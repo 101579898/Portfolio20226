@@ -1,0 +1,174 @@
+/* ---------- colours (change these to re-theme) ---------- */
+:root {
+  --pink: #ff8ad8;
+  --red: #d6141a;
+  --cream: #f6f3ea;
+  --dark: #0a0610;
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  background: black;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- the TV ---------- */
+.tv {
+  position: relative;
+  width: min(94vw, 125vh);
+  height: min(90vh, 70vw);
+  border-radius: 5% / 50%;      /* bulging sides like an old CRT */
+  overflow: hidden;
+  background: var(--dark);
+}
+
+/* every "screen" fills the TV; only one is visible at a time */
+.screen {
+  position: absolute;
+  inset: 0;
+  padding: 6% 8%;
+}
+
+.hidden { display: none !important; }
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;          /* clicks pass through */
+  background: repeating-linear-gradient(transparent 0 2px, rgba(0, 0, 0, 0.18) 2px 4px);
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- 1. off screen ---------- */
+#off {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  font-family: "VT323", monospace;
+  color: var(--pink);
+  font-size: 28px;
+  text-shadow: 0 0 8px var(--pink);
+}
+
+.blink { animation: blink 1s steps(1) infinite; }
+
+#start {
+  font-family: "VT323", monospace;
+  font-size: 24px;
+  padding: 4px 50px;
+  background: #ddd;
+  color: black;
+  border: 3px solid;
+  border-color: white #555 #555 white;   /* old-school bevel */
+  cursor: pointer;
+}
+
+#start:active { border-color: #555 white white #555; }
+
+/* ---------- 2. boot screen ---------- */
+#boot {
+  font-family: "VT323", monospace;
+  color: var(--pink);
+  text-shadow: 0 0 8px var(--pink);
+  font-size: 22px;
+}
+
+#log { font-family: inherit; white-space: pre-wrap; }
+
+#rebooting {
+  position: absolute;
+  top: 45%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 60px;
+  font-weight: normal;
+  letter-spacing: 6px;
+  animation: blink 0.4s steps(1) infinite;
+}
+
+/* ---------- 3. portfolio ---------- */
+#portfolio {
+  overflow-y: auto;              /* scroll inside the TV */
+  color: black;
+  font-family: Arial, sans-serif;
+  background:
+    radial-gradient(circle at 20% 90%, rgba(255, 120, 40, 0.35), transparent 30%),
+    radial-gradient(circle at 70% 100%, rgba(170, 200, 60, 0.4), transparent 40%),
+    var(--cream);
+  animation: turn-on 0.5s ease-out;
+}
+
+header, footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 15px;
+}
+
+.title {
+  position: relative;
+  text-align: center;
+  color: var(--red);
+  font-family: Georgia, serif;
+  margin: 8% 0;
+}
+
+.title p { font-size: 26px; font-weight: bold; }
+
+.title h1 {
+  font-size: clamp(60px, 14vw, 180px);
+  font-weight: normal;
+  font-style: italic;
+  line-height: 1;
+}
+
+.stamp {
+  position: absolute;
+  top: 0;
+  right: 5%;
+  padding: 6px 14px;
+  border: 3px solid var(--red);
+  border-radius: 10px;
+  font: bold 13px Arial, sans-serif;
+  transform: rotate(-15deg);
+}
+
+.work {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 8%;
+}
+
+.card {
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--red);
+  color: var(--red);
+  font-family: "VT323", monospace;
+  font-size: 24px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.card:hover { background: var(--red); color: var(--cream); }
+
+/* ---------- animations ---------- */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* screen stretches open from a thin white line */
+@keyframes turn-on {
+  0%   { transform: scale(1, 0.005); filter: brightness(10); }
+  50%  { transform: scale(1, 0.005); filter: brightness(10); }
+  100% { transform: scale(1, 1); filter: brightness(1); }
+}

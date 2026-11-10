@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="tv">
+
+    <!-- 1. TV is off: just the start button -->
+    <div id="off" class="screen">
+      <p class="blink">NO SIGNAL</p>
+      <button id="start">Start</button>
+    </div>
+
+    <!-- 2. Booting: text types in here -->
+    <div id="boot" class="screen hidden">
+      <pre id="log"></pre>
+      <h1 id="rebooting" class="hidden">REBOOTING...</h1>
+    </div>
+
+    <!-- 3. The portfolio -->
+    <div id="portfolio" class="screen hidden">
+
+      <header>
+        <p>Your Name<br><b>(GRAPHIC DESIGN)</b></p>
+        <p>Instagram: @yourname</p>
+        <p>SAY HELLO<br>(you@email.com)</p>
+      </header>
+
+      <section class="title">
+        <p>welcome to my</p>
+        <h1>portfolio</h1>
+        <span class="stamp">GRAPHIC<br>DESIGNER</span>
+      </section>
+
+      <section class="work">
+        <div class="card">Example Work</div>
+        <div class="card">Example Work</div>
+        <div class="card">Example Work</div>
+        <div class="card">Example Work</div>
+        <div class="card">Example Work</div>
+        <div class="card">Example Work</div>
+      </section>
+
+      <footer>
+        <p><b>PORTFOLIO</b><br>2026 UPDATE</p>
+        <p>Example tagline goes here.</p>
+      </footer>
+
+    </div>
+
+    <!-- scanlines sit on top of everything -->
+    <div class="scanlines"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
