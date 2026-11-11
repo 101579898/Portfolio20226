@@ -1,150 +1,156 @@
-/* ---------- colours (change these to re-theme) ---------- */
+/* ---------- Colors (change these to re-theme) ---------- */
 :root {
-  --pink: #ff8ad8;
-  --red: #d6141a;
-  --cream: #f6f3ea;
-  --dark: #0a0610;
+  --bg: #0d0410;
+  --pink: #ff8fd0;
+  --purple: #b98cff;
+  --cream: #fff3c4;
 }
 
 * { box-sizing: border-box; margin: 0; }
 
 body {
   background: black;
+  color: var(--pink);
+  font-family: "VT323", monospace;
+  font-size: 22px;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ---------- the TV ---------- */
-.tv {
-  position: relative;
-  width: min(94vw, 125vh);
-  height: min(90vh, 70vw);
-  border-radius: 5% / 50%;      /* bulging sides like an old CRT */
   overflow: hidden;
-  background: var(--dark);
-}
-
-/* every "screen" fills the TV; only one is visible at a time */
-.screen {
-  position: absolute;
-  inset: 0;
-  padding: 6% 8%;
 }
 
 .hidden { display: none !important; }
 
+/* ---------- The TV ---------- */
+.tv {
+  position: fixed;
+  inset: 3vmin;
+  background: var(--bg);
+  border-radius: 6% / 50%;          /* curved CRT sides */
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(255, 143, 208, 0.25);
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+}
+
 .scanlines {
   position: absolute;
   inset: 0;
-  pointer-events: none;          /* clicks pass through */
-  background: repeating-linear-gradient(transparent 0 2px, rgba(0, 0, 0, 0.18) 2px 4px);
-  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.3) 3px
+  );
 }
 
-/* ---------- 1. off screen ---------- */
-#off {
+/* ---------- 1. Start screen ---------- */
+#start {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 30px;
-  font-family: "VT323", monospace;
-  color: var(--pink);
-  font-size: 28px;
-  text-shadow: 0 0 8px var(--pink);
+  background: black;
 }
 
-.blink { animation: blink 1s steps(1) infinite; }
-
-#start {
-  font-family: "VT323", monospace;
-  font-size: 24px;
+#startBtn {
+  font: inherit;
+  font-size: 26px;
   padding: 4px 50px;
-  background: #ddd;
   color: black;
+  background: #ddd;
   border: 3px solid;
-  border-color: white #555 #555 white;   /* old-school bevel */
+  border-color: white #555 #555 white;   /* old computer button */
   cursor: pointer;
 }
+#startBtn:active { border-color: #555 white white #555; }
 
-#start:active { border-color: #555 white white #555; }
+.blink { animation: blink 1.2s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
 
-/* ---------- 2. boot screen ---------- */
+/* ---------- 2. Boot screen ---------- */
 #boot {
-  font-family: "VT323", monospace;
-  color: var(--pink);
-  text-shadow: 0 0 8px var(--pink);
-  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#log { font-family: inherit; white-space: pre-wrap; }
-
-#rebooting {
+#bootLog {
   position: absolute;
-  top: 45%;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 60px;
+  top: 8%;
+  left: 10%;
+  font: inherit;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+#bootTitle {
+  font-size: clamp(40px, 9vw, 110px);
   font-weight: normal;
   letter-spacing: 6px;
-  animation: blink 0.4s steps(1) infinite;
+  color: #ffd0ea;
+  text-shadow: 0 0 10px var(--pink), 0 0 40px var(--pink);
+  animation: flicker 0.15s infinite;
 }
+@keyframes flicker { 50% { opacity: 0.8; } }
 
-/* ---------- 3. portfolio ---------- */
+/* ---------- 3. Portfolio ---------- */
 #portfolio {
-  overflow-y: auto;              /* scroll inside the TV */
-  color: black;
-  font-family: Arial, sans-serif;
-  background:
-    radial-gradient(circle at 20% 90%, rgba(255, 120, 40, 0.35), transparent 30%),
-    radial-gradient(circle at 70% 100%, rgba(170, 200, 60, 0.4), transparent 40%),
-    var(--cream);
-  animation: turn-on 0.5s ease-out;
+  overflow-y: auto;
+  scrollbar-width: none;            /* hide scrollbar so it doesn't cut the curved edge */
+  padding: 7vh 10vw;
+  background: radial-gradient(circle at 70% 20%, #3a1040, var(--bg) 60%);
+  text-shadow: 0 0 8px rgba(255, 143, 208, 0.6);
+  animation: powerOn 0.6s ease-out;
 }
 
-header, footer {
+/* TV turning on: thin bright line that opens up */
+@keyframes powerOn {
+  0%   { transform: scaleY(0.01); filter: brightness(5); }
+  50%  { transform: scaleY(0.01); filter: brightness(5); }
+  100% { transform: scaleY(1);    filter: brightness(1); }
+}
+
+.top {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  font-size: 15px;
+  text-transform: uppercase;
 }
+.top p:nth-child(2) { text-align: center; }
+.top p:nth-child(3) { text-align: right; }
 
-.title {
-  position: relative;
+.hero {
+  margin: 12vh 0;
   text-align: center;
-  color: var(--red);
+}
+.hero h1 {
   font-family: Georgia, serif;
-  margin: 8% 0;
-}
-
-.title p { font-size: 26px; font-weight: bold; }
-
-.title h1 {
-  font-size: clamp(60px, 14vw, 180px);
-  font-weight: normal;
   font-style: italic;
-  line-height: 1;
+  font-weight: normal;
+  font-size: clamp(60px, 16vw, 220px);
+  line-height: 0.9;
+  color: var(--cream);
+  text-shadow: 0 0 20px var(--pink), 0 0 60px var(--purple);
+}
+.welcome {
+  font-family: Georgia, serif;
+  font-size: clamp(20px, 3vw, 40px);
 }
 
-.stamp {
-  position: absolute;
-  top: 0;
-  right: 5%;
-  padding: 6px 14px;
-  border: 3px solid var(--red);
-  border-radius: 10px;
-  font: bold 13px Arial, sans-serif;
-  transform: rotate(-15deg);
+h2 {
+  font-weight: normal;
+  font-size: 34px;
+  color: var(--purple);
+  margin: 50px 0 20px;
 }
 
 .work {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
-  margin-bottom: 8%;
 }
 
 .card {
@@ -152,23 +158,26 @@ header, footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--red);
-  color: var(--red);
-  font-family: "VT323", monospace;
-  font-size: 24px;
-  background: rgba(255, 255, 255, 0.5);
+  border: 2px solid var(--pink);
+  background: linear-gradient(135deg, #2a0a35, #6b2a6e);
+  cursor: pointer;
+}
+.card:hover {
+  background: var(--pink);
+  color: black;
+  text-shadow: none;
 }
 
-.card:hover { background: var(--red); color: var(--cream); }
+.about { max-width: 600px; }
 
-/* ---------- animations ---------- */
-@keyframes blink {
-  50% { opacity: 0; }
+footer {
+  margin-top: 80px;
+  text-align: center;
+  opacity: 0.7;
 }
 
-/* screen stretches open from a thin white line */
-@keyframes turn-on {
-  0%   { transform: scale(1, 0.005); filter: brightness(10); }
-  50%  { transform: scale(1, 0.005); filter: brightness(10); }
-  100% { transform: scale(1, 1); filter: brightness(1); }
+/* Small screens: stack the header */
+@media (max-width: 600px) {
+  .top { flex-direction: column; }
+  .top p:nth-child(2), .top p:nth-child(3) { text-align: left; }
 }
