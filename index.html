@@ -37,7 +37,43 @@
         <h1>Portfolio</h1>
       </div>
 
-      <h2>&gt; WORK</h2>
+      <!-- Tools strip (swap in the tools you really use) -->
+      <p class="tools">FIGMA <b>+</b> ILLUSTRATOR <b>+</b> PHOTOSHOP <b>+</b> HTML/CSS <b>+</b> JAVASCRIPT</p>
+
+      <!-- WHAT I DO: three columns.
+           Any <canvas class="pixel" data-src="..."> is drawn as purple pixels by script.js -->
+      <h2>// 01 what i do</h2>
+      <div class="columns">
+        <div>
+          <div class="frame">
+            <canvas class="pixel" data-src="img/computer.svg"></canvas>
+            <span class="tag" style="top: 12%; left: 8%">cursor_01 0.94</span>
+            <span class="tag" style="bottom: 10%; right: 6%">window_07 0.88</span>
+          </div>
+          <h3>Interaction Design</h3>
+          <p>Example text. One or two lines about this kind of work.</p>
+        </div>
+        <div>
+          <div class="frame">
+            <canvas class="pixel" data-src="img/lily.svg"></canvas>
+            <span class="tag" style="top: 8%; right: 10%">petal_27 0.91</span>
+            <span class="tag" style="bottom: 14%; left: 6%">stem_03 0.89</span>
+          </div>
+          <h3>Visual Design</h3>
+          <p>Example text. One or two lines about this kind of work.</p>
+        </div>
+        <div>
+          <div class="frame">
+            <canvas class="pixel" data-src="img/planet.svg"></canvas>
+            <span class="tag" style="top: 10%; left: 20%">orbit_12 0.97</span>
+            <span class="tag" style="bottom: 8%; right: 8%">ring_02 0.85</span>
+          </div>
+          <h3>Creative Tech</h3>
+          <p>Example text. One or two lines about this kind of work.</p>
+        </div>
+      </div>
+
+      <h2>// 02 latest work</h2>
       <!-- One project at a time. Hover = pixels reveal the image, click = open the work, > = next -->
       <div class="work">
         <a id="workLink" target="_blank"><canvas id="workCanvas"></canvas></a>
@@ -47,8 +83,46 @@
         </div>
       </div>
 
-      <h2>&gt; ABOUT</h2>
-      <p class="about">3rd Year Interaction Design Student</p>
+      <!-- ABOUT: picture on the left, text on the right, three info cards below -->
+      <h2>// 03 about</h2>
+      <div class="split">
+        <div class="frame">
+          <canvas class="pixel" data-src="img/galaxy.svg"></canvas>
+          <span class="tag" style="top: 10%; left: 6%">moon_01 0.93</span>
+          <span class="tag" style="top: 40%; right: 8%">nebula_44 0.90</span>
+          <span class="tag" style="bottom: 8%; left: 30%">frame 0003 · tracking</span>
+        </div>
+        <div>
+          <h3>Kiara Gonzalez-Layne</h3>
+          <p>3rd Year Interaction Design Student</p>
+          <p>Example about text. Write a few sentences about yourself here.</p>
+        </div>
+      </div>
+      <div class="columns">
+        <div class="card"><small>// study</small><p>Interaction Design, 3rd year</p></div>
+        <div class="card"><small>// focus</small><p>Example focus</p></div>
+        <div class="card"><small>// into</small><p>Tech, space, flowers</p></div>
+      </div>
+
+      <!-- CONTACT: text on the left, form on the right.
+           The form opens the visitor's email app with their message filled in. -->
+      <h2>// 04 let's work together</h2>
+      <div class="split">
+        <div>
+          <p>Example text. Say what kind of projects or roles you are open to.</p>
+          <p>kiaraglayne@email.com<br>Instagram: @Kiwish1</p>
+          <div class="frame small">
+            <canvas class="pixel" data-src="img/lotus.svg"></canvas>
+            <span class="tag" style="top: 8%; left: 8%">bloom_09 0.96</span>
+          </div>
+        </div>
+        <form action="mailto:kiaraglayne@email.com" method="post" enctype="text/plain">
+          <label>Name <input type="text" name="name" required></label>
+          <label>Email <input type="email" name="email" required></label>
+          <label>Message <textarea name="message" rows="5" required></textarea></label>
+          <button type="submit">Send</button>
+        </form>
+      </div>
 
       <footer>PORTFOLIO 2026</footer>
     </main>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450">
+<defs><linearGradient id="a" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#444"/><stop offset="1" stop-color="#bbb"/></linearGradient>
+<linearGradient id="b" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#888"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M300 360 Q225 225 300 90 Q375 225 300 360Z" fill="url(#a)" transform="rotate(-80 300 360)"/>
+<path d="M300 360 Q225 225 300 90 Q375 225 300 360Z" fill="url(#a)" transform="rotate(80 300 360)"/>
+<path d="M300 360 Q225 225 300 90 Q375 225 300 360Z" fill="url(#a)" transform="rotate(-55 300 360)"/>
+<path d="M300 360 Q225 225 300 90 Q375 225 300 360Z" fill="url(#a)" transform="rotate(55 300 360)"/>
+<path d="M300 360 Q225 225 300 90 Q375 225 300 360Z" fill="url(#a)" transform="rotate(-28 300 360)"/>
+<path d="M300 360 Q225 225 300 90 Q375 225 300 360Z" fill="url(#a)" transform="rotate(28 300 360)"/>
+<path d="M300 360 Q225 225 300 90 Q375 225 300 360Z" fill="url(#a)" transform="rotate(0 300 360)"/>
+<path d="M300 360 Q240 265 300 170 Q360 265 300 360Z" fill="url(#b)" transform="rotate(-60 300 360)"/>
+<path d="M300 360 Q240 265 300 170 Q360 265 300 360Z" fill="url(#b)" transform="rotate(60 300 360)"/>
+<path d="M300 360 Q240 265 300 170 Q360 265 300 360Z" fill="url(#b)" transform="rotate(-35 300 360)"/>
+<path d="M300 360 Q240 265 300 170 Q360 265 300 360Z" fill="url(#b)" transform="rotate(35 300 360)"/>
+<path d="M300 360 Q240 265 300 170 Q360 265 300 360Z" fill="url(#b)" transform="rotate(-12 300 360)"/>
+<path d="M300 360 Q240 265 300 170 Q360 265 300 360Z" fill="url(#b)" transform="rotate(12 300 360)"/>
+<ellipse cx="300" cy="372" rx="210" ry="18" fill="#555"/>
+</svg>

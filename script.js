@@ -53,6 +53,43 @@ staticSwitch.addEventListener("click", function () {
 });
 
 
+// ---------- PIXEL PICTURES ----------
+// Every <canvas class="pixel" data-src="img/..."> in the page is drawn as purple pixels.
+document.querySelectorAll("canvas.pixel").forEach(function (pixelCanvas) {
+  const picture = new Image();
+  picture.onload = function () {
+    const w = picture.width;
+    const h = picture.height;
+    const block = Math.round(w / 50);          // bigger number = smaller pixels
+
+    // 1. Shrink the picture onto a tiny hidden canvas
+    const small = document.createElement("canvas");
+    small.width = Math.ceil(w / block);
+    small.height = Math.ceil(h / block);
+    small.getContext("2d").drawImage(picture, 0, 0, small.width, small.height);
+
+    // 2. Stretch it back up without smoothing = chunky pixels, in grey
+    const p = pixelCanvas.getContext("2d");
+    pixelCanvas.width = w;
+    pixelCanvas.height = h;
+    p.imageSmoothingEnabled = false;
+    p.filter = "grayscale(1) brightness(1.3)";
+    p.drawImage(small, 0, 0, w, h);
+    p.filter = "none";
+
+    // 3. Tint it purple
+    p.globalCompositeOperation = "multiply";
+    p.fillStyle = "#b98cff";
+    p.fillRect(0, 0, w, h);
+
+    // 4. Keep see-through parts of the picture see-through
+    p.globalCompositeOperation = "destination-in";
+    p.drawImage(small, 0, 0, w, h);
+  };
+  picture.src = pixelCanvas.dataset.src;
+});
+
+
 // ---------- WORK VIEWER ----------
 
 // Your projects. To add one, copy a line and change it.

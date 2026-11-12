@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450">
+<defs><linearGradient id="p" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#555"/><stop offset="1" stop-color="#fff"/></linearGradient>
+<linearGradient id="q" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#333"/><stop offset="1" stop-color="#aaa"/></linearGradient></defs>
+<path d="M300 235 Q330 340 290 450" stroke="#666" stroke-width="10" fill="none"/><path d="M300 235 Q240 124.99999999999999 300 35 Q360 124.99999999999999 300 235Z" fill="url(#q)" transform="rotate(30 300 235)"/>
+<path d="M300 235 Q240 124.99999999999999 300 35 Q360 124.99999999999999 300 235Z" fill="url(#q)" transform="rotate(90 300 235)"/>
+<path d="M300 235 Q240 124.99999999999999 300 35 Q360 124.99999999999999 300 235Z" fill="url(#q)" transform="rotate(150 300 235)"/>
+<path d="M300 235 Q240 124.99999999999999 300 35 Q360 124.99999999999999 300 235Z" fill="url(#q)" transform="rotate(210 300 235)"/>
+<path d="M300 235 Q240 124.99999999999999 300 35 Q360 124.99999999999999 300 235Z" fill="url(#q)" transform="rotate(270 300 235)"/>
+<path d="M300 235 Q240 124.99999999999999 300 35 Q360 124.99999999999999 300 235Z" fill="url(#q)" transform="rotate(330 300 235)"/>
+<path d="M300 235 Q250 141.5 300 65 Q350 141.5 300 235Z" fill="url(#p)" transform="rotate(0 300 235)"/>
+<path d="M300 235 Q250 141.5 300 65 Q350 141.5 300 235Z" fill="url(#p)" transform="rotate(60 300 235)"/>
+<path d="M300 235 Q250 141.5 300 65 Q350 141.5 300 235Z" fill="url(#p)" transform="rotate(120 300 235)"/>
+<path d="M300 235 Q250 141.5 300 65 Q350 141.5 300 235Z" fill="url(#p)" transform="rotate(180 300 235)"/>
+<path d="M300 235 Q250 141.5 300 65 Q350 141.5 300 235Z" fill="url(#p)" transform="rotate(240 300 235)"/>
+<path d="M300 235 Q250 141.5 300 65 Q350 141.5 300 235Z" fill="url(#p)" transform="rotate(300 300 235)"/>
+<circle cx="300" cy="195" r="7" fill="#222" transform="rotate(15 300 235)"/>
+<circle cx="300" cy="195" r="7" fill="#222" transform="rotate(75 300 235)"/>
+<circle cx="300" cy="195" r="7" fill="#222" transform="rotate(135 300 235)"/>
+<circle cx="300" cy="195" r="7" fill="#222" transform="rotate(195 300 235)"/>
+<circle cx="300" cy="195" r="7" fill="#222" transform="rotate(255 300 235)"/>
+<circle cx="300" cy="195" r="7" fill="#222" transform="rotate(315 300 235)"/>
+<circle cx="300" cy="235" r="18" fill="#fff"/>
+</svg>

@@ -180,10 +180,106 @@ body {
 
 h2 {
   font-weight: normal;
-  font-size: 34px;
+  font-size: 30px;
   color: var(--purple);
-  margin: 50px 0 20px;
+  margin: 110px 0 25px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(185, 140, 255, 0.4);
 }
+
+h3 {
+  font-weight: normal;
+  font-size: 28px;
+  color: var(--cream);
+  margin: 14px 0 4px;
+}
+
+p { margin-bottom: 12px; }
+
+/* Row of tools under the title */
+.tools {
+  text-align: center;
+  letter-spacing: 2px;
+  opacity: 0.8;
+}
+.tools b { color: var(--purple); margin: 0 10px; }
+
+/* Three columns that stack on small screens */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  gap: 30px;
+}
+
+/* Two halves side by side (about, contact) */
+.split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+/* Box around a pixel picture, with little tracking labels on top */
+.frame {
+  position: relative;
+  border: 1px solid rgba(185, 140, 255, 0.5);
+  background: black;
+}
+.frame.small { max-width: 220px; }
+
+.pixel {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.tag {
+  position: absolute;
+  font-size: 14px;
+  padding: 0 5px;
+  color: var(--purple);
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid var(--purple);
+  text-shadow: none;
+}
+
+.card {
+  border: 1px solid rgba(185, 140, 255, 0.5);
+  padding: 14px 16px 4px;
+}
+.card small { color: var(--purple); }
+
+/* Contact form */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+label {
+  display: flex;
+  flex-direction: column;
+  color: var(--purple);
+}
+input, textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--cream);
+  background: black;
+  border: 1px solid var(--purple);
+  padding: 6px 10px;
+}
+form button {
+  font: inherit;
+  font-size: 26px;
+  color: black;
+  background: var(--pink);
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+}
+form button:hover { background: var(--cream); }
 
 .work {
   max-width: 800px;
@@ -222,8 +318,6 @@ h2 {
   background: var(--pink);
   color: black;
 }
-
-.about { max-width: 600px; }
 
 footer {
   margin-top: 80px;
