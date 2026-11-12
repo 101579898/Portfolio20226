@@ -90,85 +90,240 @@ document.querySelectorAll("canvas.pixel").forEach(function (pixelCanvas) {
 });
 
 
-// ---------- WORK VIEWER ----------
+// ---------- WORK PACK ----------
+// Uses GSAP (loaded in index.html) for the smooth movement.
 
-// Your projects. To add one, copy a line and change it.
-//   image = the picture shown in the viewer
-//   link  = what opens when you click it
+// Your projects: one card each. To add one, copy a block and change it.
+//   image = picture on the front      link = what "Open project" opens
+//   tags  = small line on the front   text = explanation on the back
 const projects = [
-  { title: "Myro Rebrand", image: "work/myro-rebrand.jpg", link: "work/myro-rebrand.pdf" },
-  { title: "Example Work", image: "work/patrick.jpg",      link: "work/patrick.jpg" },
+  {
+    title: "Myro Rebrand",
+    tags: "Branding",
+    image: "work/myro-rebrand.jpg",
+    link: "work/myro-rebrand.pdf",
+    text: "Example description. Say what the project was, what you did, and which tools you used.",
+  },
+  {
+    title: "Example Work",
+    tags: "Placeholder",
+    image: "work/patrick.jpg",
+    link: "work/patrick.jpg",
+    text: "Example description. Say what the project was, what you did, and which tools you used.",
+  },
 ];
 
-const workLink = document.getElementById("workLink");
-const workTitle = document.getElementById("workTitle");
-const nextBtn = document.getElementById("nextBtn");
-const canvas = document.getElementById("workCanvas");
-const ctx = canvas.getContext("2d");
-const img = new Image();
+const pack = document.getElementById("pack");
+const packTop = document.getElementById("packTop");
+const tearLine = document.getElementById("tearLine");
+const cardsBox = document.getElementById("cards");
+const openBtn = document.getElementById("openBtn");
+const cardNav = document.getElementById("cardNav");
+const cardCount = document.getElementById("cardCount");
+const packHint = document.getElementById("packHint");
 
-let current = 0;       // which project is showing
-let reveal = 0;        // 0 = fully pixelated, 1 = clear image
-let hovering = false;
+const order = [];      // the cards, order[0] is the one on top
+let opened = false;
+let busy = false;      // true while a card is flying away
 
-function showProject() {
-  const project = projects[current];
-  workTitle.textContent = (current + 1) + "/" + projects.length + "  " + project.title;
-  workLink.href = project.link;
-  img.src = project.image;
+// If the visitor has "reduce motion" turned on, make every animation near-instant
+if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  gsap.globalTimeline.timeScale(50);
 }
 
-// When the picture has loaded, start it fully pixelated
-img.onload = function () {
-  canvas.width = img.width;
-  canvas.height = img.height;
-  reveal = 0;
-  draw();
-};
+document.getElementById("packInfo").textContent = projects.length + " CARDS INSIDE";
 
-function draw() {
-  const w = canvas.width;
-  const h = canvas.height;
+// The pack gently floats until it is opened
+let floating = gsap.to(pack, { y: -12, duration: 2, yoyo: true, repeat: -1, ease: "sine.inOut" });
 
-  // Size of one "pixel" block: big when hidden, 1 when revealed
-  const block = Math.round(1 + (1 - reveal) * (w / 45));
-  const smallW = Math.ceil(w / block);
-  const smallH = Math.ceil(h / block);
 
-  // Draw the image tiny, then stretch it back up without smoothing = pixels
-  ctx.globalCompositeOperation = "source-over";
-  ctx.globalAlpha = 1;
-  ctx.imageSmoothingEnabled = false;
-  ctx.filter = "grayscale(" + (1 - reveal) + ")";
-  ctx.drawImage(img, 0, 0, smallW, smallH);
-  ctx.drawImage(canvas, 0, 0, smallW, smallH, 0, 0, w, h);
-  ctx.filter = "none";
-
-  // Pink tint that fades away as the image is revealed
-  ctx.globalCompositeOperation = "multiply";
-  ctx.globalAlpha = 1 - reveal;
-  ctx.fillStyle = "#ff5fc0";
-  ctx.fillRect(0, 0, w, h);
-}
-
-// Runs every frame: slowly reveal while hovering, re-pixelate when not
-function animate() {
-  const target = hovering ? 1 : 0;
-  if (reveal !== target && img.complete) {
-    reveal += hovering ? 0.015 : -0.04;
-    reveal = Math.max(0, Math.min(1, reveal));
-    draw();
-  }
-  requestAnimationFrame(animate);
-}
-
-workLink.addEventListener("mouseenter", function () { hovering = true; });
-workLink.addEventListener("mouseleave", function () { hovering = false; });
-
-nextBtn.addEventListener("click", function () {
-  current = (current + 1) % projects.length; // loops back to the first
-  showProject();
+// --- Build one card per project ---
+projects.forEach(function (project, i) {
+  const card = document.createElement("article");
+  card.className = "work-card";
+  card.dataset.number = i + 1;
+  card.innerHTML =
+    '<div class="tilt"><div class="card-inner">' +
+      '<div class="card-face">' +
+        '<img src="' + project.image + '" alt="">' +
+        "<h3>" + project.title + "</h3>" +
+        "<p>" + project.tags + "</p>" +
+        "<small>" + (i + 1) + "/" + projects.length + " · tap to flip</small>" +
+        '<div class="sheen"></div>' +
+      "</div>" +
+      '<div class="card-face card-back">' +
+        "<h3>" + project.title + "</h3>" +
+        "<p>" + project.text + "</p>" +
+        '<a href="' + project.link + '" target="_blank">Open project &gt;</a>' +
+      "</div>" +
+    "</div></div>";
+  cardsBox.appendChild(card);
+  order.push(card);
+  addCardDrag(card);
 });
 
-showProject();
-animate();
+
+// --- Put every card in its place in the stack ---
+function layoutCards(time) {
+  order.forEach(function (card, k) {          // k = how far down the stack (0 = top)
+    gsap.set(card, { zIndex: order.length - k });
+    gsap.to(card, {
+      x: 0,
+      y: k * 12,
+      scale: 1 - k * 0.05,
+      rotation: k === 0 ? 0 : (k % 2 ? 4 : -4),
+      opacity: k > 2 ? 0 : 1,
+      duration: time,
+    });
+  });
+  cardCount.textContent = order[0].dataset.number + "/" + projects.length;
+}
+
+
+// --- Opening the pack ---
+function openPack() {
+  if (opened) return;
+  opened = true;
+  floating.kill();
+  openBtn.classList.add("hidden");
+  cardNav.classList.remove("hidden");
+  packHint.textContent = "Drag a card sideways for the next one. Tap a card to flip it.";
+
+  // Top strip flies off, pack drops away, cards rise up
+  gsap.to(packTop, { x: 160, y: -200, rotation: 50, opacity: 0, duration: 0.7, ease: "power2.in" });
+  gsap.to(pack, { y: 260, opacity: 0, duration: 0.6, delay: 0.5, onComplete: function () {
+    pack.classList.add("hidden");
+  }});
+  cardsBox.classList.remove("hidden");
+  gsap.set(order, { x: 0, y: 140, opacity: 0, scale: 0.8, rotation: 0 });
+  gsap.delayedCall(0.5, function () { layoutCards(0.7); });
+}
+
+function resealPack() {
+  opened = false;
+  order.forEach(function (card) { card.classList.remove("flipped"); });
+  cardsBox.classList.add("hidden");
+  cardNav.classList.add("hidden");
+  openBtn.classList.remove("hidden");
+  pack.classList.remove("hidden");
+  packHint.textContent = "Drag across the top of the pack to tear it open";
+  tearLine.style.width = "0";
+  gsap.set(packTop, { x: 0, y: 0, rotation: 0, opacity: 1 });
+  gsap.fromTo(pack, { y: -200, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, onComplete: function () {
+    floating = gsap.to(pack, { y: -12, duration: 2, yoyo: true, repeat: -1, ease: "sine.inOut" });
+  }});
+}
+
+
+// --- Tearing: drag sideways across the top strip ---
+let tearStart = null;
+
+packTop.addEventListener("pointerdown", function (e) {
+  tearStart = e.clientX;
+  packTop.setPointerCapture(e.pointerId);
+});
+
+packTop.addEventListener("pointermove", function (e) {
+  if (tearStart === null) return;
+  const dragged = e.clientX - tearStart;
+  const amount = Math.min(1, Math.abs(dragged) / packTop.offsetWidth);   // 0 to 1
+  tearLine.style.width = amount * 100 + "%";
+  tearLine.style.left = dragged < 0 ? "auto" : "0";     // line grows from where you started
+  tearLine.style.right = dragged < 0 ? "0" : "auto";
+  if (amount > 0.85) {
+    tearStart = null;
+    openPack();
+  }
+});
+
+function stopTear() {
+  if (tearStart === null) return;      // let go too early: the line snaps back
+  tearStart = null;
+  tearLine.style.width = "0";
+}
+packTop.addEventListener("pointerup", stopTear);
+packTop.addEventListener("pointercancel", stopTear);
+
+
+// --- Swiping, tilting and flipping a card ---
+function addCardDrag(card) {
+  const tilt = card.querySelector(".tilt");
+  let startX = null;
+  let moved = false;
+
+  card.addEventListener("pointerdown", function (e) {
+    if (card !== order[0] || busy || e.target.closest("a")) return;
+    startX = e.clientX;
+    moved = false;
+  });
+
+  card.addEventListener("pointermove", function (e) {
+    if (card !== order[0]) return;
+
+    // Tilt toward the pointer and slide the shine across
+    const box = card.getBoundingClientRect();
+    const px = (e.clientX - box.left) / box.width - 0.5;    // -0.5 (left) to 0.5 (right)
+    const py = (e.clientY - box.top) / box.height - 0.5;
+    gsap.to(tilt, { rotateY: px * 20, rotateX: -py * 20, duration: 0.3 });
+    card.style.setProperty("--sheen", 50 - px * 100 + "%");
+
+    if (startX === null) return;
+    const dragged = e.clientX - startX;
+    if (!moved && Math.abs(dragged) > 6) {
+      moved = true;
+      card.setPointerCapture(e.pointerId);
+    }
+    if (moved) gsap.set(card, { x: dragged, rotation: dragged / 15 });
+  });
+
+  card.addEventListener("pointerup", function (e) {
+    if (startX === null) return;
+    const dragged = e.clientX - startX;
+    startX = null;
+    if (!moved) {
+      card.classList.toggle("flipped");            // a tap flips the card
+    } else if (Math.abs(dragged) > 90) {
+      nextCard(dragged > 0 ? 1 : -1);              // far enough: go to the next card
+    } else {
+      layoutCards(0.4);                            // not far enough: snap back
+    }
+  });
+
+  card.addEventListener("pointercancel", function () {
+    startX = null;
+    layoutCards(0.4);
+  });
+
+  card.addEventListener("pointerleave", function () {
+    gsap.to(tilt, { rotateY: 0, rotateX: 0, duration: 0.5 });
+  });
+}
+
+// Top card flies off to one side (1 = right, -1 = left) and goes to the bottom
+function nextCard(direction) {
+  if (busy) return;
+  busy = true;
+  const card = order[0];
+  card.classList.remove("flipped");
+  gsap.to(card, { x: direction * 420, rotation: direction * 25, opacity: 0, duration: 0.35, onComplete: function () {
+    order.push(order.shift());
+    busy = false;
+    layoutCards(0.4);
+  }});
+}
+
+// Bottom card comes back in from the left and lands on top
+function prevCard() {
+  if (busy) return;
+  order[0].classList.remove("flipped");
+  const card = order.pop();
+  order.unshift(card);
+  gsap.set(card, { x: -420, rotation: -25, opacity: 0 });
+  layoutCards(0.45);
+}
+
+openBtn.addEventListener("click", openPack);
+document.getElementById("nextBtn").addEventListener("click", function () { nextCard(-1); });
+document.getElementById("prevBtn").addEventListener("click", prevCard);
+document.getElementById("flipBtn").addEventListener("click", function () { order[0].classList.toggle("flipped"); });
+document.getElementById("resealBtn").addEventListener("click", resealPack);

@@ -74,14 +74,33 @@
       </div>
 
       <h2>// 02 latest work</h2>
-      <!-- One project at a time. Hover = pixels reveal the image, click = open the work, > = next -->
-      <div class="work">
-        <a id="workLink" target="_blank"><canvas id="workCanvas"></canvas></a>
-        <div class="work-bar">
-          <span id="workTitle"></span>
-          <button id="nextBtn" aria-label="Next project">&gt;</button>
+      <!-- WORK PACK: tear the pack open, then swipe through one card per project.
+           The cards are built by script.js from the "projects" list. -->
+      <div class="pack-stage">
+        <div class="pack" id="pack">
+          <div class="pack-top" id="packTop">&lt; TEAR HERE &gt;<span id="tearLine"></span></div>
+          <div class="pack-body">
+            <small>DIGI-SPACE // VOL.01</small>
+            <img src="img/planet.svg" alt="">
+            <strong>Work Pack</strong>
+            <small id="packInfo"></small>
+          </div>
         </div>
+        <div id="cards" class="hidden"></div>
       </div>
+
+      <!-- Buttons do everything the dragging does, for keyboard and screen-reader users -->
+      <div class="pack-controls">
+        <button id="openBtn">Open pack</button>
+        <span id="cardNav" class="hidden">
+          <button id="prevBtn" aria-label="Previous card">&lt;</button>
+          <span id="cardCount"></span>
+          <button id="nextBtn" aria-label="Next card">&gt;</button>
+          <button id="flipBtn">Flip</button>
+          <button id="resealBtn">Reseal</button>
+        </span>
+      </div>
+      <p class="hint" id="packHint">Drag across the top of the pack to tear it open</p>
 
       <!-- ABOUT: picture on the left, text on the right, three info cards below -->
       <h2>// 03 about</h2>
@@ -136,6 +155,8 @@
     </button>
   </div>
 
+  <!-- GSAP: animation library used by the work pack -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
