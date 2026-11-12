@@ -44,6 +44,45 @@ body {
   );
 }
 
+/* ---------- Static on/off switch (bottom of the TV) ---------- */
+#staticSwitch {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--pink);
+  background: black;
+  border: 1px solid #555;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.slot {                              /* the groove the knob slides in */
+  width: 34px;
+  height: 14px;
+  background: #222;
+  border: 1px solid #555;
+}
+
+.knob {                              /* ON = right and pink */
+  display: block;
+  width: 14px;
+  height: 100%;
+  margin-left: 18px;
+  background: var(--pink);
+  transition: margin-left 0.15s;
+}
+
+#staticSwitch.off .knob {            /* OFF = left and grey */
+  margin-left: 0;
+  background: #888;
+}
+
 /* ---------- 1. Start screen ---------- */
 #start {
   display: flex;

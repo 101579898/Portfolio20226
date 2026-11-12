@@ -38,7 +38,19 @@ function showPortfolio() {
   // Swap boot screen -> portfolio (CSS plays the power-on animation)
   bootScreen.classList.add("hidden");
   portfolio.classList.remove("hidden");
+  staticSwitch.classList.remove("hidden"); // the switch only appears after boot
 }
+
+
+// ---------- STATIC SWITCH ----------
+const staticSwitch = document.getElementById("staticSwitch");
+const scanlines = document.querySelector(".scanlines");
+
+staticSwitch.addEventListener("click", function () {
+  const isOff = scanlines.classList.toggle("hidden"); // true when static is now hidden
+  staticSwitch.classList.toggle("off", isOff);        // slide the knob
+  staticSwitch.setAttribute("aria-pressed", !isOff);
+});
 
 
 // ---------- WORK VIEWER ----------
