@@ -39,3 +39,87 @@ function showPortfolio() {
   bootScreen.classList.add("hidden");
   portfolio.classList.remove("hidden");
 }
+
+
+// ---------- WORK VIEWER ----------
+
+// Your projects. To add one, copy a line and change it.
+//   image = the picture shown in the viewer
+//   link  = what opens when you click it
+const projects = [
+  { title: "Myro Rebrand", image: "work/myro-rebrand.jpg", link: "work/myro-rebrand.pdf" },
+  { title: "Example Work", image: "work/patrick.jpg",      link: "work/patrick.jpg" },
+];
+
+const workLink = document.getElementById("workLink");
+const workTitle = document.getElementById("workTitle");
+const nextBtn = document.getElementById("nextBtn");
+const canvas = document.getElementById("workCanvas");
+const ctx = canvas.getContext("2d");
+const img = new Image();
+
+let current = 0;       // which project is showing
+let reveal = 0;        // 0 = fully pixelated, 1 = clear image
+let hovering = false;
+
+function showProject() {
+  const project = projects[current];
+  workTitle.textContent = (current + 1) + "/" + projects.length + "  " + project.title;
+  workLink.href = project.link;
+  img.src = project.image;
+}
+
+// When the picture has loaded, start it fully pixelated
+img.onload = function () {
+  canvas.width = img.width;
+  canvas.height = img.height;
+  reveal = 0;
+  draw();
+};
+
+function draw() {
+  const w = canvas.width;
+  const h = canvas.height;
+
+  // Size of one "pixel" block: big when hidden, 1 when revealed
+  const block = Math.round(1 + (1 - reveal) * (w / 45));
+  const smallW = Math.ceil(w / block);
+  const smallH = Math.ceil(h / block);
+
+  // Draw the image tiny, then stretch it back up without smoothing = pixels
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = 1;
+  ctx.imageSmoothingEnabled = false;
+  ctx.filter = "grayscale(" + (1 - reveal) + ")";
+  ctx.drawImage(img, 0, 0, smallW, smallH);
+  ctx.drawImage(canvas, 0, 0, smallW, smallH, 0, 0, w, h);
+  ctx.filter = "none";
+
+  // Pink tint that fades away as the image is revealed
+  ctx.globalCompositeOperation = "multiply";
+  ctx.globalAlpha = 1 - reveal;
+  ctx.fillStyle = "#ff5fc0";
+  ctx.fillRect(0, 0, w, h);
+}
+
+// Runs every frame: slowly reveal while hovering, re-pixelate when not
+function animate() {
+  const target = hovering ? 1 : 0;
+  if (reveal !== target && img.complete) {
+    reveal += hovering ? 0.015 : -0.04;
+    reveal = Math.max(0, Math.min(1, reveal));
+    draw();
+  }
+  requestAnimationFrame(animate);
+}
+
+workLink.addEventListener("mouseenter", function () { hovering = true; });
+workLink.addEventListener("mouseleave", function () { hovering = false; });
+
+nextBtn.addEventListener("click", function () {
+  current = (current + 1) % projects.length; // loops back to the first
+  showProject();
+});
+
+showProject();
+animate();
