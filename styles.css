@@ -91,7 +91,7 @@ body {
   font-weight: normal;
   letter-spacing: 6px;
   color: #ffd0ea;
-  text-shadow: 0 0 10px var(--pink), 0 0 40px var(--pink);
+  text-shadow: 0 0 10px white, 0 0 40px white;
   animation: flicker 0.15s infinite;
 }
 @keyframes flicker { 50% { opacity: 0.8; } }
@@ -101,8 +101,8 @@ body {
   overflow-y: auto;
   scrollbar-width: none;            /* hide scrollbar so it doesn't cut the curved edge */
   padding: 7vh 10vw;
-  background: radial-gradient(circle at 70% 20%, #3a1040, var(--bg) 60%);
-  text-shadow: 0 0 8px rgba(255, 143, 208, 0.6);
+  background: radial-gradient(circle at 70% 20%, white, var(--bg) 60%);
+  text-shadow: 0 0 8px white, 0 0 40px white;
   animation: powerOn 0.6s ease-out;
 }
 
@@ -133,7 +133,7 @@ body {
   font-size: clamp(60px, 16vw, 220px);
   line-height: 0.9;
   color: var(--cream);
-  text-shadow: 0 0 20px var(--pink), 0 0 60px var(--purple);
+  text-shadow: 0 0 20px white, 0 0 60px var(--purple);
 }
 .welcome {
   font-family: Georgia, serif;
@@ -143,7 +143,7 @@ body {
 h2 {
   font-weight: normal;
   font-size: 34px;
-  color: var(--purple);
+  color: white;
   margin: 50px 0 20px;
 }
 
@@ -158,8 +158,8 @@ h2 {
   aspect-ratio: 16 / 9;             /* same frame for every project */
   object-fit: contain;              /* whole image fits inside the frame */
   background: black;
-  border: 2px solid var(--pink);
-  box-shadow: 0 0 30px rgba(255, 143, 208, 0.5);
+  border: 2px solid white;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
   cursor: pointer;
 }
 
@@ -175,13 +175,13 @@ h2 {
   font: inherit;
   font-size: 34px;
   padding: 0 20px;
-  color: var(--pink);
+  color: white;
   background: none;
-  border: 2px solid var(--pink);
+  border: 2px solid white;
   cursor: pointer;
 }
 #nextBtn:hover {
-  background: var(--pink);
+  background: white;
   color: black;
 }
 
