@@ -29,7 +29,7 @@ startBtn.addEventListener("click", function () {
     } else {
       clearInterval(timer);
       bootTitle.classList.remove("hidden"); // big glowing BOOTING...
-      setTimeout(showPortfolio, 1800);
+      setTimeout(showPortfolio, 180);
     }
   }, 400);
 });
