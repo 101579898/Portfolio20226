@@ -6,6 +6,9 @@ const startBtn = document.getElementById("startBtn");
 const bootLog = document.getElementById("bootLog");
 const bootTitle = document.getElementById("bootTitle");
 
+// True when the visitor asked their device for less animation
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 // The text that "types" during boot. Edit these however you like.
 const bootLines = [
   "system check ............ ok",
@@ -39,6 +42,7 @@ function showPortfolio() {
   bootScreen.classList.add("hidden");
   portfolio.classList.remove("hidden");
   staticSwitch.classList.remove("hidden"); // the switch only appears after boot
+  starPal.classList.remove("hidden");      // so does the star friend
 }
 
 
@@ -127,14 +131,14 @@ let opened = false;
 let busy = false;      // true while a card is flying away
 
 // If the visitor has "reduce motion" turned on, make every animation near-instant
-if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+if (reduceMotion) {
   gsap.globalTimeline.timeScale(50);
 }
 
 document.getElementById("packInfo").textContent = projects.length + " CARDS INSIDE";
 
 // The pack gently floats until it is opened
-let floating = gsap.to(pack, { y: -12, duration: 2, yoyo: true, repeat: -1, ease: "sine.inOut" });
+let floating = gsap.to(pack, { y: reduceMotion ? 0 : -12, duration: 2, yoyo: true, repeat: -1, ease: "sine.inOut" });
 
 
 // --- Build one card per project ---
@@ -210,7 +214,7 @@ function resealPack() {
   tearLine.style.width = "0";
   gsap.set(packTop, { x: 0, y: 0, rotation: 0, opacity: 1 });
   gsap.fromTo(pack, { y: -200, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, onComplete: function () {
-    floating = gsap.to(pack, { y: -12, duration: 2, yoyo: true, repeat: -1, ease: "sine.inOut" });
+    floating = gsap.to(pack, { y: reduceMotion ? 0 : -12, duration: 2, yoyo: true, repeat: -1, ease: "sine.inOut" });
   }});
 }
 
@@ -327,3 +331,147 @@ document.getElementById("nextBtn").addEventListener("click", function () { nextC
 document.getElementById("prevBtn").addEventListener("click", prevCard);
 document.getElementById("flipBtn").addEventListener("click", function () { order[0].classList.toggle("flipped"); });
 document.getElementById("resealBtn").addEventListener("click", resealPack);
+
+
+// ---------- SHOOTING STAR JOURNEY ----------
+// As you scroll through the tall "journey" block, the star flies in, the stars
+// stretch into streaks (warp speed), then everything settles into digi-space.
+const journey = document.getElementById("journey");
+const journeyStage = journey.querySelector(".journey-stage");
+const spaceCanvas = document.getElementById("spaceCanvas");
+const space = spaceCanvas.getContext("2d");
+const comet = document.getElementById("comet");
+const journeyStart = document.getElementById("journeyStart");
+const journeyEnd = document.getElementById("journeyEnd");
+
+// 160 stars at random spots (x and y go 0 to 1; depth = how near it feels)
+const stars = [];
+for (let i = 0; i < 160; i++) {
+  stars.push({ x: Math.random(), y: Math.random(), depth: 0.3 + Math.random() * 0.7 });
+}
+
+function drawJourney() {
+  requestAnimationFrame(drawJourney);
+
+  // Do nothing while the journey is off screen
+  const box = journey.getBoundingClientRect();
+  const view = portfolio.getBoundingClientRect();
+  if (box.bottom < view.top || box.top > view.bottom) return;
+
+  // How far through the journey we are: 0 at the start, 1 at the end
+  const travel = box.height - journeyStage.offsetHeight;
+  const progress = Math.max(0, Math.min(1, (view.top - box.top) / travel));
+  const warp = Math.sin(progress * Math.PI);          // 0 -> 1 -> 0
+
+  // Stars: drift up-left (so we feel like we fly down-right) and stretch with warp
+  const w = spaceCanvas.width = journeyStage.offsetWidth;    // also clears the canvas
+  const h = spaceCanvas.height = journeyStage.offsetHeight;
+  const speed = 0.0004 + warp * 0.02;
+  space.strokeStyle = "white";
+  space.lineCap = "round";
+  stars.forEach(function (star) {
+    star.x -= speed * star.depth;
+    star.y -= speed * 0.45 * star.depth;
+    if (star.x < 0) star.x += 1;
+    if (star.y < 0) star.y += 1;
+    const streak = 1 + warp * 120 * star.depth;
+    space.globalAlpha = star.depth;
+    space.lineWidth = star.depth * 2;
+    space.beginPath();
+    space.moveTo(star.x * w, star.y * h);
+    space.lineTo(star.x * w + streak, star.y * h + streak * 0.45);
+    space.stroke();
+  });
+
+  // Shooting star: flies in, holds while we follow it, then shoots away
+  let x, y;
+  if (progress < 0.3) {
+    const t = progress / 0.3;
+    x = -0.1 + t * 0.65;  y = 0.1 + t * 0.35;
+  } else if (progress < 0.75) {
+    const t = (progress - 0.3) / 0.45;
+    x = 0.55 + t * 0.05;  y = 0.45 + t * 0.03;
+  } else {
+    const t = (progress - 0.75) / 0.25;
+    x = 0.6 + t * 0.7;    y = 0.48 + t * 0.35;
+  }
+  comet.style.transform =
+    "translate(" + (x * w - comet.offsetWidth) + "px, " + (y * h) + "px) rotate(24deg)";
+
+  // Captions fade out and in
+  journeyStart.style.opacity = 1 - progress * 5;
+  journeyEnd.style.opacity = Math.min((progress - 0.55) * 5, (1 - progress) * 8);
+}
+drawJourney();
+
+
+// ---------- WAVES ----------
+// A few flowing lines that bulge toward the pointer.
+const waves = document.getElementById("waves");
+const wavePen = waves.getContext("2d");
+let waveX = -9999;      // pointer position over the waves (far away to start)
+
+waves.addEventListener("pointermove", function (e) {
+  waveX = e.clientX - waves.getBoundingClientRect().left;
+});
+waves.addEventListener("pointerleave", function () { waveX = -9999; });
+
+function drawWaves(time) {
+  requestAnimationFrame(drawWaves);
+  const box = waves.getBoundingClientRect();
+  const view = portfolio.getBoundingClientRect();
+  if (box.bottom < view.top || box.top > view.bottom) return;
+
+  const w = waves.width = waves.offsetWidth;
+  const h = waves.height = waves.offsetHeight;
+  const t = reduceMotion ? 0 : time / 1000;
+
+  for (let line = 0; line < 6; line++) {
+    wavePen.beginPath();
+    for (let x = 0; x <= w; x += 6) {
+      const near = Math.exp(-Math.pow(x - waveX, 2) / 20000);     // 1 at the pointer, 0 far away
+      const y = h / 2 + Math.sin(x * 0.012 + t + line * 0.6) * (14 + near * 40) + (line - 2.5) * 8;
+      wavePen.lineTo(x, y);
+    }
+    wavePen.strokeStyle = line % 2 ? "#ff8fd0" : "#b98cff";
+    wavePen.globalAlpha = 0.35 + line * 0.1;
+    wavePen.stroke();
+  }
+}
+requestAnimationFrame(drawWaves);
+
+
+// ---------- STAR FRIEND ----------
+const starPal = document.getElementById("starPal");
+const palBody = document.getElementById("palBody");
+const palEyes = document.getElementById("palEyes");
+const palMouth = document.getElementById("palMouth");
+const palSay = document.getElementById("palSay");
+
+// Things she says when you press her. Add your own!
+const palLines = ["hi!", "wheee!", "keep scrolling", "tear the pack open!", "nice to meet you"];
+let palLine = 0;
+
+// She floats gently (unless the visitor turned animations off)
+if (!reduceMotion) {
+  gsap.to(starPal, { y: -10, duration: 1.6, yoyo: true, repeat: -1, ease: "sine.inOut" });
+}
+
+// Her eyes follow the pointer, she leans toward it, and smiles wider when it is close
+document.addEventListener("pointermove", function (e) {
+  const box = starPal.getBoundingClientRect();
+  const dx = e.clientX - (box.left + box.width / 2);
+  const dy = e.clientY - (box.top + box.height / 2);
+  const distance = Math.hypot(dx, dy) || 1;
+  gsap.to(palEyes, { x: dx / distance * 3, y: dy / distance * 3, duration: 0.2 });
+  if (!reduceMotion) gsap.to(starPal, { x: dx / distance * Math.min(18, distance / 10), duration: 0.6 });
+  palMouth.setAttribute("d", distance < 160 ? "M43 58 Q50 69 57 58" : "M45 59 Q50 64 55 59");
+});
+
+// Press her: she spins and says something
+starPal.addEventListener("click", function () {
+  gsap.fromTo(palBody, { rotation: 0 }, { rotation: 360, duration: 0.8, ease: "back.out(1.5)", transformOrigin: "50% 50%" });
+  palSay.textContent = palLines[palLine];
+  palLine = (palLine + 1) % palLines.length;
+  gsap.fromTo(palSay, { opacity: 1 }, { opacity: 0, duration: 0.6, delay: 1.4 });
+});

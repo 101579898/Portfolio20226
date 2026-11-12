@@ -29,7 +29,7 @@
       <header class="top">
         <p>Kiara Gonzalez-Layne<br>Interaction Design</p>
         <p>Instagram: @Kiwish1</p>
-        <p>Email me<br>kiaraglayne@email.com</p>
+        <p>Email me<br>kiaraglayne@gmail.com</p>
       </header>
 
       <div class="hero">
@@ -37,12 +37,77 @@
         <h1>Portfolio</h1>
       </div>
 
-      <!-- Tools strip (swap in the tools you really use) -->
-      <p class="tools">FIGMA <b>+</b> ILLUSTRATOR <b>+</b> PHOTOSHOP <b>+</b> HTML/CSS <b>+</b> JAVASCRIPT</p>
+      <!-- JOURNEY: keep scrolling to follow the shooting star into digi-space.
+           script.js moves the star and stretches the stars as you scroll. -->
+      <section class="journey" id="journey" aria-hidden="true">
+        <div class="journey-stage">
+          <canvas id="spaceCanvas"></canvas>
+          <div id="comet"></div>
+          <p class="journey-text" id="journeyStart">follow the shooting star</p>
+          <p class="journey-text" id="journeyEnd">entering digi-space...</p>
+        </div>
+      </section>
 
-      <!-- WHAT I DO: three columns.
+      <!-- ABOUT: collage on top, big title, then your info.
            Any <canvas class="pixel" data-src="..."> is drawn as purple pixels by script.js -->
-      <h2>// 01 what i do</h2>
+      <h2 id="about">// 01 about</h2>
+      <p class="ticker">INTERACTION DESIGN • UX • FRONT-END • BRANDING • VISUAL DESIGN • INTERACTION DESIGN • UX • FRONT-END • BRANDING • VISUAL DESIGN</p>
+
+      <div class="collage">
+        <canvas class="pixel" data-src="img/lily.svg"></canvas>
+        <span class="collage-num">01</span>
+        <!-- Swap this box for your photo: <img src="img/your-photo.jpg" alt="Kiara"> -->
+        <div class="mini" style="top: 8%; left: 5%">
+          <div class="photo">YOUR PHOTO</div>
+          <span class="tag" style="bottom: -12px; left: 6px">kiara_01 0.99</span>
+        </div>
+        <div class="mini" style="top: 10%; right: 5%">
+          <canvas class="pixel" data-src="img/planet.svg"></canvas>
+          <span class="tag" style="bottom: -12px; left: 6px">orbit_12 0.97</span>
+        </div>
+        <div class="mini" style="bottom: 12%; right: 12%">
+          <canvas class="pixel" data-src="img/galaxy.svg"></canvas>
+          <span class="tag" style="bottom: -12px; left: 6px">nebula_44 0.90</span>
+        </div>
+        <span class="tag" style="bottom: 8%; left: 6%">frame 0001 · tracking</span>
+      </div>
+
+      <div class="about-title">
+        <span class="script">Kiara</span>
+        <p class="glass"><i>H</i>ello,<br>I'm Kiara.</p>
+        <p>A designer from Canada.</p>
+      </div>
+
+      <p class="bio">I'm an Interaction Design student at George Brown College. I'm exploring the intersection of UX and front-end development, learning CSS and JavaScript while building prototypes that are clear, accessible, and friendly to real people. I'm also into branding and visual design and love creating visuals that support the story a product is trying to tell.</p>
+
+      <div class="columns">
+        <div>
+          <h3>// education</h3>
+          <div class="row"><b>George Brown College</b><span>2025 - Present</span><small>Interaction Design, Ontario College Advanced Diploma</small></div>
+          <div class="row"><b>ADaPT</b><span>Mar 2024</span><small>Advanced Digital and Professional Training for Black Youth</small></div>
+        </div>
+        <div>
+          <h3>// experience</h3>
+          <div class="row"><b>Sephora</b><span>2024 - Present</span><small>Operations Consultant</small></div>
+          <div class="row"><b>O'Grady's on Church</b><span>Apr - Jul 2024</span><small>Part-time Busser</small></div>
+          <div class="row"><b>TechTO</b><span>Jul 2024</span><small>Volunteer contract</small></div>
+        </div>
+        <div>
+          <h3>// skills</h3>
+          <div class="row"><b>Design</b><small>Figma, Photoshop, Illustrator, After Effects</small></div>
+          <div class="row"><b>Prototyping</b><small>Wireframing, rapid prototyping</small></div>
+          <div class="row"><b>Code</b><small>HTML/CSS, JavaScript, Arduino, Processing</small></div>
+        </div>
+      </div>
+
+      <!-- Wavy lines that bulge toward the pointer (drawn by script.js) -->
+      <canvas id="waves" aria-hidden="true"></canvas>
+
+      <!-- Tools strip -->
+      <p class="tools">FIGMA <b>+</b> PHOTOSHOP <b>+</b> ILLUSTRATOR <b>+</b> AFTER EFFECTS <b>+</b> HTML/CSS <b>+</b> JAVASCRIPT</p>
+
+      <!-- WHAT I DO: three columns -->
+      <h2>// 02 what i do</h2>
       <div class="columns">
         <div>
           <div class="frame">
@@ -51,7 +116,7 @@
             <span class="tag" style="bottom: 10%; right: 6%">window_07 0.88</span>
           </div>
           <h3>Interaction Design</h3>
-          <p>Example text. One or two lines about this kind of work.</p>
+          <p>Prototypes that are clear, accessible, and friendly to real people.</p>
         </div>
         <div>
           <div class="frame">
@@ -60,7 +125,7 @@
             <span class="tag" style="bottom: 14%; left: 6%">stem_03 0.89</span>
           </div>
           <h3>Visual Design</h3>
-          <p>Example text. One or two lines about this kind of work.</p>
+          <p>Branding and visuals that support the story a product is trying to tell.</p>
         </div>
         <div>
           <div class="frame">
@@ -69,11 +134,11 @@
             <span class="tag" style="bottom: 8%; right: 8%">ring_02 0.85</span>
           </div>
           <h3>Creative Tech</h3>
-          <p>Example text. One or two lines about this kind of work.</p>
+          <p>Front-end builds in HTML, CSS and JavaScript, plus Arduino and Processing experiments.</p>
         </div>
       </div>
 
-      <h2>// 02 latest work</h2>
+      <h2>// 03 latest work</h2>
       <!-- WORK PACK: tear the pack open, then swipe through one card per project.
            The cards are built by script.js from the "projects" list. -->
       <div class="pack-stage">
@@ -102,40 +167,19 @@
       </div>
       <p class="hint" id="packHint">Drag across the top of the pack to tear it open</p>
 
-      <!-- ABOUT: picture on the left, text on the right, three info cards below -->
-      <h2>// 03 about</h2>
-      <div class="split">
-        <div class="frame">
-          <canvas class="pixel" data-src="img/galaxy.svg"></canvas>
-          <span class="tag" style="top: 10%; left: 6%">moon_01 0.93</span>
-          <span class="tag" style="top: 40%; right: 8%">nebula_44 0.90</span>
-          <span class="tag" style="bottom: 8%; left: 30%">frame 0003 · tracking</span>
-        </div>
-        <div>
-          <h3>Kiara Gonzalez-Layne</h3>
-          <p>3rd Year Interaction Design Student</p>
-          <p>Example about text. Write a few sentences about yourself here.</p>
-        </div>
-      </div>
-      <div class="columns">
-        <div class="card"><small>// study</small><p>Interaction Design, 3rd year</p></div>
-        <div class="card"><small>// focus</small><p>Example focus</p></div>
-        <div class="card"><small>// into</small><p>Tech, space, flowers</p></div>
-      </div>
-
       <!-- CONTACT: text on the left, form on the right.
            The form opens the visitor's email app with their message filled in. -->
       <h2>// 04 let's work together</h2>
       <div class="split">
         <div>
-          <p>Example text. Say what kind of projects or roles you are open to.</p>
-          <p>kiaraglayne@email.com<br>Instagram: @Kiwish1</p>
+          <p>I'm looking for a junior or internship-level Experience / Interaction Design role.</p>
+          <p>kiaraglayne@gmail.com<br>Instagram: @Kiwish1</p>
           <div class="frame small">
             <canvas class="pixel" data-src="img/lotus.svg"></canvas>
             <span class="tag" style="top: 8%; left: 8%">bloom_09 0.96</span>
           </div>
         </div>
-        <form action="mailto:kiaraglayne@email.com" method="post" enctype="text/plain">
+        <form action="mailto:kiaraglayne@gmail.com" method="post" enctype="text/plain">
           <label>Name <input type="text" name="name" required></label>
           <label>Email <input type="email" name="email" required></label>
           <label>Message <textarea name="message" rows="5" required></textarea></label>
@@ -152,6 +196,28 @@
     <!-- Little TV switch: turns the static lines on/off (appears after boot) -->
     <button id="staticSwitch" class="hidden" aria-pressed="true">
       STATIC <span class="slot"><span class="knob"></span></span>
+    </button>
+
+    <!-- Star friend: floats in the corner, watches the pointer, spins when pressed -->
+    <button id="starPal" class="hidden" aria-label="Star friend. Press to make her spin.">
+      <svg id="palBody" viewBox="0 0 100 100">
+        <defs>
+          <radialGradient id="palGlow" cx="50%" cy="40%">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="0.6" stop-color="#d9b8ff"/>
+            <stop offset="1" stop-color="#8f5cf0"/>
+          </radialGradient>
+        </defs>
+        <path d="M50 4 C58 26 74 42 96 50 C74 58 58 74 50 96 C42 74 26 58 4 50 C26 42 42 26 50 4 Z" fill="url(#palGlow)"/>
+        <g id="palEyes">
+          <ellipse cx="42" cy="47" rx="3.5" ry="6" fill="#2a0a45"/>
+          <ellipse cx="58" cy="47" rx="3.5" ry="6" fill="#2a0a45"/>
+        </g>
+        <path id="palMouth" d="M45 59 Q50 64 55 59" stroke="#2a0a45" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="34" cy="56" r="3" fill="#ff8fd0" opacity="0.7"/>
+        <circle cx="66" cy="56" r="3" fill="#ff8fd0" opacity="0.7"/>
+      </svg>
+      <span id="palSay"></span>
     </button>
   </div>
 
