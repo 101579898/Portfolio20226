@@ -18,6 +18,7 @@ export default function BootScreen() {
   const [phase, setPhase] = useState("start"); // start | boot | done
   const [lines, setLines] = useState([]);
   const [showTitle, setShowTitle] = useState(false);
+  const [leaving, setLeaving] = useState(false); // the TV is expanding to full screen
   const startBtn = useRef(null);
   const timers = useRef([]);
 
@@ -42,8 +43,17 @@ export default function BootScreen() {
     };
   }, []);
 
+  // Step 1: the TV screen grows out to the edges of the window.
   function finish() {
+    if (leaving) return;
     timers.current.forEach(clearTimeout);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setLeaving(true);
+    timers.current.push(setTimeout(turnOn, reduce ? 0 : 750));
+  }
+
+  // Step 2: the picture comes on and the portfolio is revealed.
+  function turnOn() {
     setSiteInert(false);
     window.scrollTo(0, 0);
     const root = document.documentElement;
@@ -51,7 +61,7 @@ export default function BootScreen() {
     try {
       sessionStorage.setItem("booted", "1");
     } catch {}
-    // TV turning on: a thin bright line that opens up.
+    // TV turning on: the picture flashes bright and settles.
     root.classList.add("power-on");
     setTimeout(() => root.classList.remove("power-on"), 700);
     setPhase("done");
@@ -72,7 +82,7 @@ export default function BootScreen() {
   if (phase === "done") return null;
 
   return (
-    <div className="boot" role="dialog" aria-modal="true" aria-label="Portfolio start screen">
+    <div className={`boot ${leaving ? "is-leaving" : ""}`} role="dialog" aria-modal="true" aria-label="Portfolio start screen">
       <div className="boot-tv">
         {phase === "start" ? (
           <div className="boot-start">

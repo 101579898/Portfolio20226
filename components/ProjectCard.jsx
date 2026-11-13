@@ -209,22 +209,45 @@ export default function ProjectCard({
         {/* BACK: the card-back design, plus the write-up when `info` is on */}
         <div className="card card-back" inert={!flipped || !info}>
           <div className="back-design" aria-hidden="true">
-            <svg viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" strokeWidth=".6" strokeDasharray="1 5" />
-              <circle cx="60" cy="60" r="40" fill="none" stroke="currentColor" strokeWidth=".6" opacity=".6" />
-              <circle cx="60" cy="60" r="19" fill="url(#backPlanet)" />
-              <ellipse cx="60" cy="60" rx="36" ry="9" fill="none" stroke="currentColor" strokeWidth="1.6" transform="rotate(-18 60 60)" />
-              <path d="M60 2 l2.4 6.6 6.6 2.4 -6.6 2.4 -2.4 6.6 -2.4 -6.6 -6.6 -2.4 6.6 -2.4z" fill="currentColor" />
-              <path d="M60 98 l2.4 6.6 6.6 2.4 -6.6 2.4 -2.4 6.6 -2.4 -6.6 -6.6 -2.4 6.6 -2.4z" fill="currentColor" />
-              <path d="M12 58 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4z" fill="currentColor" opacity=".8" />
-              <path d="M108 54 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4z" fill="currentColor" opacity=".8" />
+            <svg viewBox="0 0 120 132">
               <defs>
-                <radialGradient id="backPlanet" cx="35%" cy="30%">
+                <linearGradient id="backChrome" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="#ffffff" />
+                  <stop offset=".3" stopColor="#e6d2ff" />
+                  <stop offset=".52" stopColor="#ffb0ea" />
+                  <stop offset=".72" stopColor="#ffffff" />
+                  <stop offset="1" stopColor="#b6c4ff" />
+                </linearGradient>
+                <radialGradient id="backCore">
                   <stop offset="0" stopColor="#fff" />
-                  <stop offset=".45" stopColor="#ffb0ea" />
-                  <stop offset="1" stopColor="#6a2ab0" />
+                  <stop offset=".35" stopColor="#ffd0f0" stopOpacity=".9" />
+                  <stop offset="1" stopColor="#ff8fd0" stopOpacity="0" />
                 </radialGradient>
               </defs>
+              <g fill="url(#backChrome)" stroke="#fff" strokeWidth=".35" strokeLinejoin="round">
+                {/* outer crescents */}
+                <path d="M99 16 Q117 38 104 64 Q110 38 99 16 Z" />
+                <path d="M21 116 Q3 94 16 68 Q10 94 21 116 Z" />
+                {/* orbit swooshes */}
+                <path d="M27 45 Q60 13 96 27 Q60 20 27 45 Z" />
+                <path d="M93 87 Q60 119 24 105 Q60 112 93 87 Z" />
+                {/* little four-point stars */}
+                <path d="M40 22 L41.7 29.3 L49 31 L41.7 32.7 L40 40 L38.3 32.7 L31 31 L38.3 29.3 Z" />
+                <path d="M29 39 L29.9 43.1 L34 44 L29.9 44.9 L29 49 L28.1 44.9 L24 44 L28.1 43.1 Z" />
+                <path d="M80 92 L81.7 99.3 L89 101 L81.7 102.7 L80 110 L78.3 102.7 L71 101 L78.3 99.3 Z" />
+                <path d="M91 83 L91.9 87.1 L96 88 L91.9 88.9 L91 93 L90.1 88.9 L86 88 L90.1 87.1 Z" />
+                {/* the burst behind the main star */}
+                <path d="M69.4 48.3 L63.8 62 L86 51 L65.5 65.9 L76.8 74.9 L64 69.8 L74.3 88.9 L60.2 71.5 L50.6 83.7 L56.2 70 L34 81 L54.5 66.1 L43.2 57.1 L56 62.2 L45.7 43.1 L59.8 60.5 Z" />
+                {/* the long north star */}
+                <path d="M60 6 L62.4 63.6 L114 66 L62.4 68.4 L60 126 L57.6 68.4 L6 66 L57.6 63.6 Z" />
+              </g>
+              {/* lens flare */}
+              <g stroke="#ffb0ea" strokeWidth=".7" strokeLinecap="round" opacity=".75">
+                <path d="M40 52 L98 92" />
+                <path d="M46 86 L96 38" />
+                <path d="M70 46 L84 104" opacity=".6" />
+              </g>
+              <circle cx="60" cy="66" r="10" fill="url(#backCore)" opacity=".85" />
             </svg>
             <strong>KGL</strong>
             <small>DIGI-SPACE · VOL.01</small>

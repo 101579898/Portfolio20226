@@ -1032,7 +1032,7 @@ h1.glitch, .pack-title.glitch { display: block; }
 html[data-booted] .boot { display: none; }
 html:not([data-booted]):has(.boot) { overflow: hidden; }
 /* Nothing else shows until the TV is on */
-html:not([data-booted]):has(.boot) :is(.nav, .pal, .static-switch) { visibility: hidden; }
+html:not([data-booted]):has(.boot) :is(.nav, .pal, .static-switch, .cursor-trail) { visibility: hidden; }
 .boot-tv {
   position: absolute;
   inset: 3vmin;
@@ -1101,11 +1101,11 @@ html:not([data-booted]):has(.boot) :is(.nav, .pal, .static-switch) { visibility:
 @keyframes bootBlink { 50% { opacity: 0; } }
 @keyframes bootFlicker { 50% { opacity: 0.8; } }
 
-/* TV turning on: thin bright line that opens up */
+/* TV turning on: the picture flashes bright and settles */
 html.power-on body { animation: powerOn 0.6s ease-out; }
 @keyframes powerOn {
-  0%, 50% { transform: scaleY(0.01); filter: brightness(5); }
-  100% { transform: scaleY(1); filter: brightness(1); }
+  from { filter: brightness(4) saturate(0.4); transform: scale(1.04); }
+  to { filter: none; transform: none; }
 }
 
 /* ── Scanlines + the STATIC switch ────────────────────── */
@@ -1431,3 +1431,32 @@ html:has(.zoom) { overflow: hidden; }
 
 /* Project pictures are shown whole on the card, not cropped */
 .card-art img { object-fit: contain; }
+
+/* ── Boot: the TV screen grows to fill the window, then turns on ── */
+.boot-tv {
+  transition:
+    inset 0.7s cubic-bezier(0.7, 0, 0.2, 1),
+    border-radius 0.7s cubic-bezier(0.7, 0, 0.2, 1),
+    box-shadow 0.7s;
+}
+.boot.is-leaving .boot-tv { inset: 0; border-radius: 0; box-shadow: 0 0 120px rgba(255, 143, 208, 0.6) inset; }
+.boot-skip { transition: opacity 0.2s; }
+.boot.is-leaving .boot-skip { opacity: 0; pointer-events: none; }
+
+/* ── Card back emblem: chrome starburst ───────────────── */
+.back-design svg {
+  width: 78%;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 9px rgba(255, 143, 208, 0.7));
+}
+.back-design strong { font-size: 1.5rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-tv { transition: none; }
+}
+
+/* When the back also carries the write-up, the emblem keeps the top third of the card */
+.back-info { top: 36%; }
+.card-back:has(.back-info) .back-design { place-content: start center; padding-top: 5%; }
+.card-back:has(.back-info) .back-design svg { width: 37%; }
+.card-back:has(.back-info) .back-design :is(strong, small) { display: none; }
+.back-info .card-head { display: none; }

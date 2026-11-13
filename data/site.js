@@ -19,7 +19,7 @@ export const profile = {
   instagram: { label: "@Kiwish1", url: "https://instagram.com/Kiwish1" },
   github: { label: "101579898", url: "https://github.com/101579898" },
   // The little star in the corner. Rename her to whatever you like.
-  starName: "Nova",
+  starName: "Kiwi",
 };
 
 export const education = [
