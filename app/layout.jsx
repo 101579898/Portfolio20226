@@ -4,6 +4,7 @@ import Starfield from "@/components/Starfield";
 import Nav from "@/components/Nav";
 import StarPal from "@/components/StarPal";
 import Scanlines from "@/components/Scanlines";
+import CursorTrail from "@/components/CursorTrail";
 import { profile } from "@/data/site";
 
 const sans = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
@@ -41,6 +42,7 @@ export default function RootLayout({ children }) {
         <Nav />
         <main id="main">{children}</main>
         <StarPal />
+        <CursorTrail />
         <Scanlines />
       </body>
     </html>

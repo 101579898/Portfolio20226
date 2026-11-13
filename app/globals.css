@@ -1166,3 +1166,268 @@ html.power-on body { animation: powerOn 0.6s ease-out; }
 .contact-row { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 32px; }
 .contact-main { display: grid; gap: 28px; flex: 1 1 320px; }
 .contact-art { flex: 0 1 240px; }
+
+/* ─────────────────────────────────────────────────────────────
+   COLLECTIBLE CARDS: thickness, card back, foil finishes,
+   plastic pack, opening-results spread, zoom view, astral cursor
+   ───────────────────────────────────────────────────────────── */
+
+/* ── A card with real thickness ───────────────────────── */
+.card {
+  padding: 10px;
+  border: 5px solid transparent; /* silver frame */
+  background:
+    linear-gradient(160deg, hsl(var(--hue) 45% 17%), hsl(var(--hue) 55% 7%)) padding-box,
+    linear-gradient(135deg, #fff, #d9c6ee 28%, #8d78a8 50%, #f7ecff 72%, #b9a2d0) border-box;
+}
+.card.card-front { transform: translateZ(3px); }
+.card.card-back { transform: rotateY(180deg) translateZ(3px); padding: 0; }
+.card-edge {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: linear-gradient(90deg, #f6ecff, #a892bd 50%, #f6ecff);
+  transform: translateZ(var(--z));
+}
+/* Zoom view: the card follows your drag instead of the hover lean */
+.card3d.is-spin .card3d-inner {
+  transition: none;
+  transform: rotateX(var(--sx, 0deg)) rotateY(var(--sy, 0deg));
+}
+
+/* ── Card back design ─────────────────────────────────── */
+.card.card-back {
+  background:
+    radial-gradient(rgba(255, 176, 234, 0.3) 1px, transparent 1.6px) 0 0 / 12px 12px padding-box,
+    radial-gradient(circle at 50% 42%, #5c1d8c, #1a0730 72%) padding-box,
+    linear-gradient(135deg, #fff, #d9c6ee 28%, #8d78a8 50%, #f7ecff 72%, #b9a2d0) border-box;
+}
+.back-design {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 6px;
+  color: #ffd0ea;
+  text-align: center;
+}
+.back-design::before,
+.back-design::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 1px solid rgba(255, 176, 234, 0.7);
+  border-radius: 10px;
+}
+.back-design::after { inset: 14px; border-style: dashed; border-color: rgba(255, 243, 196, 0.45); border-radius: 7px; }
+.back-design svg { width: 64%; filter: drop-shadow(0 0 10px rgba(255, 143, 208, 0.8)); }
+.back-design strong {
+  font-family: var(--font-serif), serif;
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  margin-right: -0.24em;
+  line-height: 1;
+}
+.back-design small { font-family: var(--font-pixel), monospace; font-size: 0.95rem; letter-spacing: 0.1em; color: var(--gold); }
+.back-info {
+  position: absolute;
+  inset: 12px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid hsl(var(--hue) 80% 82% / 0.45);
+  border-radius: 9px;
+  background: rgba(12, 4, 20, 0.93);
+}
+.back-info .card-back-list { overflow: hidden; }
+.back-info .btn { width: 100%; }
+
+/* ── Card art for the bonus cards ─────────────────────── */
+.card-pixel { height: 100%; border: 0; }
+.card-pixel .pixel { height: 100%; aspect-ratio: auto; object-fit: contain; }
+.card-art-star svg { width: 52%; filter: drop-shadow(0 0 16px rgba(255, 233, 168, 0.8)); }
+.card-bars {
+  display: grid;
+  align-content: center;
+  gap: 9px;
+  height: 100%;
+  padding: 12px 14px;
+  background: linear-gradient(160deg, hsl(var(--hue) 60% 20%), hsl(var(--hue) 60% 8%));
+}
+.card-bars li { display: flex; align-items: center; gap: 10px; }
+.card-bars span { width: 28px; font-family: var(--font-pixel), monospace; font-size: 1rem; color: var(--gold); }
+.card-bars i { flex: 1; height: 8px; background: rgba(255, 255, 255, 0.12); }
+.card-bars b { display: block; height: 100%; background: linear-gradient(90deg, var(--violet), var(--pink) 65%, var(--gold)); box-shadow: 0 0 8px rgba(255, 143, 208, 0.8); }
+
+/* ── Foil finishes (random every time the pack is opened) ── */
+.card-foil { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.r-holo .card-foil {
+  opacity: 0.5;
+  background: linear-gradient(115deg, transparent 18%, #ff6ad5 34%, #c774e8 42%, #ad8cff 50%, #8795e8 58%, #94d0ff 66%, transparent 82%);
+  background-size: 260% 260%;
+  background-position: var(--mx, 50%) var(--my, 50%);
+  mix-blend-mode: color-dodge;
+}
+.r-star .card-foil {
+  opacity: 0.85;
+  background:
+    radial-gradient(circle, #fff 0 1px, transparent 1.7px) 0 0 / 18px 18px,
+    radial-gradient(circle, #ffe9a8 0 1.3px, transparent 2.1px) 9px 9px / 26px 26px,
+    radial-gradient(circle, #ffb0ea 0 1px, transparent 1.8px) 4px 13px / 34px 34px;
+  -webkit-mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 30%), #000, transparent 58%);
+  mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 30%), #000, transparent 58%);
+  mix-blend-mode: screen;
+}
+.r-cosmic .card-foil {
+  opacity: 0.3;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.5) 0 1px, transparent 1.7px) 0 0 / 22px 22px,
+    linear-gradient(115deg, #ff6ad5, #ffe9a8 20%, #94d0ff 40%, #ad8cff 60%, #ff6ad5 80%, #ffe9a8);
+  background-size: 22px 22px, 320% 320%;
+  background-position: 0 0, var(--mx, 50%) var(--my, 50%);
+  mix-blend-mode: color-dodge;
+}
+.card3d.r-cosmic .card-front {
+  background:
+    linear-gradient(160deg, hsl(var(--hue) 50% 20%), hsl(calc(var(--hue) - 40) 60% 8%)) padding-box,
+    linear-gradient(135deg, #fff3c4, #ffb0ea 30%, #b98cff 55%, #fff3c4 80%, #ff8fd0) border-box;
+  box-shadow: 0 0 34px rgba(255, 233, 168, 0.55), 0 24px 50px -22px hsl(var(--hue) 90% 62% / 0.8);
+}
+.r-cosmic .card-front .card-title {
+  background: linear-gradient(90deg, #fff3c4, #ffb0ea);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.card-rarity { color: var(--muted); }
+.r-holo .card-rarity { color: var(--ice); }
+.r-star .card-rarity, .r-cosmic .card-rarity { color: var(--gold); text-shadow: 0 0 8px rgba(255, 233, 168, 0.8); }
+.r-holo .card-sheen, .r-star .card-sheen, .r-cosmic .card-sheen { opacity: 0.45; }
+
+/* ── The pack: crimped plastic wrapper ────────────────── */
+.pack-flap {
+  -webkit-mask:
+    conic-gradient(from 135deg at 50% 0, #000 90deg, #0000 0) 0 0 / 10px 6px repeat-x,
+    linear-gradient(#000 0 0) 0 5px / 100% calc(100% - 5px) no-repeat;
+  mask:
+    conic-gradient(from 135deg at 50% 0, #000 90deg, #0000 0) 0 0 / 10px 6px repeat-x,
+    linear-gradient(#000 0 0) 0 5px / 100% calc(100% - 5px) no-repeat;
+  border-radius: 0;
+}
+.pack-body {
+  -webkit-mask:
+    conic-gradient(from -45deg at 50% 100%, #000 90deg, #0000 0) 0 100% / 10px 6px repeat-x,
+    linear-gradient(#000 0 0) 0 0 / 100% calc(100% - 5px) no-repeat;
+  mask:
+    conic-gradient(from -45deg at 50% 100%, #000 90deg, #0000 0) 0 100% / 10px 6px repeat-x,
+    linear-gradient(#000 0 0) 0 0 / 100% calc(100% - 5px) no-repeat;
+  border-radius: 0;
+}
+.pack-crimp { top: 5px; height: 12px; }
+.pack-crimp.bottom { top: auto; bottom: 5px; }
+/* Gloss streaks, soft wrinkles and darker rounded sides */
+.pack-plastic {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.5), transparent 10%, transparent 90%, rgba(0, 0, 0, 0.5)),
+    linear-gradient(100deg, transparent 11%, rgba(255, 255, 255, 0.6) 16%, rgba(255, 255, 255, 0.1) 21%, transparent 30%, transparent 61%, rgba(255, 255, 255, 0.24) 67%, transparent 75%),
+    repeating-linear-gradient(7deg, rgba(255, 255, 255, 0.06) 0 2px, transparent 2px 28px),
+    repeating-linear-gradient(-11deg, rgba(0, 0, 0, 0.07) 0 3px, transparent 3px 41px);
+}
+/* Iridescent film that slides as the pack tilts */
+.pack-flap::after,
+.pack-body::after {
+  background: linear-gradient(
+    105deg,
+    transparent 15%,
+    rgba(255, 120, 220, 0.5) 32%,
+    rgba(255, 243, 180, 0.55) var(--mx, 50%),
+    rgba(140, 200, 255, 0.5) 68%,
+    transparent 85%
+  );
+  mix-blend-mode: soft-light;
+}
+
+/* ── Opening results: small cards, three to a row ─────── */
+.spread {
+  --s: 0.62;
+  --gap: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 34px var(--gap);
+  max-width: calc(var(--card-w) * var(--s) * 3 + var(--gap) * 2 + 2px);
+  margin: 0 auto;
+}
+.pull {
+  position: relative;
+  width: calc(var(--card-w) * var(--s));
+  height: calc(var(--card-w) * var(--s) * 1.4);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease);
+}
+.pull:hover { transform: translateY(-6px); }
+.pull-scale { position: absolute; top: 0; left: 0; width: var(--card-w); transform: scale(var(--s)); transform-origin: 0 0; }
+.pull-new,
+.pull-rare {
+  position: absolute;
+  z-index: 3;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-family: var(--font-pixel), monospace;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  animation: pop 0.3s var(--ease);
+}
+.pull-new { top: -11px; left: -9px; background: var(--pink); color: #2a0a2a; transform: rotate(-6deg); }
+.pull-rare { right: -8px; bottom: -11px; background: var(--gold); color: #2a1a00; text-transform: uppercase; }
+@media (max-width: 640px) {
+  .spread { --s: 0.4; --gap: 10px; gap: 26px var(--gap); }
+  .pull-new, .pull-rare { font-size: 0.9rem; padding: 0 7px; }
+}
+
+/* ── Zoom view ────────────────────────────────────────── */
+html:has(.zoom) { overflow: hidden; }
+.zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 16px;
+  padding: 72px 16px 24px;
+  background: rgba(6, 2, 12, 0.88);
+  animation: zoomIn 0.25s ease-out;
+}
+.zoom-card { --card-w: min(76vw, 330px, 48vh); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.zoom-card:active { cursor: grabbing; }
+.zoom-close { position: absolute; top: 16px; right: 16px; }
+.zoom-hint { margin-top: 8px; text-align: center; color: var(--soft); }
+.zoom .pack-controls { margin-top: 0; }
+@keyframes zoomIn { from { opacity: 0; } }
+
+/* ── Astral cursor ────────────────────────────────────── */
+.cursor-trail {
+  position: fixed;
+  inset: 0;
+  z-index: 280;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pull, .zoom { transition: none; animation: none; }
+  .pull-new, .pull-rare { animation: none; }
+}
+
+/* Project pictures are shown whole on the card, not cropped */
+.card-art img { object-fit: contain; }
