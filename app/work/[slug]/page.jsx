@@ -38,7 +38,7 @@ export default async function ProjectPage({ params }) {
       <div className="case-board">
         <header className="case-title">
           <p className="pill">{project.type} · {project.year}</p>
-          <h1 className="display">
+          <h1 className="display glitch">
             {project.title} <span className="serif">overview</span>
           </h1>
         </header>
@@ -58,7 +58,7 @@ export default async function ProjectPage({ params }) {
           ) : null}
         </section>
 
-        <figure className="case-hero">
+        <figure className="case-hero scan">
           {project.image ? (
             <img src={asset(project.image)} alt={`${project.title} cover`} />
           ) : (

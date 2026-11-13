@@ -21,6 +21,7 @@ export default function WorkPack() {
   const [phase, setPhase] = useState("sealed");
   const [order, setOrder] = useState(startOrder); // order[0] is the top card
   const [seen, setSeen] = useState(0);
+  const [flipped, setFlipped] = useState(false); // is the top card showing its back?
 
   const stage = useRef(null);
   const pack = useRef(null);
@@ -131,9 +132,9 @@ export default function WorkPack() {
       gsap.set(el, { zIndex: 50 - slot });
       gsap.to(el, {
         x: 0,
-        y: slot * 14,
+        y: slot * 20,
         scale: 1 - slot * 0.05,
-        rotation: slot === 0 ? 0 : (slot % 2 ? 1.5 : -1.5) * slot,
+        rotation: slot === 0 ? 0 : slot % 2 ? 4 : -4,
         opacity: slot > 3 ? 0 : 1,
         duration: 0.5 * d,
         delay: dealt.current ? 0 : slot * 0.07 * d,
@@ -147,6 +148,7 @@ export default function WorkPack() {
   function sendBack(direction) {
     if (busy.current || phase !== "stack") return;
     busy.current = true;
+    setFlipped(false);
     const el = cardEls.current[order[0]];
     gsap.to(el, {
       x: direction * Math.min(window.innerWidth * 0.6, 520),
@@ -164,21 +166,38 @@ export default function WorkPack() {
     });
   }
 
+  // Bottom card comes back in from the left and lands on top.
+  function prevCard() {
+    if (busy.current || phase !== "stack") return;
+    setFlipped(false);
+    const el = cardEls.current[order[order.length - 1]];
+    gsap.set(el, { x: -Math.min(window.innerWidth * 0.6, 520), rotation: -22, opacity: 0 });
+    setOrder((o) => [o[o.length - 1], ...o.slice(0, -1)]);
+  }
+
+  // A tap flips the card; a sideways drag swipes it away.
   function cardDown(e, cardIndex) {
-    if (busy.current || order[0] !== cardIndex) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    drag.current = { startX: e.clientX, x: 0, el: e.currentTarget };
+    if (busy.current || order[0] !== cardIndex || e.target.closest("a")) return;
+    drag.current = { startX: e.clientX, x: 0, el: e.currentTarget, moved: false, id: e.pointerId };
   }
   function cardMove(e) {
     const g = drag.current;
     if (!g) return;
     g.x = e.clientX - g.startX;
-    gsap.set(g.el, { x: g.x, rotation: g.x / 18, y: -Math.abs(g.x) * 0.04 });
+    if (!g.moved && Math.abs(g.x) > 6) {
+      g.moved = true;
+      g.el.setPointerCapture(g.id);
+    }
+    if (g.moved) gsap.set(g.el, { x: g.x, rotation: g.x / 18, y: -Math.abs(g.x) * 0.04 });
   }
-  function cardUp() {
+  function cardUp(e) {
     const g = drag.current;
     if (!g) return;
     drag.current = null;
+    if (!g.moved) {
+      if (e.type === "pointerup") setFlipped((f) => !f);
+      return;
+    }
     if (Math.abs(g.x) > 80) sendBack(Math.sign(g.x));
     else gsap.to(g.el, { x: 0, y: 0, rotation: 0, duration: 0.5 * speed(), ease: "elastic.out(1, 0.6)" });
   }
@@ -215,7 +234,7 @@ export default function WorkPack() {
     phase === "sealed"
       ? "Drag across the top of the pack to tear it open."
       : phase === "stack"
-        ? `Swipe the card sideways to see the next one. Card ${Math.min(seen + 1, TOTAL)} of ${TOTAL}.`
+        ? `Tap the card to flip it. Swipe sideways for the next one. Card ${Math.min(seen + 1, TOTAL)} of ${TOTAL}.`
         : "Pick a card to open its case file.";
 
   return (
@@ -266,7 +285,7 @@ export default function WorkPack() {
                     </radialGradient>
                   </defs>
                 </svg>
-                <strong className="pack-title">Work<br />Pack</strong>
+                <strong className="pack-title glitch">Work<br />Pack</strong>
                 <p className="label">{TOTAL} CARDS · {profile.name.toUpperCase()}</p>
                 <span className="pack-crimp bottom" aria-hidden="true" />
               </div>
@@ -286,9 +305,16 @@ export default function WorkPack() {
                 onPointerMove={cardMove}
                 onPointerUp={cardUp}
                 onPointerCancel={cardUp}
-                aria-hidden={order[0] !== i}
+                inert={order[0] !== i}
               >
-                <ProjectCard project={project} index={i} total={TOTAL} />
+                <ProjectCard
+                  project={project}
+                  index={i}
+                  total={TOTAL}
+                  withBack
+                  tilt={order[0] === i}
+                  flipped={order[0] === i && flipped}
+                />
               </div>
             ))}
           </div>
@@ -321,7 +347,9 @@ export default function WorkPack() {
         )}
         {phase === "stack" && (
           <>
-            <button className="btn" onClick={() => sendBack(1)}>Next card</button>
+            <button className="btn ghost" onClick={prevCard} aria-label="Previous card">‹ Prev</button>
+            <button className="btn" onClick={() => setFlipped((f) => !f)} aria-pressed={flipped}>Flip card</button>
+            <button className="btn" onClick={() => sendBack(1)} aria-label="Next card">Next ›</button>
             <button className="btn ghost" onClick={showAll}>Show all cards</button>
           </>
         )}

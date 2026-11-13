@@ -83,7 +83,7 @@ export default function Journey() {
           <p className="label hero-fade">[ PORTFOLIO_2026 ] &nbsp;{profile.name} — {profile.role}</p>
           <h1>
             <span className="hero-line"><span className="serif">Welcome to my</span></span>
-            <span className="hero-line"><span>Portfolio</span></span>
+            <span className="hero-line"><span className="glitch"><span className="swash">P</span>ortfolio</span></span>
           </h1>
           <p className="scroll-hint hero-fade">
             <span className="scroll-dot" aria-hidden="true" />

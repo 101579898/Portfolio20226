@@ -55,7 +55,7 @@ export default function Waves() {
           if (x === -step) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = `hsla(${222 + k * 40}, 90%, 82%, ${0.12 + edge * 0.5})`;
+        ctx.strokeStyle = `hsla(${268 + k * 62}, 92%, 80%, ${0.12 + edge * 0.5})`;
         ctx.lineWidth = 1;
         ctx.stroke();
       }

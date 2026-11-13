@@ -83,7 +83,7 @@ export const projects = [
     image: "/work/myro-rebrand.jpg",
     link: "/work/myro-rebrand.pdf",
     linkLabel: "View the full deck (PDF)",
-    hue: 255,
+    hue: 268,
     placeholder: false,
   },
   {
@@ -103,7 +103,7 @@ export const projects = [
     outcome: "Placeholder outcome.",
     image: "",
     link: "",
-    hue: 205,
+    hue: 300,
     placeholder: true,
   },
   {
@@ -123,7 +123,7 @@ export const projects = [
     outcome: "Placeholder outcome.",
     image: "",
     link: "",
-    hue: 290,
+    hue: 325,
     placeholder: true,
   },
   {
@@ -143,7 +143,7 @@ export const projects = [
     outcome: "Placeholder outcome.",
     image: "",
     link: "",
-    hue: 330,
+    hue: 284,
     placeholder: true,
   },
 ];

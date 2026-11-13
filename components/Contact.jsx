@@ -24,7 +24,7 @@ export default function Contact() {
       </Reveal>
 
       <Reveal as="h2" id="contact-title" className="display huge">
-        Let's work <span className="serif">together.</span>
+        <span className="swash">L</span>et's work <span className="serif">together.</span>
       </Reveal>
       <div className="contact-row">
         <div className="contact-main">

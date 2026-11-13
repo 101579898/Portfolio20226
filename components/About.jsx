@@ -29,7 +29,7 @@ export default function About() {
 
       <div className="about-grid">
         <Reveal className="portrait">
-          <div className="portrait-frame">
+          <div className="portrait-frame scan">
             {profile.photo ? (
               <img src={asset(profile.photo)} alt={`Portrait of ${profile.name}`} />
             ) : (
