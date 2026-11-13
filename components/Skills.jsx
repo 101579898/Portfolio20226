@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Reveal from "./Reveal";
+import PixelArt from "./PixelArt";
 import { profile, skills } from "@/data/site";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -58,6 +59,13 @@ export default function Skills() {
 
       <div className="skills-grid">
         <Reveal className="player glass">
+          <PixelArt
+            src="/img/computer.svg"
+            tags={[
+              { text: "cursor_01 0.94", style: { top: "10%", left: "6%" } },
+              { text: "window_07 0.88", style: { bottom: "8%", right: "6%" } },
+            ]}
+          />
           <p className="label">[ PLAYER_01 ]</p>
           <h2 id="skills-title" className="display small">
             <span className="serif">Level</span> check.

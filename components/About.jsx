@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import PixelArt from "./PixelArt";
 import { profile, education, experience } from "@/data/site";
 import { asset } from "@/lib/asset";
 
@@ -32,11 +33,25 @@ export default function About() {
             {profile.photo ? (
               <img src={asset(profile.photo)} alt={`Portrait of ${profile.name}`} />
             ) : (
-              <div className="portrait-empty" aria-hidden="true">
-                <span>KGL</span>
-                <small>add your photo in data/site.js</small>
-              </div>
+              <PixelArt
+                src="/img/lily.svg"
+                className="portrait-art"
+                tags={[
+                  { text: "kiara_01 0.99", style: { top: "6%", left: "6%" } },
+                  { text: "frame 0001 · tracking", style: { bottom: "6%", left: "6%" } },
+                ]}
+              />
             )}
+            <PixelArt
+              src="/img/planet.svg"
+              className="mini mini-a"
+              tags={[{ text: "orbit_12 0.97", style: { bottom: "-12px", left: "6px" } }]}
+            />
+            <PixelArt
+              src="/img/galaxy.svg"
+              className="mini mini-b"
+              tags={[{ text: "nebula_44 0.90", style: { bottom: "-12px", left: "6px" } }]}
+            />
             <span className="corner tl" aria-hidden="true" />
             <span className="corner br" aria-hidden="true" />
           </div>

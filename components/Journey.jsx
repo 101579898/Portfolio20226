@@ -56,16 +56,17 @@ export default function Journey() {
         scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: 0.6 },
       });
 
-      gsap.from(".hero-line > span", {
-        yPercent: 110,
-        duration: 1.1,
-        ease: "power4.out",
-        stagger: 0.12,
-        delay: 0.15,
-      });
-      gsap.from(".hero-fade", { opacity: 0, y: 12, duration: 0.8, delay: 0.9, stagger: 0.15 });
+      // The title animates in once the boot screen is out of the way.
+      const intro = gsap
+        .timeline({ paused: true })
+        .from(".hero-line > span", { yPercent: 110, duration: 1.1, ease: "power4.out", stagger: 0.12 }, 0.45)
+        .from(".hero-fade", { opacity: 0, y: 12, duration: 0.8, stagger: 0.15 }, 1.2);
+      const playIntro = () => intro.play();
+      if (document.documentElement.dataset.booted) playIntro();
+      else window.addEventListener("portfolio:booted", playIntro, { once: true });
 
       return () => {
+        window.removeEventListener("portfolio:booted", playIntro);
         space.warp = 0;
         space.digi = 1;
         space.cometA = 0;
