@@ -20,11 +20,11 @@ export default function Contact() {
     <section className="chapter contact" id="contact" aria-labelledby="contact-title">
       <Reveal className="chapter-head">
         <p className="label">Contact <span aria-hidden="true">/</span> Transmission</p>
-        <p className="label">Chapter 04</p>
+        <p className="label">Chapter 05</p>
       </Reveal>
 
       <Reveal as="h2" id="contact-title" className="display huge">
-        <span className="swash">L</span>et's work <span className="serif">together.</span>
+        Let's work together.
       </Reveal>
       <div className="contact-row">
         <div className="contact-main">

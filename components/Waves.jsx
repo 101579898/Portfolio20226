@@ -55,7 +55,7 @@ export default function Waves() {
           if (x === -step) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = `hsla(${268 + k * 62}, 92%, 80%, ${0.12 + edge * 0.5})`;
+        ctx.strokeStyle = `hsla(${246 + k * 92}, ${46 - k * 6}%, 78%, ${0.12 + edge * 0.5})`;
         ctx.lineWidth = 1;
         ctx.stroke();
       }
@@ -96,14 +96,14 @@ export default function Waves() {
   }, []);
 
   return (
-    <section className="waves" ref={wrap} aria-label="Design statement">
+    <section className="waves" id="signal" ref={wrap} aria-label="Design statement">
       <canvas ref={canvasRef} aria-hidden="true" />
       <p className="waves-text">
         Clear, accessible,
         <br />
-        and <span className="serif">friendly to real people.</span>
+        and friendly to real people.
       </p>
-      <p className="label waves-hint" aria-hidden="true">[ MOVE_THROUGH_THE_SIGNAL ]</p>
+      <p className="label waves-hint" aria-hidden="true">[ Move_through_the_signal ]</p>
     </section>
   );
 }

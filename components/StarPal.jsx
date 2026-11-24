@@ -1,13 +1,14 @@
 "use client";
 
-// The little star friend. She floats in the corner, watches your pointer,
+// Kiwi, the kitten-star. She floats in the corner, watches your pointer,
 // smiles when you come close, dodges once or twice if you chase her with a
 // mouse, and spins when you tap her.
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import KiwiArt from "./KiwiArt";
 import { profile } from "@/data/site";
 
-const tapLines = ["Wheee!", "Again, again!", "So dizzy…", "Stardust everywhere!", "Hi, I'm " + profile.starName + "!"];
+const tapLines = ["Wheee!", "Again, again!", "So dizzy…", "Stardust everywhere!", "Mrrp! I'm " + profile.starName + "!"];
 const sectionLines = {
   about: "That's Kiara! She made me.",
   skills: "Look at those stats go!",
@@ -40,7 +41,7 @@ export default function StarPal() {
       const dy = e.clientY - (r.top + r.height / 2);
       const dist = Math.hypot(dx, dy) || 1;
       // Eyes look toward the pointer.
-      const look = Math.min(4, dist / 60);
+      const look = Math.min(1, dist / 160);
       eyes.current.setAttribute("transform", `translate(${(dx / dist) * look} ${(dy / dist) * look})`);
       setHappy(dist < 150);
 
@@ -120,38 +121,15 @@ export default function StarPal() {
       ref={btn}
       className={`pal ${happy ? "is-happy" : ""}`}
       onClick={spin}
-      aria-label={`${profile.starName}, the star friend. Press to make her spin.`}
+      aria-label={`${profile.starName}, the kitten star. Press to make her spin.`}
     >
       {[0, 1, 2, 3, 4, 5].map((i) => (
         <span key={i} className="pal-spark" aria-hidden="true" />
       ))}
       <span className="pal-bob">
-        <svg ref={body} viewBox="0 0 100 100" aria-hidden="true">
-          <defs>
-            <radialGradient id="palFill" cx="50%" cy="38%" r="70%">
-              <stop offset="0" stopColor="#fffdf2" />
-              <stop offset=".55" stopColor="#ffe9a8" />
-              <stop offset="1" stopColor="#f5b6ff" />
-            </radialGradient>
-          </defs>
-          <path
-            d="M50 12 L61.2 36.6 L88 39.6 L68.1 57.9 L73.5 84.4 L50 71 L26.5 84.4 L31.9 57.9 L12 39.6 L38.8 36.6 Z"
-            fill="url(#palFill)"
-            stroke="url(#palFill)"
-            strokeWidth="13"
-            strokeLinejoin="round"
-          />
-          <g ref={eyes}>
-            <ellipse className="pal-eye" cx="42.5" cy="50" rx="3.4" ry="5.6" fill="#2a1a4a" />
-            <ellipse className="pal-eye" cx="57.5" cy="50" rx="3.4" ry="5.6" fill="#2a1a4a" />
-            <circle cx="43.6" cy="47.6" r="1.2" fill="#fff" />
-            <circle cx="58.6" cy="47.6" r="1.2" fill="#fff" />
-          </g>
-          <path className="pal-mouth" d="M45.5 60 Q50 63.5 54.5 60" stroke="#2a1a4a" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-          <path className="pal-smile" d="M44 59 Q50 68 56 59 Z" fill="#2a1a4a" />
-          <circle cx="34.5" cy="57" r="3.4" fill="#ff8fc8" opacity=".65" />
-          <circle cx="65.5" cy="57" r="3.4" fill="#ff8fc8" opacity=".65" />
-        </svg>
+        <span className="pal-art" ref={body}>
+          <KiwiArt eyesRef={eyes} />
+        </span>
       </span>
       {say ? <span className="pal-say" aria-hidden="true">{say}</span> : null}
     </button>
