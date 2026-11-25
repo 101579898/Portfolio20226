@@ -4,6 +4,7 @@
 // then the screen "powers on" into the portfolio.
 // It plays once per browser session and can be skipped.
 import { useEffect, useRef, useState } from "react";
+import { pauseScroll, resumeScroll } from "@/lib/scroll";
 
 // The text that "types" during boot. Edit these however you like.
 const bootLines = [
@@ -13,6 +14,8 @@ const bootLines = [
   "data restoration in progress",
   "booting, please wait...",
 ];
+
+const LINE_MS = 130; // lower = faster boot
 
 export default function BootScreen() {
   const [phase, setPhase] = useState("start"); // start | boot | done
@@ -24,7 +27,7 @@ export default function BootScreen() {
 
   // Everything behind the boot screen is switched off while it shows.
   function setSiteInert(on) {
-    document.querySelectorAll("#main > *:not(.boot), .nav, .pal, .static-switch").forEach((el) => {
+    document.querySelectorAll("#main > *:not(.boot), .nav, .pal, .static-switch, .star-rail").forEach((el) => {
       if (on) el.setAttribute("inert", "");
       else el.removeAttribute("inert");
     });
@@ -36,10 +39,12 @@ export default function BootScreen() {
       return;
     }
     setSiteInert(true);
+    pauseScroll();
     startBtn.current?.focus({ preventScroll: true });
     return () => {
       timers.current.forEach(clearTimeout);
       setSiteInert(false);
+      resumeScroll();
     };
   }, []);
 
@@ -49,12 +54,13 @@ export default function BootScreen() {
     timers.current.forEach(clearTimeout);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setLeaving(true);
-    timers.current.push(setTimeout(turnOn, reduce ? 0 : 750));
+    timers.current.push(setTimeout(turnOn, reduce ? 0 : 520));
   }
 
   // Step 2: the picture comes on and the portfolio is revealed.
   function turnOn() {
     setSiteInert(false);
+    resumeScroll();
     window.scrollTo(0, 0);
     const root = document.documentElement;
     root.dataset.booted = "1";
@@ -70,13 +76,13 @@ export default function BootScreen() {
 
   function start() {
     setPhase("boot");
-    // Print one line every 400ms, then the big BOOTING... title.
+    // Print one line every 130ms, then the big BOOTING... title.
     bootLines.forEach((line, i) => {
-      timers.current.push(setTimeout(() => setLines((all) => [...all, line]), 400 * (i + 1)));
+      timers.current.push(setTimeout(() => setLines((all) => [...all, line]), LINE_MS * (i + 1)));
     });
-    const end = 400 * (bootLines.length + 1);
+    const end = LINE_MS * (bootLines.length + 1);
     timers.current.push(setTimeout(() => setShowTitle(true), end));
-    timers.current.push(setTimeout(finish, end + 500));
+    timers.current.push(setTimeout(finish, end + 260));
   }
 
   if (phase === "done") return null;

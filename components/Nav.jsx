@@ -2,10 +2,11 @@ import Link from "next/link";
 import { profile } from "@/data/site";
 
 const links = [
-  { n: "01", label: "About", href: "/#about" },
-  { n: "02", label: "Skills", href: "/#skills" },
-  { n: "03", label: "Work", href: "/#work" },
-  { n: "04", label: "Contact", href: "/#contact" },
+  { n: "02.", label: "About", href: "/#about" },
+  { n: "↳", label: "Skills", href: "/#skills" },
+  { n: "03.", label: "Work", href: "/#work" },
+  { n: "04.", label: "Music", href: "/#music" },
+  { n: "05.", label: "Contact", href: "/#contact" },
 ];
 
 export default function Nav() {
@@ -17,7 +18,7 @@ export default function Nav() {
       <nav aria-label="Sections">
         {links.map((l) => (
           <Link key={l.href} href={l.href}>
-            <span className="nav-n" aria-hidden="true">{l.n}.</span>
+            <span className="nav-n" aria-hidden="true">{l.n}</span>
             {l.label}
           </Link>
         ))}

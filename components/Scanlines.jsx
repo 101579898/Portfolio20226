@@ -25,7 +25,7 @@ export default function Scanlines() {
     <>
       {on ? <div className="scanlines" aria-hidden="true" /> : null}
       <button className={`static-switch ${on ? "" : "off"}`} onClick={toggle} aria-pressed={on}>
-        STATIC <span className="slot"><span className="knob" /></span>
+        <span className="static-word">STATIC</span> <span className="slot"><span className="knob" /></span>
       </button>
     </>
   );

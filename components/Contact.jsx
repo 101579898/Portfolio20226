@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Reveal from "./Reveal";
 import PixelArt from "./PixelArt";
+import Signature from "./Signature";
 import { profile } from "@/data/site";
 
 export default function Contact() {
@@ -20,11 +21,11 @@ export default function Contact() {
     <section className="chapter contact" id="contact" aria-labelledby="contact-title">
       <Reveal className="chapter-head">
         <p className="label">Contact <span aria-hidden="true">/</span> Transmission</p>
-        <p className="label">Chapter 04</p>
+        <p className="label">Chapter 05</p>
       </Reveal>
 
       <Reveal as="h2" id="contact-title" className="display huge">
-        <span className="swash">L</span>et's work <span className="serif">together.</span>
+        Let's work together.
       </Reveal>
       <div className="contact-row">
         <div className="contact-main">
@@ -56,6 +57,9 @@ export default function Contact() {
           <dd><a href={profile.github.url} target="_blank" rel="noreferrer">{profile.github.label}</a></dd>
         </div>
       </Reveal>
+
+      <Signature name={profile.name} />
+      <p className="contact-creed">Clear, accessible, and friendly to real people.</p>
 
       <footer className="footer">
         <span>© 2026 {profile.name}</span>

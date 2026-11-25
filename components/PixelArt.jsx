@@ -34,7 +34,7 @@ export default function PixelArt({ src, tags = [], className = "" }) {
 
       // 3. Tint it purple
       p.globalCompositeOperation = "multiply";
-      p.fillStyle = "#b98cff";
+      p.fillStyle = "#9f8bc6";
       p.fillRect(0, 0, w, h);
 
       // 4. Keep see-through parts of the picture see-through
