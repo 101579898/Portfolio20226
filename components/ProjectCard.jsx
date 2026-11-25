@@ -205,7 +205,6 @@ export default function ProjectCard({
             <span className="card-rarity">{RARITY_LABEL[rarity]}</span>
           </footer>
           <span className="card-foil" aria-hidden="true" />
-          <span className="card-pixels" aria-hidden="true" />
           <span className="card-sheen" aria-hidden="true" />
         </article>
 

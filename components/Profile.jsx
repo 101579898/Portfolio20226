@@ -123,7 +123,10 @@ export default function Profile() {
             <Window title="kiara.profile">
               <div className="id-portrait">
                 {profile.photo ? (
-                  <img src={asset(profile.photo)} alt={`Portrait of ${profile.name}`} />
+                  <>
+                    <img src={asset(profile.photo)} alt={profile.photoAlt || `Portrait of ${profile.name}`} draggable="false" />
+                    <span className="tag" style={{ top: "8px", left: "8px" }} aria-hidden="true">kiara_01 0.99</span>
+                  </>
                 ) : (
                   <PixelArt
                     src="/img/lily.svg"

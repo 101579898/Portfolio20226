@@ -14,7 +14,8 @@ export const profile = {
   seeking: "I'm looking for a junior or internship-level Experience / Interaction Design role.",
   bio: "I'm an Interaction Design student at George Brown College. I'm exploring the intersection of UX and front-end development, learning CSS and JavaScript while building prototypes that are clear, accessible, and friendly to real people. I'm also into visual design and love creating visuals that support the story a product is trying to tell.",
   // Put a photo in public/img/ and write its path here, e.g. "/img/kiara.jpg".
-  photo: "",
+  photo: "/img/kiara.webp",
+  photoAlt: "Kiara's picture: a pixel-art kitten inside a glowing star",
   email: "kiaraglayne@gmail.com",
   instagram: { label: "@Kiwish1", url: "https://instagram.com/Kiwish1" },
   github: { label: "101579898", url: "https://github.com/101579898" },

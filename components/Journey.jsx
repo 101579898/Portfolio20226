@@ -9,7 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Transmission from "./Transmission";
 import { space, smoothstep } from "@/lib/space";
-import { glide, isGliding } from "@/lib/scroll";
+import { glide, gliding } from "@/lib/scroll";
 import { profile } from "@/data/site";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -34,6 +34,7 @@ export default function Journey() {
   // "pending" until we know; "3d" shows the scene; "flat" shows a drawn star instead.
   const [mode, setMode] = useState("pending");
   const gate = useRef({ booted: false, warm: false, flown: false });
+  const hasWebGL3D = useRef(false);
 
   function flyIn() {
     const g = gate.current;
@@ -44,7 +45,10 @@ export default function Journey() {
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setMode(!reduce && hasWebGL() ? "3d" : "flat");
+    const can = !reduce && hasWebGL();
+    hasWebGL3D.current = can;
+    document.documentElement.classList.toggle("kiwi-flying", can && space.p < 0.93);
+    setMode(can ? "3d" : "flat");
 
     const onMove = (e) => {
       space.mx = (e.clientX / innerWidth) * 2 - 1;
@@ -61,37 +65,83 @@ export default function Journey() {
     return () => {
       window.removeEventListener("pointermove", onMove);
       io.disconnect();
+      document.documentElement.classList.remove("kiwi-flying");
     };
   }, []);
 
   // Following the star takes one scroll (wheel, swipe or key): down flies to About,
-  // up flies back. Reduced motion has no smooth scroll, so nothing is taken over there.
+  // up from the top of About flies back. Anything lower on the page scrolls normally.
+  // Scrolling again on the way hurries the flight, or turns it around. Reduced motion
+  // has no smooth scroll, so nothing is taken over there.
   useEffect(() => {
     const about = document.getElementById("about");
-    if (!about) return;
-    const inside = () => document.documentElement.dataset.booted && scrollY < root.current.offsetHeight - 70;
+    if (!about || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const landing = () => Math.round(about.getBoundingClientRect().top + scrollY - 80);
+
+    // Starts (or redirects) the flight. Says whether this gesture belongs to it.
     const fly = (down) => {
-      if (isGliding()) return true;
-      if (!inside() || (!down && scrollY < 4)) return false;
-      return down ? glide(about, -40) : glide(0);
+      if (!document.documentElement.dataset.booted) return false;
+      const there = landing();
+      const now = gliding();
+      if (now) {
+        const goingDown = now.to > 0;
+        if (goingDown !== down) return glide(down ? there : 0, 2);
+        if (performance.now() - now.began > 700) glide(now.to, 0.9);
+        return true;
+      }
+      if (down) return scrollY < there - 24 && glide(there);
+      return scrollY > 4 && scrollY <= there + 4 && glide(0);
     };
     const stop = (e) => {
       if (e.cancelable) e.preventDefault();
       e.stopImmediatePropagation();
     };
+
+    // A wheel or trackpad gesture is a run of events with no pause. Its first event
+    // decides for all of them; the leftover push after landing is swallowed briefly.
+    let last = 0;
+    let dir = 0;
+    let taken = false;
+    let landed = 0;
     const onWheel = (e) => {
-      if (e.ctrlKey || e.shiftKey || Math.abs(e.deltaY) < Math.abs(e.deltaX) || !e.deltaY) return;
-      if (fly(e.deltaY > 0)) stop(e);
+      if (e.ctrlKey || e.shiftKey || !e.deltaY || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+      const t = performance.now();
+      const d = Math.sign(e.deltaY);
+      if (t - last > 170 || d !== dir) {
+        dir = d;
+        landed = 0;
+        taken = fly(d > 0);
+      }
+      last = t;
+      if (!taken) return;
+      if (!gliding()) {
+        landed = landed || t;
+        if (t - landed > 450) {
+          taken = false;
+          return;
+        }
+      }
+      stop(e);
     };
+
+    // A touch decides once too, on its first real movement.
     let start = null;
-    const onStart = (e) => (start = e.touches.length === 1 ? [e.touches[0].clientX, e.touches[0].clientY] : null);
+    let mine = null; // null = not decided yet
+    const onStart = (e) => {
+      mine = null;
+      start = e.touches.length === 1 && !e.target.closest?.("input") ? [e.touches[0].clientX, e.touches[0].clientY] : null;
+    };
     const onTouch = (e) => {
       if (!start || e.touches.length > 1) return;
-      const dx = e.touches[0].clientX - start[0];
-      const dy = e.touches[0].clientY - start[1];
-      if (Math.abs(dy) < 6 || Math.abs(dy) < Math.abs(dx)) return;
-      if (fly(dy < 0)) stop(e);
+      if (mine === null) {
+        const dx = e.touches[0].clientX - start[0];
+        const dy = e.touches[0].clientY - start[1];
+        if (Math.abs(dy) < 4 && Math.abs(dx) < 4) return;
+        mine = e.cancelable && Math.abs(dy) > Math.abs(dx) && fly(dy < 0);
+      }
+      if (mine) stop(e);
     };
+
     const DOWN = ["ArrowDown", "PageDown", " "];
     const UP = ["ArrowUp", "PageUp"];
     const onKey = (e) => {
@@ -99,7 +149,7 @@ export default function Journey() {
       if (e.key === " " && e.target.closest?.("button, a, summary")) return;
       const down = DOWN.includes(e.key) && !(e.key === " " && e.shiftKey);
       if (!down && !UP.includes(e.key) && e.key !== " ") return;
-      if (fly(down)) stop(e);
+      if (e.repeat ? gliding() : fly(down)) stop(e);
     };
     const opt = { passive: false, capture: true };
     addEventListener("wheel", onWheel, opt);
@@ -125,6 +175,8 @@ export default function Journey() {
 
       function apply(q) {
         space.p = q;
+        // While Kiwi is the star, the little Kiwi in the corner waits for her to land.
+        document.documentElement.classList.toggle("kiwi-flying", hasWebGL3D.current && q < 0.93);
         const out = smoothstep(0.04, 0.3, q);
         title.current.style.opacity = 1 - out;
         title.current.style.transform = `translateZ(0) scale(${1 + out * 0.28})`;
@@ -188,7 +240,11 @@ export default function Journey() {
               gate.current.warm = true;
               flyIn();
             }}
-            onFail={() => setMode("flat")}
+            onFail={() => {
+              hasWebGL3D.current = false;
+              document.documentElement.classList.remove("kiwi-flying");
+              setMode("flat");
+            }}
           /> : null}
         {mode === "flat" ? (
           <svg className="journey-flatstar" viewBox="0 0 100 100" aria-hidden="true">

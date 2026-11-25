@@ -27,6 +27,7 @@ export default function Music() {
   const [status, setStatus] = useState("waiting"); // waiting | loading | ready | failed
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
+  const [browsing, setBrowsing] = useState(false); // the song list is uncovered
 
   // Load the player when the section is close.
   useEffect(() => {
@@ -73,6 +74,8 @@ export default function Music() {
         });
     }
 
+    const out = new IntersectionObserver(([e]) => !e.isIntersecting && setBrowsing(false));
+    out.observe(host.current);
     const io = new IntersectionObserver(
       ([e]) => {
         if (!e.isIntersecting) return;
@@ -89,6 +92,7 @@ export default function Music() {
       window.removeEventListener("quote:start", hush);
       clearTimeout(timer);
       io.disconnect();
+      out.disconnect();
       energy.current = 0;
       try {
         controller.current?.destroy();
@@ -157,8 +161,14 @@ export default function Music() {
 
           <div className="win playlist-win">
             <div className="win-bar" aria-hidden="true"><span>{music.title.toLowerCase()}.playlist</span><i /><i /><i /></div>
-            <div className="playlist-body">
-              <div className="playlist-host" ref={host} />
+            <div className="playlist-body" onPointerLeave={(e) => e.pointerType === "mouse" && setBrowsing(false)}>
+              <div className="playlist-host" ref={host} inert={status === "ready" && !browsing} />
+              {/* Without this, the long song list would swallow the page's scrolling. */}
+              {status === "ready" && !browsing ? (
+                <button type="button" className="playlist-cover" onClick={() => setBrowsing(true)}>
+                  <span className="label">Tap to browse songs</span>
+                </button>
+              ) : null}
               {status === "failed" ? (
                 <div className="playlist-fallback">
                   <p>Spotify didn't load here. You can still hear it there.</p>

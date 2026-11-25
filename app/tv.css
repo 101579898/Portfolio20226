@@ -74,7 +74,6 @@ html[data-static="on"] :is(.reveal.display.is-in, .profile-story .reveal.display
 html[data-static="on"] .hero-welcome { text-shadow: -1.2px 0 rgba(255, 84, 140, 0.5), 1.2px 0 rgba(84, 130, 255, 0.6), 0 0 22px rgba(170, 160, 255, 0.3); }
 @media (min-width: 701px) {
   html[data-static="on"] .hero-script { filter: drop-shadow(-1.6px 0 0 rgba(255, 84, 140, 0.4)) drop-shadow(1.8px 0 0 rgba(84, 130, 255, 0.5)) drop-shadow(0 6px 22px rgba(7, 6, 11, 0.8)) drop-shadow(0 0 30px rgba(150, 140, 240, 0.5)); }
-  html[data-static="on"] :is(.cosmos-obj.is-moon, .cosmos-obj.is-planet) img { filter: drop-shadow(-2px 0 0 rgba(255, 84, 140, 0.35)) drop-shadow(2px 0 0 rgba(84, 130, 255, 0.4)); }
 }
 
 /* The snow and lines replace the old dots and grain */

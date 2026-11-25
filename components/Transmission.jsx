@@ -2,7 +2,7 @@
 
 // A small pixel message box floating in the opening scene. Click it and it
 // flickers into a song card: the record plays and pauses a short preview (no account
-// needed), the title opens the song in Spotify; click elsewhere on it to go back.
+// needed) with its own volume, the title opens the song in Spotify; click elsewhere on it to go back.
 // Nothing plays until the record is pressed, and it stops when you close the card,
 // scroll on or start the playlist. The words come from `transmission` in data/site.js.
 import { useEffect, useRef, useState } from "react";
@@ -14,9 +14,14 @@ export default function Transmission() {
   const [open, setOpen] = useState(false);
   const [flicker, setFlicker] = useState(false);
   const [sound, setSound] = useState("none"); // none | ready | playing
+  const [volume, setVolume] = useState(0.25);
   const timers = useRef([]);
 
   useEffect(() => {
+    try {
+      const v = parseFloat(localStorage.getItem("volume"));
+      if (v >= 0 && v <= 1) setVolume(v);
+    } catch {}
     const stop = () => audio.current?.pause();
     const io = new IntersectionObserver(([e]) => !e.isIntersecting && stop());
     io.observe(root.current);
@@ -35,7 +40,7 @@ export default function Transmission() {
     if (audio.current || !transmission.previewId) return;
     const a = new Audio();
     a.preload = "auto";
-    a.volume = 0.7;
+    a.volume = volume;
     const still = () => audio.current === a;
     a.addEventListener("loadedmetadata", () => still() && setSound("ready"));
     a.addEventListener("playing", () => still() && setSound("playing"));
@@ -60,6 +65,15 @@ export default function Transmission() {
     }
     window.dispatchEvent(new Event("quote:start"));
     a.play().catch(() => {});
+  }
+
+  function changeVolume(e) {
+    const v = Number(e.target.value) / 100;
+    setVolume(v);
+    if (audio.current) audio.current.volume = v;
+    try {
+      localStorage.setItem("volume", String(v));
+    } catch {}
   }
 
   function toggle() {
@@ -107,7 +121,15 @@ export default function Transmission() {
                 {transmission.song} <span aria-hidden="true">↗</span>
               </a>
               <span>{transmission.artist}</span>
-              {sound === "none" ? null : <small>Preview courtesy of iTunes</small>}
+              {sound === "none" ? null : (
+                <>
+                  <span className="transmission-volume">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9z" />{volume > 0 ? <path d="M14.5 8.2a5 5 0 0 1 0 7.6l1.2 1.4a7 7 0 0 0 0-10.4z" /> : null}</svg>
+                    <input type="range" min="0" max="100" step="1" value={Math.round(volume * 100)} onChange={changeVolume} style={{ "--v": `${Math.round(volume * 100)}%` }} aria-label="Volume" />
+                  </span>
+                  <small>Preview courtesy of iTunes</small>
+                </>
+              )}
             </span>
           </>
         ) : (
