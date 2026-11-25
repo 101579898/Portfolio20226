@@ -24,12 +24,14 @@ export const profile = {
 
 // The little pixel message in the opening scene.
 // text: your lyric, exactly as you want it shown ("" shows "1 new message").
-// url: where the song's name links to.
+// url: where the song's name links to. previewId: the song's number on Apple Music,
+// for the 30-second preview ("" for no preview).
 export const transmission = {
   text: "Me, I wasn't taught to share, but care",
   song: "PRIDE.",
   artist: "Kendrick Lamar",
   url: "https://open.spotify.com/track/6IZvVAP7VPPnsGX6bvgkqg",
+  previewId: "1440882161",
 };
 
 export const education = [

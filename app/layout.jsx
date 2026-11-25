@@ -1,4 +1,4 @@
-import { Hanken_Grotesk, Playfair_Display, Great_Vibes, Cinzel_Decorative, VT323, Pixelify_Sans } from "next/font/google";
+import { Hanken_Grotesk, Playfair_Display, Great_Vibes, VT323, Pixelify_Sans } from "next/font/google";
 import "./globals.css";
 import "./digispace.css";
 import "./work.css";
@@ -20,8 +20,6 @@ const serif = Playfair_Display({
   display: "swap",
 });
 const script = Great_Vibes({ subsets: ["latin"], weight: "400", variable: "--font-script", display: "swap" });
-// Ornamental capitals, for small panel titles only.
-const deco = Cinzel_Decorative({ subsets: ["latin"], weight: "400", variable: "--font-deco", display: "swap" });
 // Rounded pixel letters, for the message box and Kiwi's speech.
 const message = Pixelify_Sans({ subsets: ["latin"], weight: "400", variable: "--font-message", display: "swap" });
 
@@ -46,7 +44,7 @@ export const viewport = { themeColor: "#07060b" };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${sans.variable} ${serif.variable} ${script.variable} ${deco.variable} ${message.variable} ${pixel.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${sans.variable} ${serif.variable} ${script.variable} ${message.variable} ${pixel.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootCheck }} />
         <noscript><style>{`.boot{display:none}.reveal{opacity:1;transform:none}`}</style></noscript>

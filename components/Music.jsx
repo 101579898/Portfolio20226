@@ -59,6 +59,7 @@ export default function Music() {
               const on = !data.isPaused && !data.isBuffering;
               energy.current = on ? 1 : 0;
               setPlaying(!data.isPaused);
+              if (on) window.dispatchEvent(new Event("music:start"));
               if (!data.isPaused) setStarted(true);
               const part = data.duration ? data.position / data.duration : 0;
               ring.current?.style.setProperty("--p", part.toFixed(4));
@@ -81,8 +82,11 @@ export default function Music() {
       { rootMargin: "500px 0px" }
     );
     io.observe(root.current);
+    const hush = () => controller.current?.pause(); // the quote in the opening started playing
+    window.addEventListener("quote:start", hush);
     return () => {
       gone = true;
+      window.removeEventListener("quote:start", hush);
       clearTimeout(timer);
       io.disconnect();
       energy.current = 0;
