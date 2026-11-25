@@ -146,9 +146,9 @@ export default function Cosmos() {
       shown: null,
     }));
     const lights = [...el.querySelectorAll(".cosmos-light")];
-    const galaxy = el.querySelector(".cosmos-galaxy");
-    const arms = galaxy.querySelector(".arms");
-    const haze = galaxy.querySelector(".haze");
+    const bloom = el.querySelector(".cosmos-bloom");
+    const petals = bloom.querySelector(".petals");
+    const haze = bloom.querySelector(".haze");
     const masks = dissolveMasks();
     let mask = -1;
     const ids = [...new Set(items.map((i) => i.at).filter(Boolean))];
@@ -198,7 +198,7 @@ export default function Cosmos() {
           it.node.style.visibility = vis ? "visible" : "hidden";
         }
         if (!vis) continue;
-        // Objects in the opening slide past as you travel, then make way for the galaxy.
+        // Objects in the opening slide past as you travel, then make way for the bloom.
         const trip = it.at === "intro" && !reduce ? space.p : 0;
         const inner = it.at ? -trip * h * SCROLL[it.depth] * 0.55 : -now.s * 0.04 * it.depth;
         const x = -now.x * POINTER[it.depth];
@@ -206,22 +206,22 @@ export default function Cosmos() {
         it.node.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
         it.node.style.opacity = (it.o * (1 - smoothstep(0.3, 1.15, Math.abs(t))) * (1 - smoothstep(0.5, 0.88, trip))).toFixed(3);
       }
-      // The galaxy: grows as the star dives in, then drifts on into About and breaks
-      // up into pixels, so there is never an edge between the two.
+      // The bloom: a small flower of light opens as the star dives in, then drifts up
+      // and breaks into pixels before About begins.
       const gone = away("intro");
       const past = gone === null ? 9 : Math.max(0, -gone); // screens travelled beyond the opening
-      const seen = home && !reduce ? smoothstep(0.4, 0.74, space.p) * (1 - smoothstep(0.25, 1.15, past)) : 0;
-      galaxy.style.visibility = seen > 0.004 ? "visible" : "hidden";
+      const seen = home && !reduce ? smoothstep(0.42, 0.74, space.p) * (1 - smoothstep(0.1, 0.72, past)) : 0;
+      bloom.style.visibility = seen > 0.004 ? "visible" : "hidden";
       if (seen > 0.004) {
         const g = smoothstep(0.4, 1, space.p);
-        const size = 0.2 + g * g * 0.86 + past * 0.34;
-        galaxy.style.opacity = seen.toFixed(3);
-        arms.style.transform = `translate(-50%,-50%) translate3d(${(-now.x * 22).toFixed(1)}px,${(-now.y * 16 - past * h * 0.16).toFixed(1)}px,0) rotate(${(-16 + g * 13 + past * 9).toFixed(2)}deg) scale(${size.toFixed(4)})`;
-        haze.style.transform = `translate(-50%,-50%) translate3d(${(-now.x * 9).toFixed(1)}px,${(-now.y * 7 - past * h * 0.07).toFixed(1)}px,0) rotate(${(-16 + g * 7).toFixed(2)}deg) scale(${(size * 0.94 + 0.12).toFixed(4)})`;
-        const k = Math.round(smoothstep(0.05, 1, past) * 8);
+        const size = 0.22 + g * 0.78 + past * 0.1;
+        bloom.style.opacity = seen.toFixed(3);
+        petals.style.transform = `translate(-50%,-50%) translate3d(${(-now.x * 22).toFixed(1)}px,${(-now.y * 16 - past * h * 0.5).toFixed(1)}px,0) rotate(${(-34 + g * 34 + past * 16).toFixed(2)}deg) scale(${size.toFixed(4)})`;
+        haze.style.transform = `translate(-50%,-50%) translate3d(${(-now.x * 9).toFixed(1)}px,${(-now.y * 7 - past * h * 0.36).toFixed(1)}px,0) scale(${(size * 0.94 + 0.12).toFixed(4)})`;
+        const k = Math.round(smoothstep(0.04, 0.62, past) * 8);
         if (k !== mask) {
           mask = k;
-          arms.style.maskImage = arms.style.webkitMaskImage = masks[k];
+          petals.style.maskImage = petals.style.webkitMaskImage = masks[k];
         }
       }
       for (const l of lights) {
@@ -287,9 +287,9 @@ export default function Cosmos() {
       <span className="cosmos-stars" />
       <span className="cosmos-stars" />
       <span className="cosmos-stars" />
-      <div className="cosmos-galaxy">
-        <img className="haze" src={asset("/cosmos/galaxy-haze.webp")} alt="" draggable="false" decoding="async" />
-        <img className="arms" src={asset("/cosmos/galaxy.webp")} alt="" draggable="false" decoding="async" />
+      <div className="cosmos-bloom">
+        <img className="haze" src={asset("/cosmos/bloom-haze.webp")} alt="" draggable="false" decoding="async" />
+        <img className="petals" src={asset("/cosmos/bloom.webp")} alt="" draggable="false" decoding="async" />
       </div>
       {[...OBJECTS, ...ELSEWHERE].map((o, i) => (
         <div

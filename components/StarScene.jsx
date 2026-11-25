@@ -3,7 +3,7 @@
 // The shooting star, in real 3D (React Three Fiber). One faceted chrome star
 // with a glowing core pulls a prism-coloured trail along a path: it flies in
 // when the page opens, swings close to the camera as you scroll, then dives
-// into the galaxy. Glass shards and dust drift past on the way.
+// into the bloom. Glass shards and dust drift past on the way.
 // It reads its progress from lib/space.js and sleeps when off screen.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";

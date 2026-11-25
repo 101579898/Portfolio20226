@@ -1,7 +1,7 @@
 "use client";
 
 // Chapter 01. One continuous scroll: the star flies in, the title appears, and
-// as you scroll the star pulls you past glass and dust into a galaxy (drawn by
+// as you scroll the star pulls you past glass and dust into a small bloom of light (drawn by
 // Cosmos.jsx, so it carries on into the next chapter), where About begins. The star itself lives in StarScene.jsx.
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";

@@ -15,12 +15,12 @@ html.lenis, html.lenis body { height: auto; }
 .journey-text { color: var(--title); }
 .display { letter-spacing: -0.022em; }
 .deco {
-  font-family: var(--font-deco), serif;
-  font-size: 1.25rem;
+  font-family: var(--font-serif), serif;
+  font-size: 1.5rem;
   font-weight: 400;
-  letter-spacing: 0.03em;
+  letter-spacing: -0.015em;
   line-height: 1.2;
-  color: var(--ice);
+  color: var(--title);
 }
 .label, .pill, .btn, .nav { text-shadow: none; }
 
@@ -112,9 +112,16 @@ body::before { display: none; }
 .transmission-song a { position: relative; z-index: 2; pointer-events: auto; justify-self: start; padding: 4px 0; font-size: 1.3rem; letter-spacing: 0.04em; text-underline-offset: 4px; }
 .transmission-song a:hover { color: var(--ice); }
 .transmission-text { white-space: pre-line; }
+.transmission.is-open { width: max-content; max-width: min(310px, 84vw); }
 .transmission-song { display: grid; }
 .transmission-song span { color: var(--ice); }
-.transmission-disc { flex: none; width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle, #07060b 0 8%, #dcb1c2 9% 26%, #14111f 27%), #14111f; box-shadow: 0 0 0 2px #7c679e, inset 0 0 0 6px rgba(255, 255, 255, 0.05); animation: discTurn 6s linear infinite; }
+.transmission-play { position: relative; z-index: 2; flex: none; width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: none; pointer-events: auto; cursor: pointer; }
+.transmission-play:disabled { cursor: default; }
+.transmission-disc { flex: none; display: block; width: 48px; height: 48px; border-radius: 50%; background: radial-gradient(circle, #07060b 0 8%, #dcb1c2 9% 26%, #14111f 27%), #14111f; box-shadow: 0 0 0 2px #7c679e, inset 0 0 0 6px rgba(255, 255, 255, 0.05); animation: discTurn 3s linear infinite paused; }
+.transmission.is-playing .transmission-disc { animation-play-state: running; }
+.transmission-play svg { position: absolute; inset: 13px; width: 22px; fill: #fff; filter: drop-shadow(0 0 3px #07060b) drop-shadow(0 0 2px #07060b); }
+.transmission-play:hover:not(:disabled) .transmission-disc { box-shadow: 0 0 0 3px #efe6f2, 0 0 16px rgba(220, 177, 194, 0.6); }
+.transmission-song small { font-size: 0.72rem; color: var(--soft); }
 .transmission-caret { position: absolute; right: 12px; bottom: 10px; border: 6px solid transparent; border-top-color: #efe6f2; border-bottom: 0; animation: bootBlink 1.2s steps(1) infinite; }
 .transmission.is-flicker .transmission-body { animation: pixelFlicker 0.52s steps(1); }
 @keyframes pixelFlicker {
@@ -356,10 +363,10 @@ body::before { display: none; }
 
 /* ── Digital treatment ────────────────────────────────── */
 .cosmos-stars:nth-of-type(10) { opacity: 0.9; image-rendering: pixelated; }
-.cosmos-galaxy { position: absolute; inset: 0; visibility: hidden; }
-.cosmos-galaxy img { position: absolute; left: 50%; top: 50%; max-width: none; will-change: transform; }
-.cosmos-galaxy .arms { width: max(112vw, 1100px); mask-size: 32px; -webkit-mask-size: 32px; }
-.cosmos-galaxy .haze { width: max(150vw, 1500px); opacity: 0.55; }
+.cosmos-bloom { position: absolute; inset: 0; visibility: hidden; }
+.cosmos-bloom img { position: absolute; left: 50%; top: 50%; max-width: none; will-change: transform; }
+.cosmos-bloom .petals { width: clamp(330px, 46vw, 760px); mask-size: 32px; -webkit-mask-size: 32px; }
+.cosmos-bloom .haze { width: clamp(420px, 60vw, 980px); opacity: 0.4; }
 .cosmos-grain, .cosmos-dither { position: absolute; inset: 0; }
 .cosmos-grain { background: url("./fx/grain.png"); }
 .cosmos-dither { opacity: 0.8; background: url("./fx/dither.png"); image-rendering: pixelated; }
