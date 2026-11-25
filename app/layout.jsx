@@ -2,6 +2,7 @@ import { Hanken_Grotesk, Playfair_Display, Great_Vibes, VT323, Pixelify_Sans } f
 import "./globals.css";
 import "./digispace.css";
 import "./work.css";
+import "./tv.css";
 import Cosmos from "@/components/Cosmos";
 import SmoothScroll from "@/components/SmoothScroll";
 import StarRail from "@/components/StarRail";
@@ -25,8 +26,9 @@ const message = Pixelify_Sans({ subsets: ["latin"], weight: "400", variable: "--
 
 const pixel = VT323({ subsets: ["latin"], weight: "400", variable: "--font-pixel", display: "swap" });
 
-// Runs before the page paints: if the boot screen was already seen this session, skip it.
-const bootCheck = 'try{if(sessionStorage.getItem("booted"))document.documentElement.dataset.booted="1"}catch(e){}';
+// Runs before the page paints: skip the boot screen if it was seen this session, and
+// remember whether TV mode (the STATIC switch) is on.
+const bootCheck = `try{if(sessionStorage.getItem("booted"))document.documentElement.dataset.booted="1"}catch(e){}try{document.documentElement.dataset.static=localStorage.getItem("static")==="off"?"off":"on"}catch(e){document.documentElement.dataset.static="on"}`;
 
 export const metadata = {
   title: `${profile.name} — ${profile.role}`,

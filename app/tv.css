@@ -1,0 +1,98 @@
+/* ─────────────────────────────────────────────────────────────
+   TV MODE: what the STATIC switch in the corner turns on.
+   Everything here only moves transforms and opacity, sits above the
+   page and never takes a click. Off means none of it is shown.
+   ───────────────────────────────────────────────────────────── */
+
+/* The boot screen keeps its own simple scanlines; TV mode starts once it has gone. */
+.scanlines { transition: opacity 0.8s; }
+html[data-booted]:not(.boot-hold) .scanlines, html:not(:has(.boot)) .scanlines, html[data-static="off"] .scanlines { opacity: 0; }
+
+.tv { position: fixed; inset: 0; z-index: 300; overflow: hidden; pointer-events: none; transition: opacity 0.35s; }
+html[data-static="off"] .tv { opacity: 0; visibility: hidden; transition: opacity 0.35s, visibility 0s 0.35s; }
+/* a hair above nothing, so it is already drawn when the boot screen lifts */
+html:not([data-booted]):has(.boot) .tv, html.boot-hold .tv { opacity: 0.01; transition: none; }
+html.boot-fade .tv { animation: surface 1.6s ease 0.6s backwards; }
+.tv > span { position: absolute; display: block; }
+
+/* Fine lines: one hair of light, then shade. Change --line to make them finer or thicker. */
+.tv-lines {
+  --line: 4px;
+  inset: 0;
+  background:
+    repeating-linear-gradient(rgba(206, 212, 255, 0.1) 0 1px, transparent 1px calc(var(--line) / 2), rgba(7, 6, 11, 0.2) calc(var(--line) / 2) calc(var(--line) - 1px), transparent calc(var(--line) - 1px) var(--line)),
+    radial-gradient(110% 110% at 50% 42%, rgba(140, 146, 255, 0.055), transparent 66%);
+}
+
+/* Snow: a big tile that hops about, so it looks alive without being redrawn */
+.tv-snow { inset: -192px; opacity: 0.055; background: var(--snow); background-size: 192px; animation: tvSnow 0.9s steps(1) infinite; }
+@keyframes tvSnow {
+  0% { transform: translate(0, 0); }
+  12% { transform: translate(-74px, 38px); }
+  25% { transform: translate(52px, -90px); }
+  37% { transform: translate(-30px, -44px); }
+  50% { transform: translate(96px, 71px); }
+  62% { transform: translate(-118px, 12px); }
+  75% { transform: translate(20px, 104px); }
+  87% { transform: translate(-60px, -120px); }
+}
+
+/* A soft band that rolls down the screen now and then */
+.tv-roll { left: 0; right: 0; top: -24vh; height: 24vh; background: linear-gradient(transparent, rgba(196, 202, 255, 0.05) 45%, rgba(214, 218, 255, 0.085) 72%, rgba(196, 202, 255, 0.04) 88%, transparent); animation: tvRoll 11s linear infinite; }
+@keyframes tvRoll { 0%, 30% { transform: translateY(0); } 85%, 100% { transform: translateY(126vh); } }
+
+/* Thin border with rounded glass corners and a hairline of chrome */
+.tv-frame {
+  --b: 8px;
+  inset: 0;
+  border: var(--b) solid transparent;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #8f8ab8 0%, #2a2740 14%, #4b4670 32%, #191727 50%, #5d5788 68%, #211e33 84%, #9a94c4 100%) border-box;
+  -webkit-mask: linear-gradient(#000 0 0) padding-box exclude, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) padding-box exclude, linear-gradient(#000 0 0);
+}
+/* dark beyond the rounded corners, and the shade of curved glass just inside */
+.tv-frame-glass {
+  inset: 8px;
+  border-radius: 19px;
+  box-shadow: 0 0 0 1px rgba(10, 8, 18, 0.9), inset 0 0 0 1px rgba(226, 222, 255, 0.16), inset 0 0 44px rgba(4, 3, 8, 0.5);
+}
+.tv::before { content: ""; position: absolute; inset: 0; border-radius: 26px; box-shadow: 0 0 0 40px #07060b; }
+html[data-static="on"] .static-switch { left: 22px; bottom: 20px; }
+
+/* Switching on: one short burst of snow, a bright line opening, a channel number */
+.tv-burst { inset: 0; }
+.tv-burst::before { content: ""; position: absolute; inset: -192px; background: var(--snow); background-size: 192px; opacity: 0; animation: tvBurst 0.6s ease-out, tvSnow 0.4s steps(1) 2; }
+.tv-burst::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: #efeaff; box-shadow: 0 0 24px 4px rgba(170, 176, 255, 0.8); opacity: 0; animation: tvOpen 0.5s ease-out; }
+@keyframes tvBurst { from { opacity: 0.62; } to { opacity: 0; } }
+@keyframes tvOpen { from { opacity: 0.9; transform: scaleX(0.1); } 40% { opacity: 0.7; transform: scaleX(1); } to { opacity: 0; transform: scaleX(1) scaleY(60); } }
+.tv-osd { position: absolute; right: clamp(22px, 4vw, 54px); top: 88px; font-family: var(--font-pixel), monospace; font-size: 1.9rem; letter-spacing: 0.08em; color: #dfe4ff; text-shadow: -2px 0 rgba(255, 90, 140, 0.7), 2px 0 rgba(90, 130, 255, 0.8), 0 0 14px rgba(150, 160, 255, 0.8); opacity: 0; animation: tvOsd 2.6s steps(12); }
+@keyframes tvOsd { 0%, 12% { opacity: 0; } 16%, 80% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Colour edges and a soft glow, on big titles and the sky only. Small text stays sharp. */
+html[data-static="on"] :is(.reveal.display.is-in, .profile-story .reveal.display.is-in, .journey-text) { text-shadow: -1.5px 0 rgba(255, 84, 140, 0.5), 1.5px 0 rgba(84, 130, 255, 0.6), 0 0 26px rgba(170, 160, 255, 0.34), 0 2px 30px rgba(7, 6, 11, 0.6); }
+html[data-static="on"] .hero-welcome { text-shadow: -1.2px 0 rgba(255, 84, 140, 0.5), 1.2px 0 rgba(84, 130, 255, 0.6), 0 0 22px rgba(170, 160, 255, 0.3); }
+@media (min-width: 701px) {
+  html[data-static="on"] .hero-script { filter: drop-shadow(-1.6px 0 0 rgba(255, 84, 140, 0.4)) drop-shadow(1.8px 0 0 rgba(84, 130, 255, 0.5)) drop-shadow(0 6px 22px rgba(7, 6, 11, 0.8)) drop-shadow(0 0 30px rgba(150, 140, 240, 0.5)); }
+  html[data-static="on"] :is(.cosmos-obj.is-moon, .cosmos-obj.is-planet) img { filter: drop-shadow(-2px 0 0 rgba(255, 84, 140, 0.35)) drop-shadow(2px 0 0 rgba(84, 130, 255, 0.4)); }
+}
+
+/* The snow and lines replace the old dots and grain */
+html[data-static="on"] .cosmos-grain { display: none; }
+.cosmos-dither { opacity: 0.45; }
+
+@media (max-width: 700px) {
+  .tv-lines { --line: 3px; }
+  .tv-frame { --b: 4px; border-radius: 18px; }
+  .tv::before { border-radius: 18px; }
+  .tv-frame-glass { inset: 4px; border-radius: 15px; }
+  html[data-static="on"] .static-switch { left: 14px; bottom: 14px; }
+  .tv-snow { opacity: 0.045; animation-duration: 1.6s; }
+  .tv-roll { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tv, .scanlines { transition: none; }
+  .tv-snow { animation: none; }
+  .tv-roll, .tv-burst { display: none !important; }
+  html.boot-fade .tv { animation: none; }
+}
