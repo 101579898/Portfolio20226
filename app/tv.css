@@ -80,6 +80,11 @@ html[data-static="on"] .hero-welcome { text-shadow: -1.2px 0 rgba(255, 84, 140, 
 html[data-static="on"] .cosmos-grain { display: none; }
 .cosmos-dither { opacity: 0.45; }
 
+/* Phones: out of the way while scrolling down */
+.pal, .static-switch { transition: translate 0.35s ease, opacity 0.35s ease, visibility 0s 0s; }
+html.floaters-away :is(.pal, .static-switch) { translate: 0 140%; opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .pal, .static-switch { transition: opacity 0.2s; } html.floaters-away :is(.pal, .static-switch) { translate: none; } }
+
 @media (max-width: 700px) {
   .tv-lines { --line: 3px; }
   .tv-frame { --b: 4px; border-radius: 18px; }
