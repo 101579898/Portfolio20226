@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Reveal from "./Reveal";
+import Decode from "./Decode";
 import PixelArt from "./PixelArt";
 import Signature from "./Signature";
 import { profile } from "@/data/site";
@@ -20,8 +21,8 @@ export default function Contact() {
   return (
     <section className="chapter contact" id="contact" aria-labelledby="contact-title">
       <Reveal className="chapter-head">
-        <p className="label">Contact <span aria-hidden="true">/</span> Transmission</p>
-        <p className="label">Chapter 05</p>
+        <Decode text="Contact / Transmission" />
+        <Decode text="Chapter 05" />
       </Reveal>
 
       <Reveal as="h2" id="contact-title" className="display huge">

@@ -42,8 +42,8 @@ export default function StarPal() {
       const dy = e.clientY - (r.top + r.height / 2);
       const dist = Math.hypot(dx, dy) || 1;
       // Eyes look toward the pointer.
-      const look = Math.min(1, dist / 160);
-      eyes.current.setAttribute("transform", `translate(${(dx / dist) * look} ${(dy / dist) * look})`);
+      const look = dist > 70 ? 1 : 0;
+      eyes.current.setAttribute("transform", `translate(${Math.round((dx / dist) * look)} ${Math.round((dy / dist) * look * 0.6)})`);
       setHappy(dist < 150);
 
       // Playing tag: with a mouse she hops away twice, then lets you catch her.
@@ -127,9 +127,12 @@ export default function StarPal() {
       {[0, 1, 2, 3, 4, 5].map((i) => (
         <span key={i} className="pal-spark" aria-hidden="true" />
       ))}
+      <span className="pal-bits" aria-hidden="true">
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => <i key={i} style={{ "--i": i }} />)}
+      </span>
       <span className="pal-bob">
         <span className="pal-art" ref={body}>
-          <KiwiArt eyesRef={eyes} />
+          <KiwiArt eyesRef={eyes} aura />
         </span>
       </span>
       {say ? <span className="pal-say" aria-hidden="true">{say}</span> : null}

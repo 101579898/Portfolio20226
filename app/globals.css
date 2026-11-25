@@ -455,6 +455,7 @@ button { font: inherit; color: inherit; }
 @media (max-width: 640px) {
   .panels, .xp-list, .contact-links { grid-template-columns: minmax(0, 1fr); }
   .timeline li { flex-direction: column; gap: 6px; }
+  .timeline li > div { flex: none; }
 }
 
 /* ── Keyframes ────────────────────────────────────────── */

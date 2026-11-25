@@ -4,7 +4,7 @@
 // placed at its own depth. Far things barely move; near things move more, both
 // when you scroll and when the pointer moves. All light comes from the upper left.
 //
-//   depth 1 deep space   2 nebula light   3 moons, planets   4 flowers   5 foreground
+//   depth 1 deep space   2 nebula light   3 moons, planets   4 lilies   5 foreground
 //
 // To move or add an object, edit the list below.
 import { useEffect, useRef } from "react";
@@ -15,43 +15,83 @@ import { clamp, smoothstep, space } from "@/lib/space";
 // at:    the chapter (element id) the object belongs to
 // x, y:  centre position in % of the screen      w: width in vw (min in px)
 // depth: 1 (far) to 5 (near)                     o: how visible it is
-// move:  optional slow motion: "drift" | "turn" | "sway"
+// move:  optional slow motion: "drift" | "sway"
 const OBJECTS = [
   // Opening
   { img: "blackhole", at: "intro", x: 13, y: 78, w: 30, min: 300, depth: 1, o: 0.5 },
   { img: "nebula", at: "intro", x: 72, y: 46, w: 92, min: 760, depth: 2, o: 0.62, move: "drift" },
   { img: "moon", at: "intro", x: 88, y: 20, w: 27, min: 230, depth: 3, o: 0.95, move: "drift" },
-  { img: "flower", at: "intro", x: 6, y: 25, w: 20, min: 160, depth: 4, o: 0.85, move: "turn" },
-  { img: "blossom", at: "intro", x: 99, y: 103, w: 40, min: 330, depth: 5, o: 0.5, blur: 7, move: "sway" },
+  { img: "flower", at: "intro", x: 9, y: 31, w: 24, min: 170, depth: 4, o: 0.95, move: "sway" },
+  { img: "blossom", at: "intro", x: 99, y: 103, w: 40, min: 330, depth: 5, o: 0.5, move: "sway" },
   // About
   { img: "nebula", at: "about", x: 22, y: 30, w: 88, min: 700, depth: 2, o: 0.42, flip: true, move: "drift" },
   { img: "planet", at: "about", x: 97, y: 44, w: 58, min: 500, depth: 3, o: 0.62, move: "drift" },
-  { img: "flower", at: "about", x: -1, y: 92, w: 24, min: 190, depth: 4, o: 0.5, move: "turn" },
-  { img: "blossom", at: "about", x: 103, y: 100, w: 30, min: 260, depth: 5, o: 0.42, blur: 6, move: "sway" },
+  { img: "blossom", at: "about", x: 103, y: 100, w: 30, min: 260, depth: 5, o: 0.42, move: "sway" },
   // Work
   { img: "galaxy", at: "work", x: 12, y: 40, w: 46, min: 420, depth: 1, o: 0.4 },
   { img: "nebula", at: "work", x: 62, y: 60, w: 96, min: 760, depth: 2, o: 0.45, move: "drift" },
   { img: "moon", at: "work", x: 88, y: 46, w: 17, min: 130, depth: 3, o: 0.85, move: "drift" },
-  { img: "flower", at: "work", x: 96, y: 86, w: 26, min: 210, depth: 4, o: 0.62, move: "turn" },
-  { img: "blossom", at: "work", x: -3, y: 98, w: 36, min: 280, depth: 5, o: 0.45, blur: 7, move: "sway" },
+  { img: "blossom", at: "work", x: 103, y: 98, w: 36, min: 280, depth: 5, o: 0.45, move: "sway" },
   // Music
   { img: "blackhole", at: "music", x: 50, y: 42, w: 70, min: 560, depth: 2, o: 0.5 },
-  { img: "flower", at: "music", x: 2, y: 18, w: 18, min: 150, depth: 4, o: 0.45, move: "turn" },
   // Contact
   { img: "nebula", at: "contact", x: 40, y: 74, w: 96, min: 760, depth: 2, o: 0.5, move: "drift" },
   { img: "planet", at: "contact", x: 88, y: 88, w: 46, min: 420, depth: 3, o: 0.62, move: "drift" },
-  { img: "flower", at: "contact", x: 97, y: 18, w: 18, min: 150, depth: 4, o: 0.55, move: "turn" },
-  { img: "blossom", at: "contact", x: 0, y: 104, w: 34, min: 280, depth: 5, o: 0.4, blur: 7, move: "sway" },
+  { img: "blossom", at: "contact", x: 103, y: 104, w: 34, min: 280, depth: 5, o: 0.4, move: "sway" },
 ];
 // On other pages (case files) there are no chapters, so these are used instead.
 const ELSEWHERE = [
   { img: "nebula", x: 30, y: 30, w: 96, min: 760, depth: 2, o: 0.5, move: "drift" },
   { img: "moon", x: 94, y: 16, w: 18, min: 150, depth: 3, o: 0.7, move: "drift" },
-  { img: "flower", x: 1, y: 88, w: 22, min: 180, depth: 4, o: 0.45, move: "turn" },
 ];
 // How far each depth moves: with the pointer (px) and with a screen of scroll (share of the screen).
 const POINTER = [0, 3, 6, 12, 22, 38];
 const SCROLL = [0, 0.1, 0.2, 0.42, 0.7, 1.1];
+
+// Pixel dissolves: nine masks, from solid to nothing, made of ordered dots.
+function dissolveMasks() {
+  const M = [0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36, 14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41, 51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21];
+  return Array.from({ length: 9 }, (_, k) => {
+    if (k === 0) return "none";
+    const c = document.createElement("canvas");
+    c.width = c.height = 32;
+    const g = c.getContext("2d");
+    M.forEach((v, i) => v >= k * 7.5 && g.fillRect((i % 8) * 4, Math.floor(i / 8) * 4, 4, 4));
+    return `url(${c.toDataURL()})`;
+  });
+}
+
+// Small floating data: pixels, plus signs and brackets.
+function dataTile(size, seed) {
+  const c = document.createElement("canvas");
+  c.width = c.height = size;
+  const g = c.getContext("2d");
+  let s = seed;
+  const rnd = () => {
+    s = (s * 16807) % 2147483647;
+    return s / 2147483647;
+  };
+  const dot = (x, y, w = 1, h = 1) => g.fillRect(Math.round(x), Math.round(y), w * 2, h * 2);
+  for (let i = 0; i < 15; i++) {
+    const x = rnd() * (size - 60) + 20;
+    const y = rnd() * (size - 60) + 20;
+    g.fillStyle = ["#8f9bff", "#dcb1c2", "#b3a0d6"][i % 3];
+    g.globalAlpha = 0.28 + rnd() * 0.34;
+    const kind = i % 4;
+    if (kind === 0) {
+      dot(x - 4, y, 5, 1);
+      dot(x, y - 4, 1, 5);
+    } else if (kind === 1) {
+      for (let k = 0; k < 7; k++) if (rnd() > 0.35) dot(x + (k % 4) * 4, y + Math.floor(k / 4) * 4);
+    } else if (kind === 2) {
+      dot(x, y, 3, 1);
+      dot(x, y, 1, 3);
+      dot(x + 18, y + 18, 3, 1);
+      dot(x + 22, y + 14, 1, 3);
+    } else for (let k = 0; k < 5; k++) dot(x + k * 6, y, 1 + Math.floor(rnd() * 2), 1);
+  }
+  return `url(${c.toDataURL()})`;
+}
 
 // A tile of stars, drawn once. The brightest few get a four-point sparkle.
 function starTile(size, count, maxR, seed) {
@@ -96,6 +136,7 @@ export default function Cosmos() {
       stars[0].style.backgroundImage = starTile(700, 260, 0.7, 11);
       stars[1].style.backgroundImage = starTile(900, 90, 1.2, 37);
       stars[2].style.backgroundImage = starTile(1100, 26, 2.1, 73);
+      stars[3].style.backgroundImage = dataTile(1000, 29);
     }
 
     const items = [...el.querySelectorAll(".cosmos-obj")].map((node) => ({
@@ -106,6 +147,11 @@ export default function Cosmos() {
       shown: null,
     }));
     const lights = [...el.querySelectorAll(".cosmos-light")];
+    const galaxy = el.querySelector(".cosmos-galaxy");
+    const arms = galaxy.querySelector(".arms");
+    const haze = galaxy.querySelector(".haze");
+    const masks = dissolveMasks();
+    let mask = -1;
     const ids = [...new Set(items.map((i) => i.at).filter(Boolean))];
 
     let h = innerHeight;
@@ -161,12 +207,30 @@ export default function Cosmos() {
         it.node.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
         it.node.style.opacity = (it.o * (1 - smoothstep(0.3, 1.15, Math.abs(t))) * (1 - smoothstep(0.5, 0.88, trip))).toFixed(3);
       }
+      // The galaxy: grows as the star dives in, then drifts on into About and breaks
+      // up into pixels, so there is never an edge between the two.
+      const gone = away("intro");
+      const past = gone === null ? 9 : Math.max(0, -gone); // screens travelled beyond the opening
+      const seen = home && !reduce ? smoothstep(0.4, 0.74, space.p) * (1 - smoothstep(0.25, 1.15, past)) : 0;
+      galaxy.style.visibility = seen > 0.004 ? "visible" : "hidden";
+      if (seen > 0.004) {
+        const g = smoothstep(0.4, 1, space.p);
+        const size = 0.2 + g * g * 0.86 + past * 0.34;
+        galaxy.style.opacity = seen.toFixed(3);
+        arms.style.transform = `translate(-50%,-50%) translate3d(${(-now.x * 22).toFixed(1)}px,${(-now.y * 16 - past * h * 0.16).toFixed(1)}px,0) rotate(${(-16 + g * 13 + past * 9).toFixed(2)}deg) scale(${size.toFixed(4)})`;
+        haze.style.transform = `translate(-50%,-50%) translate3d(${(-now.x * 9).toFixed(1)}px,${(-now.y * 7 - past * h * 0.07).toFixed(1)}px,0) rotate(${(-16 + g * 7).toFixed(2)}deg) scale(${(size * 0.94 + 0.12).toFixed(4)})`;
+        const k = Math.round(smoothstep(0.05, 1, past) * 8);
+        if (k !== mask) {
+          mask = k;
+          arms.style.maskImage = arms.style.webkitMaskImage = masks[k];
+        }
+      }
       for (const l of lights) {
         const a = l.dataset.at ? away(l.dataset.at) : home ? 9 : 0;
         l.style.opacity = a === null ? 0 : (1 - clamp(Math.abs(a))).toFixed(3);
       }
       stars.forEach((s, i) => {
-        const k = 0.015 + i * 0.03;
+        const k = 0.015 + i * 0.03; // the last layer is the floating data
         s.style.transform = `translate3d(${(-now.x * (3 + i * 5)).toFixed(1)}px,${(-((now.s * k) % 350) - now.y * (3 + i * 5)).toFixed(1)}px,0)`;
       });
     }
@@ -198,8 +262,8 @@ export default function Cosmos() {
 
     measure();
     paint();
-    // Unpack the pictures early so they do not cause a hitch when first scrolled to.
-    const early = setTimeout(() => el.querySelectorAll("img").forEach((i) => i.decode?.().catch(() => {})), 1200);
+    // Unpack the pictures early, so that is not left until they scroll into view.
+    const early = setTimeout(() => el.querySelectorAll("img").forEach((p) => p.decode?.().catch(() => {})), 1200);
     const ro = new ResizeObserver(measure);
     ro.observe(document.body);
     addEventListener("resize", measure);
@@ -223,6 +287,11 @@ export default function Cosmos() {
       <span className="cosmos-stars" />
       <span className="cosmos-stars" />
       <span className="cosmos-stars" />
+      <span className="cosmos-stars" />
+      <div className="cosmos-galaxy">
+        <img className="haze" src={asset("/cosmos/galaxy-haze.webp")} alt="" draggable="false" decoding="async" />
+        <img className="arms" src={asset("/cosmos/galaxy.webp")} alt="" draggable="false" decoding="async" />
+      </div>
       {[...OBJECTS, ...ELSEWHERE].map((o, i) => (
         <div
           key={i}
@@ -234,7 +303,6 @@ export default function Cosmos() {
         >
           <img
             className={`${o.move ? `move-${o.move}` : ""} ${o.flip ? "is-flip" : ""}`}
-            style={o.blur ? { filter: `blur(${o.blur}px)` } : undefined}
             src={asset(`/cosmos/${o.img}.webp`)}
             alt=""
             draggable="false"
@@ -243,6 +311,9 @@ export default function Cosmos() {
           />
         </div>
       ))}
+      {/* One screen treatment over the whole sky, so every picture belongs to the same world */}
+      <span className="cosmos-grain" />
+      <span className="cosmos-dither" />
     </div>
   );
 }

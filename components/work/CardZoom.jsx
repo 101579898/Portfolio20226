@@ -2,6 +2,7 @@
 
 // One card shown big, free to spin in 3D.
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { createPortal } from "react-dom";
 import gsap from "gsap";
 import ProjectCard from "../ProjectCard";
@@ -49,17 +50,18 @@ export default function CardZoom({ entry, number, total, index, onClose, onOpen 
           rarity={rarity}
           number={`${pad(number)}/${pad(total)}`}
           spin
-          info
           flipped={flipped}
           onFlip={setFlipped}
-          onNavigate={onClose}
-          onOpen={card.kind === "project" ? () => onOpen(index) : undefined}
         />
       </div>
       <p className="zoom-hint">Drag to spin the card. Tap it to flip.</p>
       <div className="pack-controls">
         <button className="btn" onClick={() => setFlipped((f) => !f)} aria-pressed={flipped}>Flip card</button>
-        {card.kind === "project" ? <button className="btn primary" onClick={() => onOpen(index)}>Open project</button> : null}
+        {card.kind === "project" ? (
+          <button className="btn primary" onClick={() => onOpen(index)}>Open project</button>
+        ) : (
+          <Link className="btn primary" href={card.href} onClick={onClose}>{card.cta}</Link>
+        )}
       </div>
     </div>,
     document.body

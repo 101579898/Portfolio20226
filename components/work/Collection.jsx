@@ -5,6 +5,7 @@
 // `pos` is where we are along the row (a decimal while dragging); layout() turns it
 // into positions. The intro plays through the same layout, from the fan the 3D pack
 // left behind, to a stack, to the row.
+import Link from "next/link";
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import ProjectCard from "../ProjectCard";
@@ -16,7 +17,7 @@ const mix = (a, b, t) => a + (b - a) * t;
 const calm = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const Collection = forwardRef(function Collection(
-  { cards, index, onIndex, seen, onSeen, intro, fx, scale, onIntroDone, onOpen, onInspect, away },
+  { cards, index, onIndex, seen, onSeen, intro, fx, scale, onIntroDone, onOpen, onInspect, onEnd, complete, paused, away },
   handle
 ) {
   const total = cards.length;
@@ -122,7 +123,21 @@ const Collection = forwardRef(function Collection(
     return () => clearTimeout(timer);
   }, [ready, index, cards, seen, onSeen]);
 
+  // At the last card, once it has turned over, the whole collection lays itself out.
+  // Doing anything with the card (dragging, flipping, opening, pointing at it) waits.
+  const [touch, setTouch] = useState(0);
+  const stay = () => setTouch((n) => n + 1);
+  useEffect(() => {
+    if (!ready || complete || away || paused || flipped || index !== total - 1 || !seen.has(cards[index].card.id)) return;
+    const timer = setTimeout(onEnd, 2600);
+    return () => clearTimeout(timer);
+  }, [ready, complete, away, paused, flipped, index, total, seen, cards, onEnd, touch]);
+
   const goTo = (i) => {
+    if (i >= total && index === total - 1) {
+      onEnd(); // going past the last card
+      return;
+    }
     const to = Math.max(0, Math.min(total - 1, i));
     if (to !== index) onIndex(to);
     else gsap.to(pos.current, { v: to, duration: 0.45, ease: "power3.out", onUpdate: layout, overwrite: true });
@@ -130,13 +145,16 @@ const Collection = forwardRef(function Collection(
 
   // ── Drag / swipe ──────────────────────────────────────────
   function down(e) {
-    if (!ready || away || (e.pointerType === "mouse" && e.button !== 0) || e.target.closest("a, .card-back button")) return;
+    if (!ready || away || (e.pointerType === "mouse" && e.button !== 0) || e.target.closest("a")) return;
     suppress.current = false;
     drag.current = { x: e.clientX, from: pos.current.v, moved: false, id: e.pointerId, last: e.clientX, time: e.timeStamp, v: 0 };
   }
   function move(e) {
     const g = drag.current;
-    if (!g) return;
+    if (!g) {
+      if (e.pointerType === "mouse" && index === total - 1 && !complete) stay();
+      return;
+    }
     const dx = e.clientX - g.x;
     if (!g.moved && Math.abs(dx) > 7) {
       g.moved = true;
@@ -162,13 +180,17 @@ const Collection = forwardRef(function Collection(
     suppress.current = true;
     setTimeout(() => (suppress.current = false), 60);
     // A quick flick always moves one card; a long drag can travel further.
+    if (pos.current.v > total - 1 + 0.12) {
+      onEnd(); // pulled past the last card
+      return;
+    }
     let to = Math.round(pos.current.v);
     if (to === index && e.type === "pointerup" && Math.abs(g.v) > 0.35) to = index - Math.sign(g.v);
     goTo(to);
   }
 
   function click(i, e) {
-    if (suppress.current || !ready || e.target.closest("a, .card-back button")) return;
+    if (suppress.current || !ready || e.target.closest("a")) return;
     if (i !== index) goTo(i);
     else if (flipped) setFlipped(false);
     else onOpen(i);
@@ -203,9 +225,7 @@ const Collection = forwardRef(function Collection(
                 rarity={r}
                 number={`${pad(i + 1)}/${pad(total)}`}
                 tilt={isNow && ready}
-                info={isNow && up}
                 flipped={!up || (isNow && flipped)}
-                onOpen={card.kind === "project" ? () => onOpen(i) : undefined}
               >
                 {isNow && ready && !flipped ? (
                   <button
@@ -240,14 +260,18 @@ const Collection = forwardRef(function Collection(
             </li>
           ))}
         </ol>
-        <button className="btn round" onClick={() => goTo(index + 1)} disabled={index === total - 1} aria-label="Next card">›</button>
+        <button className="btn round" onClick={() => goTo(index + 1)} aria-label={index === total - 1 ? "Show the full collection" : "Next card"}>{index === total - 1 ? "✦" : "›"}</button>
       </div>
       <p className="collection-count" aria-live="polite">
         {pad(index + 1)} / {pad(total)}
         {known ? <> · {now.title} · <span className={`rarity r-${rarity}`}>{RARITY_LABEL[rarity]}</span></> : null}
       </p>
       <div className="pack-controls" inert={!ready || away}>
-        <button className="btn" onClick={() => onOpen(index)}>{now.kind === "project" ? "Open project" : "Look closer"}</button>
+        {now.kind === "project" ? (
+          <button className="btn" onClick={() => onOpen(index)}>Open project</button>
+        ) : (
+          <Link className="btn" href={now.href}>{now.cta}</Link>
+        )}
         <button className="btn ghost" onClick={() => setFlipped((f) => !f)} aria-pressed={flipped}>Flip card</button>
         <button className="btn ghost" onClick={() => onInspect(index)}>Spin in 3D</button>
       </div>

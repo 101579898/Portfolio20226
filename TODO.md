@@ -15,7 +15,6 @@ accessibility, loading and testing. Myro has been removed.
 ## Whenever you like (all in `data/site.js`)
 
 - [ ] Skill levels (`skills`)
-- [ ] Bio still says "I'm also into branding and visual design": keep or change? (`profile.bio`)
 - [ ] Cafe Finder: how it ended up (`outcome`), hidden until filled in
 - [ ] More projects: each one is a new entry in `projects`
 - [ ] A photo for About (`profile.photo`); the pixel lily is there for now

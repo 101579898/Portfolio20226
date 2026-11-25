@@ -13,6 +13,10 @@ export default function Scanlines() {
     } catch {}
   }, []);
 
+  useEffect(() => {
+    document.documentElement.dataset.static = on ? "on" : "off";
+  }, [on]);
+
   function toggle() {
     const next = !on;
     setOn(next);

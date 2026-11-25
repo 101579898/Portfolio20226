@@ -333,10 +333,10 @@ function Dust({ count }) {
       premultipliedAlpha: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
-      uniforms: { uP: { value: 0 }, uW: { value: 0 } },
+      uniforms: { uP: { value: 0 }, uW: { value: 0 }, uF: { value: 1 } },
       vertexShader: `attribute float end; uniform float uP,uW; varying float vA;
         void main(){ vec3 p=position; p.z=mod(p.z+uP*34.,30.)-26.; float near=smoothstep(-26.,-4.,p.z)*smoothstep(5.,2.,p.z); p.z-=end*(.03+uW*2.6); vA=near*(1.-end*.85); gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.); }`,
-      fragmentShader: `uniform float uW; varying float vA; void main(){ float i=vA*(.12+uW*.55); gl_FragColor=vec4(vec3(.86,.8,.95)*i,i*.2); }`,
+      fragmentShader: `uniform float uW,uF; varying float vA; void main(){ float i=vA*(.12+uW*.55); i*=uF; gl_FragColor=vec4(vec3(.86,.8,.95)*i,i*.2); }`,
     });
     return { geo, mat };
   }, [count]);
@@ -344,6 +344,7 @@ function Dust({ count }) {
   const last = useRef(0);
   useFrame(() => {
     mat.uniforms.uP.value = space.p;
+    mat.uniforms.uF.value = 1 - smoothstep(0.86, 0.97, space.p);
     const v = Math.min(1, Math.abs(space.p - last.current) * 60);
     last.current = space.p;
     mat.uniforms.uW.value += (Math.max(v, smoothstep(0.1, 0.5, space.p) * 0.35 * (1 - smoothstep(0.85, 1, space.p))) - mat.uniforms.uW.value) * 0.1;
