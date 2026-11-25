@@ -22,7 +22,7 @@ export default function Decode({ text, className = "" }) {
           n += 1.5;
           el.textContent = [...text].map((c, i) => (c === " " || i < n ? c : NOISE[Math.floor(Math.random() * NOISE.length)])).join("");
           if (n >= text.length) clearInterval(timer);
-        }, 34);
+        }, 52);
       },
       { threshold: 0.6 }
     );

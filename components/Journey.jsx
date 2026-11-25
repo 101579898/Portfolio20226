@@ -1,8 +1,7 @@
 "use client";
 
 // Chapter 01. One continuous scroll: the star flies in, the title appears, and
-// as you scroll the star pulls you past glass and dust into a small bloom of light (drawn by
-// Cosmos.jsx, so it carries on into the next chapter), where About begins. The star itself lives in StarScene.jsx.
+// as you scroll the star pulls you past glass and dust, then fades away as About begins. The star itself lives in StarScene.jsx.
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
@@ -30,7 +29,6 @@ export default function Journey() {
   const root = useRef(null);
   const title = useRef(null);
   const entering = useRef(null);
-  const flash = useRef(null);
   const actions = useRef(null);
   const message = useRef(null);
   // "pending" until we know; "3d" shows the scene; "flat" shows a drawn star instead.
@@ -41,7 +39,7 @@ export default function Journey() {
     const g = gate.current;
     if (!g.booted || !g.warm || g.flown) return;
     g.flown = true;
-    gsap.to(space, { intro: 1, duration: 2.1, ease: "power3.out" });
+    gsap.fromTo(space, { intro: 0 }, { intro: 1, duration: 3.2, ease: "power2.out" });
   }
 
   useEffect(() => {
@@ -136,9 +134,8 @@ export default function Journey() {
         message.current.style.opacity = 1 - out;
         message.current.style.visibility = out >= 1 ? "hidden" : "visible";
         message.current.style.transform = `translateY(${-out * 90}px)`;
-        entering.current.style.opacity = bump(0.4, 0.55, 0.78, 0.9, q);
-        entering.current.style.transform = `translateY(${(0.55 - Math.min(q, 0.55)) * 60}px)`;
-        flash.current.style.opacity = bump(0.82, 0.93, 0.94, 1, q) * 0.4;
+        entering.current.style.opacity = bump(0.2, 0.36, 0.84, 0.98, q);
+        entering.current.style.transform = `translateY(${(0.36 - Math.min(q, 0.36)) * 60}px)`;
       }
 
       const state = { q: 0 };
@@ -154,18 +151,31 @@ export default function Journey() {
       space.intro = 0;
       const intro = gsap
         .timeline({ paused: true })
-        .from(".hero-line > span", { yPercent: 60, opacity: 0, duration: 1.1, ease: "power3.out", stagger: 0.14 }, 0.45)
-        .from(".hero-flourish path", { strokeDashoffset: 1, duration: 1.3, ease: "power2.inOut" }, 0.85)
-        .from(".hero-fade", { opacity: 0, y: 12, duration: 0.8, stagger: 0.12 }, 1);
+        .from(".hero-line > span", { yPercent: 34, opacity: 0.001, duration: 1.8, ease: "power2.out", stagger: 0.4 }, 0.9)
+        .from(".hero-flourish path", { strokeDashoffset: 1, duration: 2, ease: "power2.inOut" }, 2)
+        .from(".hero-fade", { opacity: 0.001, y: 12, duration: 1.2, stagger: 0.35 }, 2.5);
+      // Behind the black boot screen, draw everything once in its final place, so the
+      // first frames of the opening never stall.
+      const rehearse = () => {
+        space.intro = 1;
+        intro.progress(1).pause();
+      };
       const playIntro = () => {
         gate.current.booted = true;
+        space.intro = 0;
         flyIn();
-        intro.play();
+        intro.progress(0).play();
       };
       if (document.documentElement.dataset.booted) playIntro();
-      else window.addEventListener("portfolio:booted", playIntro, { once: true });
+      else {
+        window.addEventListener("portfolio:rehearse", rehearse, { once: true });
+        window.addEventListener("portfolio:booted", playIntro, { once: true });
+      }
 
-      return () => window.removeEventListener("portfolio:booted", playIntro);
+      return () => {
+        window.removeEventListener("portfolio:rehearse", rehearse);
+        window.removeEventListener("portfolio:booted", playIntro);
+      };
     },
     { scope: root }
   );
@@ -211,7 +221,6 @@ export default function Journey() {
           <span className="label">[ Coordinates_locked ]</span>
           Entering Digi-Space
         </p>
-        <div className="journey-flash" ref={flash} aria-hidden="true" />
       </div>
     </section>
   );
