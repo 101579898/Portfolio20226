@@ -127,9 +127,12 @@ export default function StarPal() {
       {[0, 1, 2, 3, 4, 5].map((i) => (
         <span key={i} className="pal-spark" aria-hidden="true" />
       ))}
+      <span className="pal-bits" aria-hidden="true">
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => <i key={i} style={{ "--i": i }} />)}
+      </span>
       <span className="pal-bob">
         <span className="pal-art" ref={body}>
-          <KiwiArt eyesRef={eyes} />
+          <KiwiArt eyesRef={eyes} aura />
         </span>
       </span>
       {say ? <span className="pal-say" aria-hidden="true">{say}</span> : null}

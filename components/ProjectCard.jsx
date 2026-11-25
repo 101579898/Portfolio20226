@@ -6,15 +6,14 @@
 //   rarity  – "common" | "holo" | "star" | "cosmic": how much foil it has
 //   tilt    – leans toward the pointer and the foil shifts with it
 //   flipped – show the back
-//   info    – the back also shows the write-up and a button
 //   spin    – drag to turn the card freely in 3D; a tap flips it (used in the zoom view)
 import { useEffect, useRef } from "react";
-import Link from "next/link";
 import gsap from "gsap";
 import PixelArt from "./PixelArt";
 import KiwiArt from "./KiwiArt";
 import { asset } from "@/lib/asset";
 import { RARITY_LABEL } from "@/lib/deck";
+import { cardBack } from "@/lib/cardback";
 
 function CardArt({ card }) {
   if (card.kind === "skill") {
@@ -51,18 +50,25 @@ export default function ProjectCard({
   rarity = "common",
   tilt = false,
   flipped = false,
-  info = false,
   spin = false,
   badge,
   onFlip,
-  onNavigate,
-  onOpen,
   children,
 }) {
   const ref = useRef(null);
   // Spin mode keeps its own rotation (in degrees): base turn + a small hover lean.
   const rot = useRef({ x: 0, y: 0, hx: 0, hy: 0 });
   const drag = useRef(null);
+  const back = useRef(null);
+
+  // Print the back of the card.
+  useEffect(() => {
+    const art = cardBack(card);
+    const c = back.current;
+    c.width = art.width;
+    c.height = art.height;
+    c.getContext("2d").drawImage(art, 0, 0);
+  }, [card]);
 
   function paint() {
     const el = ref.current;
@@ -199,27 +205,14 @@ export default function ProjectCard({
             <span className="card-rarity">{RARITY_LABEL[rarity]}</span>
           </footer>
           <span className="card-foil" aria-hidden="true" />
+          <span className="card-pixels" aria-hidden="true" />
           <span className="card-sheen" aria-hidden="true" />
         </article>
 
-        {/* BACK: the card-back design, plus the write-up when `info` is on */}
-        <div className="card card-back" inert={!flipped || !info}>
-          <img className="back-art" src={asset("/work/card-back.webp")} alt="" draggable="false" />
-          {info ? (
-            <div className="back-info">
-              <h3 className="card-title">{card.title}</h3>
-              <ol className="card-back-list">
-                {card.list.map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-              </ol>
-              {onOpen ? (
-                <button className="btn primary" onClick={(e) => { e.stopPropagation(); onOpen(); }}>{card.cta}</button>
-              ) : (
-                <Link className="btn primary" href={card.href} onClick={onNavigate}>{card.cta}</Link>
-              )}
-            </div>
-          ) : null}
+        {/* BACK: Kiwi on her moon (see lib/cardback.js) */}
+        <div className="card card-back" aria-hidden="true">
+          <canvas className="back-art" ref={back} />
+          <span className="back-holo" />
           <span className="card-sheen" aria-hidden="true" />
         </div>
       </div>

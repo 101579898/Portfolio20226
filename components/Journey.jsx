@@ -1,15 +1,14 @@
 "use client";
 
 // Chapter 01. One continuous scroll: the star flies in, the title appears, and
-// as you scroll the star pulls you past glass and dust into a galaxy, where
-// the About chapter begins. The star itself lives in StarScene.jsx.
+// as you scroll the star pulls you past glass and dust into a galaxy (drawn by
+// Cosmos.jsx, so it carries on into the next chapter), where About begins. The star itself lives in StarScene.jsx.
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Transmission from "./Transmission";
-import { asset } from "@/lib/asset";
 import { space, smoothstep } from "@/lib/space";
 import { profile } from "@/data/site";
 
@@ -30,7 +29,6 @@ export default function Journey() {
   const root = useRef(null);
   const title = useRef(null);
   const entering = useRef(null);
-  const galaxy = useRef(null);
   const flash = useRef(null);
   const actions = useRef(null);
   const message = useRef(null);
@@ -89,10 +87,7 @@ export default function Journey() {
         message.current.style.transform = `translateY(${-out * 90}px)`;
         entering.current.style.opacity = bump(0.4, 0.55, 0.78, 0.9, q);
         entering.current.style.transform = `translateY(${(0.55 - Math.min(q, 0.55)) * 60}px)`;
-        const g = smoothstep(0.42, 1, q);
-        galaxy.current.style.opacity = bump(0.42, 0.75, 0.995, 1.2, q);
-        galaxy.current.style.transform = `translate(-50%, -50%) scale(${0.28 + g * g * 1.15}) rotate(${-14 + g * 14}deg)`;
-        flash.current.style.opacity = bump(0.86, 0.96, 0.965, 1, q) * 0.55;
+        flash.current.style.opacity = bump(0.82, 0.93, 0.94, 1, q) * 0.4;
       }
 
       const state = { q: 0 };
@@ -127,7 +122,6 @@ export default function Journey() {
   return (
     <section className="journey" id="intro" ref={root} aria-label="Welcome">
       <div className="journey-stage">
-        <img className="journey-galaxy" ref={galaxy} src={asset("/cosmos/galaxy.webp")} alt="" aria-hidden="true" />
         {mode === "3d" ? <StarScene
             onReady={() => {
               gate.current.warm = true;

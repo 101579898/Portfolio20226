@@ -7,6 +7,7 @@
 // Nothing plays on its own, and nothing loads from Spotify until you are near.
 import { useEffect, useRef, useState } from "react";
 import Reveal from "./Reveal";
+import Decode from "./Decode";
 import Waves from "./Waves";
 import { loadSpotify, spotifyUri } from "@/lib/spotify";
 import { music } from "@/data/site";
@@ -116,8 +117,8 @@ export default function Music() {
       <Waves energy={energy} />
       <div className="chapter">
         <div className="chapter-head">
-          <p className="label">Music <span aria-hidden="true">/</span> Playlist</p>
-          <p className="label">Chapter 04</p>
+          <Decode text="Music / Playlist" />
+        <Decode text="Chapter 04" />
         </div>
         <Reveal as="h2" id="music-title" className="display center">What I listen to.</Reveal>
 

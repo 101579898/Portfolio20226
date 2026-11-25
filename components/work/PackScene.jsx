@@ -9,6 +9,7 @@ import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import WarmUp from "../WarmUp";
 import { asset } from "@/lib/asset";
+import { cardBack } from "@/lib/cardback";
 import { fanPose, PACK } from "./machine";
 
 const W = PACK.w / 100;
@@ -174,8 +175,28 @@ function Camera() {
   return null;
 }
 
-function Pack({ fx, total, scale }) {
-  const [front, normal, back] = useLoader(THREE.TextureLoader, [asset("/work/pack-front.webp"), asset("/work/pack-normal.webp"), asset("/work/card-back.webp")]);
+function Pack({ fx, cards: deck, scale }) {
+  const total = deck.length;
+  const [front, normal] = useLoader(THREE.TextureLoader, [asset("/work/pack-front.webp"), asset("/work/pack-normal.webp")]);
+  // One printed back per card. The last mesh is the top of the stack, which is card 0.
+  const backs = useMemo(
+    () =>
+      deck.map(({ card }) => {
+        const t = new THREE.CanvasTexture(cardBack(card));
+        t.colorSpace = THREE.SRGBColorSpace;
+        t.anisotropy = 8;
+        return new THREE.MeshBasicMaterial({ map: t, transparent: true, toneMapped: false, depthWrite: false, depthTest: false });
+      }),
+    [deck]
+  );
+  useEffect(
+    () => () =>
+      backs.forEach((m) => {
+        m.map.dispose();
+        m.dispose();
+      }),
+    [backs]
+  );
   const root = useRef(null);
   const wrapper = useRef(null);
   const strip = useRef(null);
@@ -185,8 +206,8 @@ function Pack({ fx, total, scale }) {
 
   const u = useMemo(() => ({ tear: { value: 0 }, dir: { value: 1 }, gape: { value: 0 } }), []);
   const kit = useMemo(() => {
-    front.colorSpace = back.colorSpace = THREE.SRGBColorSpace;
-    front.anisotropy = back.anisotropy = 8;
+    front.colorSpace = THREE.SRGBColorSpace;
+    front.anisotropy = 8;
     const maps = { front, normal };
     const geoF = sheet(1);
     const geoB = sheet(-1);
@@ -209,7 +230,6 @@ function Pack({ fx, total, scale }) {
     const uv = cardGeo.attributes.uv;
     const pos = cardGeo.attributes.position;
     for (let i = 0; i < uv.count; i++) uv.setXY(i, pos.getX(i) / cw + 0.5, pos.getY(i) / ch + 0.5);
-    const cardMat = new THREE.MeshBasicMaterial({ map: back, transparent: true, toneMapped: false, depthWrite: false, depthTest: false });
     // The light inside: a soft column rising from the mouth, hotter along the torn edge.
     const lightMat = new THREE.ShaderMaterial({
       transparent: true,
@@ -227,8 +247,8 @@ function Pack({ fx, total, scale }) {
     });
     const lightGeo = new THREE.PlaneGeometry(W * 1.5, 3.2);
     lightGeo.translate(0, 1.6, 0);
-    return { geoF, geoB, mats, cardGeo, cardMat, lightMat, lightGeo };
-  }, [front, normal, back, u]);
+    return { geoF, geoB, mats, cardGeo, lightMat, lightGeo };
+  }, [front, normal, u]);
 
   useEffect(
     () => () => {
@@ -236,7 +256,6 @@ function Pack({ fx, total, scale }) {
       kit.geoB.dispose();
       kit.cardGeo.dispose();
       kit.lightGeo.dispose();
-      kit.cardMat.dispose();
       kit.lightMat.dispose();
       Object.values(kit.mats).forEach((m) => m.dispose());
     },
@@ -278,7 +297,7 @@ function Pack({ fx, total, scale }) {
     light.current.position.set(0, TEAR_Y - 0.08 - f.rise * 1.5 - f.drop * 4, 0.02);
     light.current.scale.set(1, 0.5 + f.light * 0.75, 1);
 
-    kit.cardMat.opacity = f.cards;
+    backs.forEach((m) => (m.opacity = f.cards));
     cards.current.forEach((c, i) => {
       if (!c) return;
       const pose = fanPose(i, total);
@@ -298,7 +317,7 @@ function Pack({ fx, total, scale }) {
         <mesh geometry={kit.geoB} material={kit.mats.bodyB} renderOrder={0} />
       </group>
       {Array.from({ length: total }, (_, i) => (
-        <mesh key={i} ref={(m) => (cards.current[i] = m)} geometry={kit.cardGeo} material={kit.cardMat} renderOrder={1 + i * 0.01} />
+        <mesh key={i} ref={(m) => (cards.current[i] = m)} geometry={kit.cardGeo} material={backs[total - 1 - i]} renderOrder={1 + i * 0.01} />
       ))}
       <mesh ref={light} geometry={kit.lightGeo} material={kit.lightMat} renderOrder={2} />
       <FrontOf wrapper={wrapper} geo={kit.geoF} mat={kit.mats.bodyF} />
@@ -321,7 +340,7 @@ function FrontOf({ wrapper, geo, mat }) {
   return <mesh ref={ref} geometry={geo} material={mat} renderOrder={3} />;
 }
 
-export default function PackScene({ fx, total, scale, awake, onReady, onFail }) {
+export default function PackScene({ fx, cards, scale, awake, onReady, onFail }) {
   return (
     <Canvas
       className="pack-canvas"
@@ -338,7 +357,7 @@ export default function PackScene({ fx, total, scale, awake, onReady, onFail }) 
       <Lights />
       <Camera />
       <Suspense fallback={null}>
-        <Pack fx={fx} total={total} scale={scale} />
+        <Pack fx={fx} cards={cards} scale={scale} />
         <WarmUp onReady={onReady} />
       </Suspense>
     </Canvas>

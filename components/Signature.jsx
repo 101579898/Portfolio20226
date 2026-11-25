@@ -1,8 +1,8 @@
 "use client";
 
-// Kiara's name as a drawn signature: sharp, blade-like chrome letters with orbit
-// swooshes and sparkles. Every stroke is a blade that tapers to a point at each
-// end, so the letters can be adjusted by moving the points below.
+// Kiara's name as a flowing chrome script, with one long flourish that ends in the
+// shooting star. The letters are outlines of Great Vibes (SIL Open Font License),
+// the same hand as "Portfolio" in the opening; the flourish and chrome are ours.
 import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -10,40 +10,11 @@ import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const n = (v) => Math.round(v * 10) / 10;
-
-// A blade from (x1,y1) to (x2,y2). `bend` curves it, `w` is its widest point,
-// `at` is how far along that widest point sits (0-1).
-function blade(x1, y1, x2, y2, w, bend = 0, at = 0.5) {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const len = Math.hypot(dx, dy) || 1;
-  const nx = -dy / len;
-  const ny = dx / len;
-  const mx = x1 + dx * at + nx * bend;
-  const my = y1 + dy * at + ny * bend;
-  return `M${n(x1)} ${n(y1)} Q${n(mx + nx * w)} ${n(my + ny * w)} ${n(x2)} ${n(y2)} Q${n(mx - nx * w)} ${n(my - ny * w)} ${n(x1)} ${n(y1)}Z`;
-}
-const spark = (x, y, r) => `M${x} ${y - r} Q${x + r * 0.07} ${y - r * 0.07} ${x + r} ${y} Q${x + r * 0.07} ${y + r * 0.07} ${x} ${y + r} Q${x - r * 0.07} ${y + r * 0.07} ${x - r} ${y} Q${x - r * 0.07} ${y - r * 0.07} ${x} ${y - r}Z`;
-
-// Each letter: its strokes, in drawing order. Letters stand between y = 100 and y = 330.
-const LETTERS = [
-  // K
-  [blade(150, 40, 142, 392, 30), blade(146, 226, 330, 62, 22, -26, 0.4), blade(176, 190, 352, 400, 26, 18, 0.45), blade(108, 92, 206, 62, 8, -12), blade(98, 372, 196, 352, 8, 10), blade(296, 108, 392, 34, 7, 10)],
-  // I
-  [blade(402, 82, 396, 358, 27), blade(352, 118, 446, 100, 7, -8), blade(350, 340, 444, 326, 7, 8)],
-  // A
-  [blade(578, 50, 452, 372, 22, 12), blade(560, 46, 676, 378, 30, -10), blade(424, 268, 716, 250, 11, 8)],
-  // R
-  [blade(752, 60, 744, 378, 28), blade(700, 352, 794, 338, 8, 8), blade(884, 372, 968, 392, 7, -10), blade(720, 104, 752, 238, 24, -176, 0.48), blade(764, 216, 918, 404, 26, 16, 0.4)],
-  // A
-  [blade(1018, 50, 892, 372, 22, 12), blade(1000, 46, 1118, 384, 30, -10), blade(866, 270, 1290, 226, 11, 18)],
-];
-const SWOOSH = [
-  blade(20, 330, 1180, 396, 9, 74, 0.45),
-  blade(1300, 110, 640, 12, 8, 40, 0.5),
-  blade(60, 130, 420, 18, 7, -30, 0.5),
-];
+const NAME = "M369 55.5Q348 55.5 328.3 42.4Q308.7 29.4 294.9-0.9Q288.9-14.4 285.1-28.2Q281.4-42 279.6-54Q277.8-66 277.8-73.8Q277.8-83.4 279.9-84.6Q285.6-84 298.9-89.4Q312.3-94.8 330.8-105.3Q349.2-115.8 370.6-130.7Q392.1-145.5 413.8-164.1Q435.6-182.7 455.7-204.3Q475.8-225.9 491.1-249.6Q493.2-252.9 494.4-254.4Q495.6-255.9 496.8-255.9Q498.3-255.9 499.5-254.5Q500.7-253.2 500.7-251.7Q500.7-249.3 498.6-246Q484.2-222 464.5-199Q444.9-176.1 422.7-156Q400.5-135.9 378-119.7Q355.5-103.5 335.1-92.7Q314.7-81.9 299.1-78Q298.2-78.6 298.2-75Q298.2-69.9 300.3-58.6Q302.4-47.4 306.8-33.1Q311.1-18.9 317.4-4.2Q328.8 22.5 344.3 32.5Q359.7 42.6 376.2 42.6Q386.7 42.6 397.8 38.4Q408.9 34.2 418.2 26.8Q427.5 19.5 432.6 9.6Q434.4 6.6 435.3 6.6Q437.4 6.6 437.4 9Q437.4 9.9 436.9 10.9Q436.5 12 435 15.3Q430.8 23.7 421.1 33.1Q411.3 42.6 397.9 49Q384.6 55.5 369 55.5M114.3 51.6Q93.9 51.6 74.8 46Q55.8 40.5 40.6 29.7Q25.5 18.9 16.6 3.3Q7.8-12.3 7.8-32.1Q7.8-46.5 12.2-57.7Q16.5-69 22.9-76.5Q29.4-84 35.9-87.9Q42.3-91.8 46.5-91.8Q49.5-91.8 49.5-90Q49.5-88.5 48-87.6Q41.1-84 33.9-77.1Q26.7-70.2 21.9-59.1Q17.1-48 17.1-31.5Q17.1-13.5 24.8-0.7Q32.4 12 44.9 20.1Q57.3 28.2 71.7 31.9Q86.1 35.7 99.3 35.7Q128.7 35.7 154.2 24.3Q179.7 12.9 200.8-6.1Q222-25.2 238.2-48.6Q254.4-72 264.9-96Q268.8-104.7 274.2-116.8Q279.6-129 285.9-142.8Q292.2-156.6 298.2-169.8Q304.2-183 309.1-193.7Q314.1-204.3 317.1-210Q297-207.6 273.8-205.7Q250.5-203.7 229.5-197.7Q206.1-191.1 191.3-178.5Q176.4-165.9 169.3-151.2Q162.3-136.5 162.3-123.6Q162.3-108 170.1-98Q177.9-87.9 192.6-87.9Q203.7-87.9 212.4-94.3Q221.1-100.8 226.2-111.1Q231.3-121.5 231.3-133.2Q231.3-138 230.4-141.3Q229.5-144.6 229.5-146.4Q229.5-148.5 231-148.5Q233.1-148.5 234.9-144.9Q237.9-138 237.9-131.4Q237.9-117.3 231-106Q224.1-94.8 213.3-88.2Q202.5-81.6 190.5-81.6Q176.4-81.6 166-88.3Q155.7-95.1 150-106.2Q144.3-117.3 144.3-130.2Q144.3-144.9 152.4-160Q160.5-175.2 178.5-187.7Q196.5-200.1 225.9-206.7Q250.5-212.1 276-213.7Q301.5-215.4 321-217.2Q331.5-233.4 338.1-237.7Q344.7-242.1 350.1-242.1Q355.5-242.1 358.6-239.1Q361.8-236.1 361.8-231.9Q361.8-225.9 353.6-219.2Q345.3-212.4 325.8-210.3Q316.2-192.6 308.1-170.8Q300-149.1 291.9-125.4Q283.8-101.7 274.2-78.3Q258-39.3 235.8-10Q213.6 19.2 183.6 35.4Q153.6 51.6 114.3 51.6M331.5-217.8Q339-218.4 345.9-222.2Q352.8-225.9 352.8-230.4Q352.8-233.4 349.8-233.4Q347.1-233.4 342.3-229.9Q337.5-226.5 331.5-217.8M418.2 0Q407.1 0 402.6-6.5Q398.1-12.9 398.1-21.3Q398.1-25.8 399.1-30.4Q400.2-35.1 401.7-39L421.8-90.3Q422.7-92.7 422.7-94.5Q422.7-97.5 421.2-99.7Q419.7-102 419.1-102.9L435.6-103.5Q440.1-103.8 442-102.5Q444-101.1 444-99.3Q444-97.5 441.9-92.7Q438.9-85.5 433.8-74.7Q428.7-63.9 423.7-52.5Q418.8-41.1 415.3-31.2Q411.9-21.3 411.9-15.9Q411.9-12 413.8-9.3Q415.8-6.6 420.6-6.6Q426.9-6.6 433-11.5Q439.2-16.5 444.6-24.3Q450-32.1 454.6-41.1Q459.3-50.1 462.6-57.9Q466.2-57.9 466.2-55.2Q463.2-47.7 458.4-38.1Q453.6-28.5 447.4-19.9Q441.3-11.4 433.9-5.7Q426.6 0 418.2 0M444.9-122.1Q441-122.1 438.1-125.1Q435.3-128.1 435.3-132.3Q435.3-137.4 439.5-141.4Q443.7-145.5 448.8-145.5Q453-145.5 456-142.8Q459-140.1 459-135.9Q459-130.5 454.8-126.3Q450.6-122.1 444.9-122.1M527.7 0.9Q520.8 0.9 515.5-3Q510.3-6.9 510.3-18.9Q510.3-24 511-28.5Q511.8-33 513-38.1Q510.3-33.6 505.5-27Q500.7-20.4 494.8-14.1Q489-7.8 482.8-3.6Q476.7 0.6 471.3 0.6Q463.5 0.6 458.7-6.5Q453.9-13.5 453.9-24.9Q453.9-37.2 459.6-51.3Q465.3-65.4 475.2-78.3Q485.1-91.2 498-99.3Q510.9-107.4 525-107.4Q531.9-107.4 538.2-105.1Q544.5-102.9 549.3-97.8Q551.4-95.7 551.4-93Q551.4-91.2 549.9-90Q548.4-88.8 546-89.4Q542.7-99.9 531.9-99.9Q526.8-99.9 520.2-96.6Q512.1-92.4 502.9-83.2Q493.8-74.1 485.8-62.5Q477.9-51 472.8-39.3Q467.7-27.6 467.7-18Q467.7-8.1 475.2-8.1Q481.8-8.1 488.8-14.4Q495.9-20.7 502.3-30.1Q508.8-39.6 514.2-48.9Q519.6-58.2 522.6-63.9Q527.1-72 531-77.4Q534.9-82.8 542.1-82.8Q545.4-82.8 548.7-81.9Q552-81 555.6-81.6Q546.6-72.6 539.9-60.3Q533.1-48 529.5-36.1Q525.9-24.3 525.9-16.2Q525.9-7.2 531.9-7.2Q536.7-7.2 542.3-12.6Q547.8-18 553-26.2Q558.3-34.5 562.8-43Q567.3-51.6 570-57.9Q571.5-57.9 572.5-57.6Q573.6-57.3 573.6-55.2Q573.3-54 572.5-52.6Q571.8-51.3 570.3-48Q567.9-43.2 563.7-35.1Q559.5-27 553.8-18.7Q548.1-10.5 541.5-4.8Q534.9 0.9 527.7 0.9M570.3-58.8Q572.7-63.9 576.6-75.1Q580.5-86.4 584.7-100.2Q588.9-114 591-126.3Q591.9-131.1 594.3-133.3Q596.7-135.6 599.4-135.6Q603.3-135.6 606.6-131.8Q609.9-128.1 609.9-121.2Q609.9-112.8 604.9-106.8Q600-100.8 592.8-95.4Q595.8-95.1 599.1-95Q602.4-94.8 606.3-94.8Q620.4-94.8 634.2-96.6Q634.8-94.8 634.8-93.9Q634.8-90 632.5-84Q630.3-78 627.9-73.2Q626.7-70.5 623.1-63.4Q619.5-56.4 615.3-47.5Q611.1-38.7 608.3-30.1Q605.4-21.6 605.4-15.6Q605.4-7.8 611.4-7.8Q617.1-7.8 627.3-21.1Q637.5-34.5 647.7-57.9Q651.3-57.9 651.3-55.2Q648-47.1 643-37.5Q638.1-27.9 632.1-19.3Q626.1-10.8 619.2-5.2Q612.3 0.3 604.8 0.3Q599.1 0.3 593.4-4.3Q587.7-9 587.7-19.5Q587.7-28.8 591.3-37.6Q594.9-46.5 599.4-54.3Q603.9-62.1 607.5-68.1Q611.1-74.1 611.1-77.7Q611.1-83.1 604.3-85.5Q597.6-87.9 586.8-88.2Q581.4-74.4 578.7-67.8Q576-61.2 573.6-55.2Q568.8-55.2 570.3-58.8M712.8 0.9Q705.9 0.9 700.6-3Q695.4-6.9 695.4-18.9Q695.4-24 696.1-28.5Q696.9-33 698.1-38.1Q695.4-33.6 690.6-27Q685.8-20.4 680-14.1Q674.1-7.8 668-3.6Q661.8 0.6 656.4 0.6Q648.6 0.6 643.8-6.5Q639-13.5 639-24.9Q639-37.2 644.7-51.3Q650.4-65.4 660.3-78.3Q670.2-91.2 683.1-99.3Q696-107.4 710.1-107.4Q717-107.4 723.3-105.1Q729.6-102.9 734.4-97.8Q736.5-95.7 736.5-93Q736.5-91.2 735-90Q733.5-88.8 731.1-89.4Q727.8-99.9 717-99.9Q711.9-99.9 705.3-96.6Q697.2-92.4 688-83.2Q678.9-74.1 671-62.5Q663-51 657.9-39.3Q652.8-27.6 652.8-18Q652.8-8.1 660.3-8.1Q666.9-8.1 674-14.4Q681-20.7 687.5-30.1Q693.9-39.6 699.3-48.9Q704.7-58.2 707.7-63.9Q712.2-72 716.1-77.4Q720-82.8 727.2-82.8Q730.5-82.8 733.8-81.9Q737.1-81 740.7-81.6Q731.7-72.6 725-60.3Q718.2-48 714.6-36.1Q711-24.3 711-16.2Q711-7.2 717-7.2Q721.8-7.2 727.4-12.6Q732.9-18 738.1-26.2Q743.4-34.5 747.9-43Q752.4-51.6 755.1-57.9Q756.6-57.9 757.6-57.6Q758.7-57.3 758.7-55.2Q758.4-54 757.6-52.6Q756.9-51.3 755.4-48Q753-43.2 748.8-35.1Q744.6-27 738.9-18.7Q733.2-10.5 726.6-4.8Q720 0.9 712.8 0.9";
+// A ribbon: thin, swelling, thin again.
+const FLOURISH = "M716 6 C770 -6 806 -44 838 -74 C812 -22 770 26 700 44 C560 80 330 34 190 58 C120 70 70 96 96 116 C118 132 172 118 214 104 C172 132 104 146 74 126 C36 98 100 60 188 46 C336 22 556 64 690 32 C702 28 710 18 716 6Z";
+const STAR = "M852 -134 Q856 -98 896 -92 Q856 -86 850 -44 Q845 -86 806 -90 Q846 -97 852 -134Z";
+const spark = (x, y, r) => `M${x} ${y - r} Q${x} ${y} ${x + r} ${y} Q${x} ${y} ${x} ${y + r} Q${x} ${y} ${x - r} ${y} Q${x} ${y} ${x} ${y - r}Z`;
 
 export default function Signature({ name }) {
   const root = useRef(null);
@@ -52,10 +23,11 @@ export default function Signature({ name }) {
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const tl = gsap.timeline({ scrollTrigger: { trigger: root.current, start: "top 88%", once: true } });
-        tl.from(".sig-stroke", { scaleY: 0, opacity: 0, transformOrigin: "50% 0%", duration: 0.7, stagger: 0.06, ease: "power4.out" })
-          .from(".sig-swoosh", { scaleX: 0, opacity: 0, transformOrigin: (i) => (i === 1 ? "100% 50%" : "0% 50%"), duration: 1, stagger: 0.12, ease: "power3.out" }, 0.35)
-          .from(".sig-spark", { scale: 0, rotation: -90, transformOrigin: "50% 50%", duration: 0.7, stagger: 0.08, ease: "back.out(2.4)" }, 0.8);
+        const tl = gsap.timeline({ scrollTrigger: { trigger: root.current, start: "top 86%", once: true } });
+        tl.fromTo("#sigWipe", { attr: { width: 0 } }, { attr: { width: 1000 }, duration: 1.7, ease: "power2.inOut" })
+          .from(".sig-star", { scale: 0, rotation: -120, transformOrigin: "50% 50%", duration: 0.8, ease: "back.out(2)" }, 1.25)
+          .from(".sig-spark", { scale: 0, transformOrigin: "50% 50%", duration: 0.5, stagger: 0.1, ease: "back.out(2)" }, 1.4)
+          .fromTo("#sigGleam", { attr: { x: -300 } }, { attr: { x: 1000 }, duration: 1.3, ease: "power2.inOut" }, 1.5);
       });
       return () => mm.revert();
     },
@@ -64,28 +36,43 @@ export default function Signature({ name }) {
 
   return (
     <div className="signature" ref={root}>
-      <svg viewBox="0 0 1320 430" role="img" aria-label={name}>
+      <svg viewBox="-20 -280 960 440" role="img" aria-label={name}>
         <defs>
-          <linearGradient id="sigChrome" gradientUnits="userSpaceOnUse" x1="0" y1="30" x2="60" y2="410">
-            <stop offset="0" stopColor="#ffffff" />
-            <stop offset=".28" stopColor="#dccbe8" />
-            <stop offset=".47" stopColor="#8f7cb6" />
-            <stop offset=".52" stopColor="#f6eefa" />
-            <stop offset=".68" stopColor="#c9b7dd" />
-            <stop offset=".86" stopColor="#7c679e" />
-            <stop offset="1" stopColor="#efe6f6" />
+          <linearGradient id="sigFill" gradientUnits="userSpaceOnUse" x1="0" y1="-250" x2="30" y2="130">
+            <stop offset="0" stopColor="#cdb9ea" />
+            <stop offset=".34" stopColor="#9c86cf" />
+            <stop offset=".52" stopColor="#7a66b4" />
+            <stop offset=".56" stopColor="#c9b6e6" />
+            <stop offset=".8" stopColor="#8d78c2" />
+            <stop offset="1" stopColor="#d9c9f0" />
           </linearGradient>
+          <linearGradient id="sigEdge" gradientUnits="userSpaceOnUse" x1="0" y1="-250" x2="120" y2="130">
+            <stop offset="0" stopColor="#ffffff" />
+            <stop offset=".3" stopColor="#d9ccf0" />
+            <stop offset=".5" stopColor="#ffffff" />
+            <stop offset=".64" stopColor="#a394d6" />
+            <stop offset=".8" stopColor="#ffffff" />
+            <stop offset="1" stopColor="#c5b5e6" />
+          </linearGradient>
+          <linearGradient id="sigShine" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stopColor="#fff" stopOpacity="0" />
+            <stop offset=".5" stopColor="#fff" stopOpacity=".85" />
+            <stop offset="1" stopColor="#fff" stopOpacity="0" />
+          </linearGradient>
+          <clipPath id="sigReveal"><rect id="sigWipe" x="-40" y="-300" width="1000" height="500" /></clipPath>
+          <clipPath id="sigLetters"><path d={NAME} /><path d={FLOURISH} /></clipPath>
         </defs>
-        <g fill="url(#sigChrome)" opacity=".75">
-          {SWOOSH.map((d) => <path key={d} className="sig-swoosh" d={d} />)}
+        <g clipPath="url(#sigReveal)" strokeLinejoin="round">
+          {/* dark rim, chrome edge, violet body, fine inner light */}
+          <g fill="none" stroke="#1b1538" strokeWidth="15"><path d={NAME} /><path d={FLOURISH} /></g>
+          <g fill="url(#sigEdge)" stroke="url(#sigEdge)" strokeWidth="9.5"><path d={NAME} /><path d={FLOURISH} /></g>
+          <g fill="url(#sigFill)"><path d={NAME} /><path d={FLOURISH} /></g>
+          <g fill="none" stroke="#fff" strokeOpacity=".55" strokeWidth="1.1" transform="translate(-1.2 -1.6)"><path d={NAME} /></g>
+          <g clipPath="url(#sigLetters)"><rect id="sigGleam" x="1000" y="-300" width="220" height="500" fill="url(#sigShine)" transform="skewX(-18)" /></g>
         </g>
-        <g fill="url(#sigChrome)" stroke="#fff" strokeOpacity=".5" strokeWidth="1" strokeLinejoin="round">
-          {LETTERS.flat().map((d) => <path key={d} className="sig-stroke" d={d} />)}
-        </g>
-        <g fill="#f6eefa">
-          {[[399, 44, 34], [1236, 150, 26], [88, 88, 20], [1180, 332, 16], [694, 60, 14]].map(([x, y, r]) => (
-            <path key={x} className="sig-spark" d={spark(x, y, r)} />
-          ))}
+        <path className="sig-star" d={STAR} fill="url(#sigFill)" stroke="url(#sigEdge)" strokeWidth="5" strokeLinejoin="round" />
+        <g fill="#fff">
+          {[[446, -176, 26], [40, -150, 15], [92, 122, 17], [906, -156, 12]].map(([x, y, r]) => <path key={x} className="sig-spark" d={spark(x, y, r)} />)}
         </g>
       </svg>
       <p className="label" aria-hidden="true">Gonzalez-Layne</p>

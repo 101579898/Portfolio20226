@@ -16,6 +16,7 @@ const STOPS = [
 export default function StarRail() {
   const pathname = usePathname();
   const star = useRef(null);
+  const read = useRef(null);
   const [current, setCurrent] = useState(0);
   const [home, setHome] = useState(false);
 
@@ -39,6 +40,10 @@ export default function StarRail() {
       if (atEnd) pos = STOPS.length - 1;
       pos = Math.min(pos, STOPS.length - 1);
       if (star.current) star.current.style.transform = `translateY(${(pos / (STOPS.length - 1)) * 100}%)`;
+      if (read.current) {
+        const max = document.documentElement.scrollHeight - innerHeight;
+        read.current.textContent = String(Math.round((scrollY / Math.max(1, max)) * 100)).padStart(3, "0");
+      }
       setCurrent(Math.min(STOPS.length - 1, Math.floor(pos + 0.02)));
     }
     const onScroll = () => {
@@ -63,6 +68,7 @@ export default function StarRail() {
           <svg viewBox="0 0 100 100"><path d="M50 0 Q53 47 100 50 Q53 53 50 100 Q47 53 0 50 Q47 47 50 0 Z" /></svg>
         </span>
       </span>
+      <span className="star-rail-read" aria-hidden="true"><b ref={read}>000</b></span>
       {STOPS.map((s, i) => (
         <a key={s.id} href={`#${s.id}`} aria-current={i === current ? "true" : undefined}>
           <span className="star-rail-label"><i>{s.n}</i> {s.label}</span>

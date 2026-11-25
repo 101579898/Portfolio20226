@@ -12,7 +12,7 @@ export const profile = {
   school: "George Brown College",
   status: "Open to work",
   seeking: "I'm looking for a junior or internship-level Experience / Interaction Design role.",
-  bio: "I'm an Interaction Design student at George Brown College. I'm exploring the intersection of UX and front-end development, learning CSS and JavaScript while building prototypes that are clear, accessible, and friendly to real people. I'm also into branding and visual design and love creating visuals that support the story a product is trying to tell.",
+  bio: "I'm an Interaction Design student at George Brown College. I'm exploring the intersection of UX and front-end development, learning CSS and JavaScript while building prototypes that are clear, accessible, and friendly to real people. I'm also into visual design and love creating visuals that support the story a product is trying to tell.",
   // Put a photo in public/img/ and write its path here, e.g. "/img/kiara.jpg".
   photo: "",
   email: "kiaraglayne@gmail.com",
@@ -81,6 +81,8 @@ export const music = {
 //   outcome  how it ended                             gallery   { src, alt }
 //   image    the main picture (public/work/...)       links     { label, href }
 //   hue      0-360, the tint of the card
+//   symbol   mark on the card's back: cup, pen, bars, paw, star, code, heart
+//   backTone moon on the card's back: 0 blush, 1 blue, 2 violet, 3 pale
 export const projects = [
   {
     slug: "cafe-finder",
@@ -162,5 +164,7 @@ export const projects = [
       { label: "See the code", href: "https://github.com/101579898/Cafefind" },
     ],
     hue: 8,
+    symbol: "cup",
+    backTone: 0,
   },
 ];

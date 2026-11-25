@@ -72,10 +72,10 @@
 .card-bars span { width: 28px; font-family: var(--font-pixel), monospace; font-size: 1rem; color: var(--gold); }
 .card-bars i { flex: 1; height: 8px; background: rgba(255, 255, 255, 0.12); }
 .card-bars b { display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--lilac) 55%, var(--ice)); }
-.card-rows { display: grid; gap: 2px; font-size: 0.76rem; line-height: 1.4; }
+.card-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; font-size: 0.76rem; line-height: 1.4; }
 .card-rows div { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.13); }
 .card-rows dt { font-family: var(--font-pixel), monospace; font-size: 0.95rem; line-height: 1.1; text-transform: uppercase; letter-spacing: 0.05em; color: hsl(var(--hue) 30% 80%); }
-.card-rows dd { min-width: 0; overflow: hidden; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+.card-rows dd { min-width: 0; overflow: hidden; text-align: right; text-wrap: balance; }
 .card-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font-size: 0.79rem; line-height: 1.4; color: var(--soft); }
 .card-rarity { color: var(--muted); }
 .r-holo .card-rarity, .rarity.r-holo { color: var(--ice); }
@@ -85,12 +85,13 @@
 
 /* Back: the printed design, with the write-up over the lower part when it is on */
 .card.card-back { position: absolute; inset: 0; padding: 0; transform: rotateY(180deg) translateZ(3px); background: #0b0912; border: 0; }
-.back-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.back-info { position: absolute; inset: 51% 22px 22px; z-index: 1; display: flex; flex-direction: column; gap: 7px; padding: 11px 13px; border: 1px solid rgba(220, 177, 194, 0.5); border-radius: 12px; background: rgba(10, 8, 17, 0.93); }
-.card-back-list { display: grid; flex: 1; align-content: start; gap: 5px; overflow: hidden; font-size: 0.8rem; line-height: 1.35; color: var(--soft); }
-.card-back-list li { display: grid; grid-template-columns: auto 1fr; gap: 8px; }
-.card-back-list li::before { content: "✦"; color: var(--ice); font-size: 0.7em; line-height: 2; }
-.card-back .btn { width: 100%; padding: 8px 12px; }
+.back-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.back-holo { position: absolute; inset: 0; background: repeating-linear-gradient(118deg, transparent 0 7%, rgba(143, 155, 255, 0.5) 11%, rgba(220, 177, 194, 0.5) 15%, rgba(200, 199, 147, 0.32) 18%, transparent 24%); background-size: 260% 260%; background-position: var(--mx, 30%) var(--my, 20%); mix-blend-mode: screen; opacity: 0.16; -webkit-mask: url("./fx/dots.png"); mask: url("./fx/dots.png"); transition: opacity 0.4s; }
+.card3d:hover .back-holo, .is-spin .back-holo { opacity: 0.55; }
+/* When a card turns over, its picture resolves out of pixels */
+.card-pixels { position: absolute; inset: 0; background: #171330; opacity: 0; pointer-events: none; -webkit-mask: url("./fx/dots.png") 0 0 / 24px; mask: url("./fx/dots.png") 0 0 / 24px; }
+.card3d:not(.is-flipped) .card-pixels { animation: pixelsOut 0.7s steps(6) 0.12s backwards; }
+@keyframes pixelsOut { from { opacity: 0.95; } to { opacity: 0; } }
 
 /* Foil */
 .card-foil, .card-sheen { position: absolute; inset: 0; pointer-events: none; }
@@ -128,8 +129,11 @@
 .progress button:hover svg { fill: var(--ice); }
 .collection-count { margin-top: 4px; text-align: center; font-family: var(--font-pixel), monospace; font-size: 1.1rem; letter-spacing: 0.05em; color: var(--soft); text-shadow: 0 0 10px #07060b; }
 
-/* All cards */
+/* The full collection */
 .spread { --card-w: 290px; --s: 0.66; --gap: 24px; position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; gap: 36px var(--gap); max-width: calc(var(--card-w) * var(--s) * 3 + var(--gap) * 2 + 2px); padding: 20px 0; }
+.spread[data-count="4"] { max-width: none; }
+@media (max-width: 900px) { .spread[data-count="4"] { max-width: calc(var(--card-w) * var(--s) * 2 + var(--gap) + 2px); } }
+@media (max-width: 640px) { .spread[data-count="4"] { --s: 0.56; } }
 .pull { position: relative; width: calc(var(--card-w) * var(--s)); height: calc(var(--card-w) * var(--s) * 1.4); border-radius: 12px; cursor: pointer; transition: transform 0.25s var(--ease); }
 .pull:hover { transform: translateY(-6px); }
 .pull-scale { position: absolute; left: 0; top: 0; width: var(--card-w); transform: scale(var(--s)); transform-origin: 0 0; }
@@ -230,11 +234,9 @@ html:has(.zoom, .case-sheet) { overflow: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {
   .card3d-inner, .pull, .collection-item, .progress svg { transition: none; }
-  .zoom, .pull-new, .pull-rare { animation: none; }
+  .zoom, .pull-new, .pull-rare, .card3d:not(.is-flipped) .card-pixels { animation: none; }
 }
 @media (max-width: 720px) {
   .collection .pack-controls { gap: 8px; }
   .collection .pack-controls .btn { padding: 8px 10px; font-size: 1rem; letter-spacing: 0.02em; }
 }
-.back-info .card-title { font-size: 1.2rem; }
-.back-info .btn { min-height: 40px; }

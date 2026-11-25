@@ -8,6 +8,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Reveal from "./Reveal";
+import Decode from "./Decode";
 import PixelArt from "./PixelArt";
 import { profile, education, experience, skills } from "@/data/site";
 import { asset } from "@/lib/asset";
@@ -88,8 +89,8 @@ export default function Profile() {
   return (
     <section className="chapter profile" id="about" ref={root} aria-labelledby="about-title">
       <div className="chapter-head">
-        <p className="label">About <span aria-hidden="true">/</span> Profile</p>
-        <p className="label">Chapter 02</p>
+        <Decode text="About / Profile" />
+        <Decode text="Chapter 02" />
       </div>
 
       <div className="profile-grid">

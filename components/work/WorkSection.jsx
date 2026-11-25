@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import Reveal from "../Reveal";
+import Decode from "../Decode";
 import FlatPack from "./FlatPack";
 import Collection from "./Collection";
 import Spread from "./Spread";
@@ -64,6 +65,8 @@ export default function WorkSection() {
   const [index, setIndex] = useState(0);
   const [seen, setSeen] = useState(() => new Set());
   const [view, setView] = useState("browse"); // "browse" one at a time, "spread" all at once
+  const [complete, setComplete] = useState(false); // every card has been reached once
+  const fly = useRef(null); // where the cards were on screen, so they can fly into the full collection
   const [zoom, setZoom] = useState(null);
   const [openSlug, setOpenSlug] = useState(null);
 
@@ -96,24 +99,39 @@ export default function WorkSection() {
       const at = focus ? p.findIndex((c) => c.id === focus) : store.get("packIndex") || 0;
       setIndex(Math.max(0, Math.min(total - 1, at)));
       setSeen(new Set([...(store.get("packSeen") || []), ...(focus ? [focus] : [])]));
+      if (store.get("packDone")) {
+        setComplete(true);
+        if (store.get("packView") !== "browse") setView("spread");
+      }
       go("collection");
     }
 
     const el = stage.current;
-    const nearIO = new IntersectionObserver(([e]) => e.isIntersecting && setNear(true), { rootMargin: "900px 0px" });
+    // Prepare the 3D pack once the opening has settled or we are close to it, but only
+    // while the page is still, so it never interrupts a scroll. Until then the flat
+    // pack stands in.
+    let wanted = false;
+    let quiet = 0;
+    const whenStill = () => {
+      clearTimeout(quiet);
+      if (wanted) quiet = setTimeout(() => setNear(true), 380);
+    };
+    const want = () => {
+      wanted = true;
+      whenStill();
+    };
+    window.addEventListener("scroll", whenStill, { passive: true });
+    const nearIO = new IntersectionObserver(([e]) => e.isIntersecting && want(), { rootMargin: "900px 0px" });
     const onIO = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting));
     nearIO.observe(el);
-    // Prepare it quietly once the opening has settled, so arriving here is smooth.
-    let idle = 0;
-    const later = setTimeout(() => {
-      idle = window.requestIdleCallback ? requestIdleCallback(() => setNear(true), { timeout: 4000 }) : setTimeout(() => setNear(true), 500);
-    }, 4500);
+    const later = setTimeout(want, 4200);
     onIO.observe(el);
     const ro = new ResizeObserver(([e]) => setScale(Math.min(1, e.contentRect.width / 350, e.contentRect.height / 560)));
     ro.observe(el);
     return () => {
       clearTimeout(later);
-      if (idle) (window.cancelIdleCallback || clearTimeout)(idle);
+      clearTimeout(quiet);
+      window.removeEventListener("scroll", whenStill);
       nearIO.disconnect();
       onIO.disconnect();
       ro.disconnect();
@@ -189,6 +207,9 @@ export default function WorkSection() {
     setIndex(0);
     setSeen(new Set());
     setView("browse");
+    setComplete(false);
+    store.set("packDone", null);
+    store.set("packView", null);
     store.set("packPull", rolled);
     store.set("packSeen", []);
     store.set("packIndex", 0);
@@ -221,7 +242,30 @@ export default function WorkSection() {
     setSeen(new Set());
     setIndex(0);
     setView("browse");
-    ["packPull", "packSeen", "packIndex"].forEach((k) => store.set(k, null));
+    setComplete(false);
+    ["packPull", "packSeen", "packIndex", "packDone", "packView"].forEach((k) => store.set(k, null));
+  }
+
+  // ── The full collection ───────────────────────────────────
+  // Reaching the end of the cards lays the whole collection out (see Collection).
+  const showAll = useCallback(() => {
+    if (phaseNow.current !== "collection") return;
+    const at = {};
+    document.querySelectorAll(".collection-item").forEach((el) => {
+      if (el.style.visibility === "hidden") return;
+      const r = el.getBoundingClientRect();
+      at[el.dataset.card] = { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width };
+    });
+    fly.current = at;
+    setComplete(true);
+    setView("spread");
+    store.set("packDone", true);
+    store.set("packView", "spread");
+  }, []);
+  function browse(i = index) {
+    setIndex(i);
+    setView("browse");
+    store.set("packView", "browse");
   }
 
   // ── Project detail ────────────────────────────────────────
@@ -259,14 +303,14 @@ export default function WorkSection() {
       : phase === "collection" || phase === "detail"
         ? view === "browse"
           ? "Drag, swipe or use the arrows. Click a card to open it."
-          : "Pick a card to look at it."
+          : "Your full collection. Pick any card to open it again."
         : "";
 
   return (
     <section className="chapter work" id="work" aria-labelledby="work-title">
       <div className="chapter-head">
-        <p className="label">Work <span aria-hidden="true">/</span> Card pack</p>
-        <p className="label">Chapter 03</p>
+        <Decode text="Work / Card pack" />
+        <Decode text="Chapter 03" />
       </div>
       <Reveal as="h2" id="work-title" className="display center">
         {showCards ? "The collection." : "Open the work pack."}
@@ -278,7 +322,7 @@ export default function WorkSection() {
         onPointerMove={(e) => showPack && e.pointerType === "mouse" && point(e)}
       >
         {showPack && near && mode === "3d" ? (
-          <PackScene fx={fx} total={total} scale={scale} awake={onScreen && warm} onReady={() => setWarm(true)} onFail={() => setMode("flat")} />
+          <PackScene fx={fx} cards={cards} scale={scale} awake={onScreen && warm} onReady={() => setWarm(true)} onFail={() => setMode("flat")} />
         ) : null}
         {showPack && (mode === "flat" || (mode === "3d" && !warm)) ? <FlatPack fx={fx} scale={scale} /> : null}
         {phase === "sealed" || phase === "interacting" ? (
@@ -308,10 +352,13 @@ export default function WorkSection() {
             onIntroDone={() => go("collection")}
             onOpen={openCard}
             onInspect={setZoom}
+            onEnd={showAll}
+            complete={complete}
+            paused={zoom !== null}
             away={phase === "detail"}
           />
         ) : null}
-        {showCards && view === "spread" ? <Spread ref={collection} cards={cards} onSeen={discover} onOpen={openCard} /> : null}
+        {showCards && view === "spread" ? <Spread ref={collection} cards={cards} seen={seen} from={fly} onSeen={discover} onOpen={openCard} /> : null}
       </div>
 
       <p className="pack-hint" role="status">{hint}</p>
@@ -320,9 +367,11 @@ export default function WorkSection() {
         {phase === "opening" ? <button className="btn ghost" onClick={skip}>Skip</button> : null}
         {phase === "collection" || phase === "detail" ? (
           <>
-            <button className="btn text" onClick={() => setView(view === "browse" ? "spread" : "browse")}>
-              {view === "browse" ? "See all cards" : "One at a time"}
-            </button>
+            {view === "spread" ? (
+              <button className="btn" onClick={() => browse()}>Browse one at a time</button>
+            ) : complete ? (
+              <button className="btn text" onClick={showAll}>Back to the full collection</button>
+            ) : null}
             <button className="btn text" onClick={reseal}>Reseal and pull again</button>
           </>
         ) : null}
