@@ -9,7 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Transmission from "./Transmission";
 import { space, smoothstep } from "@/lib/space";
-import { glide, gliding } from "@/lib/scroll";
+import { glide, gliding, endGlide } from "@/lib/scroll";
 import { profile } from "@/data/site";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -34,7 +34,6 @@ export default function Journey() {
   // "pending" until we know; "3d" shows the scene; "flat" shows a drawn star instead.
   const [mode, setMode] = useState("pending");
   const gate = useRef({ booted: false, warm: false, flown: false });
-  const hasWebGL3D = useRef(false);
 
   function flyIn() {
     const g = gate.current;
@@ -45,10 +44,7 @@ export default function Journey() {
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const can = !reduce && hasWebGL();
-    hasWebGL3D.current = can;
-    document.documentElement.classList.toggle("kiwi-flying", can && space.p < 0.93);
-    setMode(can ? "3d" : "flat");
+    setMode(!reduce && hasWebGL() ? "3d" : "flat");
 
     const onMove = (e) => {
       space.mx = (e.clientX / innerWidth) * 2 - 1;
@@ -65,7 +61,6 @@ export default function Journey() {
     return () => {
       window.removeEventListener("pointermove", onMove);
       io.disconnect();
-      document.documentElement.classList.remove("kiwi-flying");
     };
   }, []);
 
@@ -83,7 +78,9 @@ export default function Journey() {
       if (!document.documentElement.dataset.booted) return false;
       const there = landing();
       const now = gliding();
-      if (now) {
+      // Already there (or as good as): the flight is over, so scrolling is normal again.
+      if (now && Math.abs(scrollY - now.to) < 12) endGlide();
+      else if (now) {
         const goingDown = now.to > 0;
         if (goingDown !== down) return glide(down ? there : 0, 2);
         if (performance.now() - now.began > 700) glide(now.to, 0.9);
@@ -175,8 +172,6 @@ export default function Journey() {
 
       function apply(q) {
         space.p = q;
-        // While Kiwi is the star, the little Kiwi in the corner waits for her to land.
-        document.documentElement.classList.toggle("kiwi-flying", hasWebGL3D.current && q < 0.93);
         const out = smoothstep(0.04, 0.3, q);
         title.current.style.opacity = 1 - out;
         title.current.style.transform = `translateZ(0) scale(${1 + out * 0.28})`;
@@ -240,11 +235,7 @@ export default function Journey() {
               gate.current.warm = true;
               flyIn();
             }}
-            onFail={() => {
-              hasWebGL3D.current = false;
-              document.documentElement.classList.remove("kiwi-flying");
-              setMode("flat");
-            }}
+            onFail={() => setMode("flat")}
           /> : null}
         {mode === "flat" ? (
           <svg className="journey-flatstar" viewBox="0 0 100 100" aria-hidden="true">

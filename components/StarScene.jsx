@@ -1,7 +1,7 @@
 "use client";
 
-// The shooting star you follow, in real 3D (React Three Fiber): Kiwi, riding a soft
-// four-point star that pulls a prism-coloured trail along a path: it flies in
+// The shooting star, in real 3D (React Three Fiber). One faceted chrome star
+// with a glowing core pulls a prism-coloured trail along a path: it flies in
 // when the page opens, swings close to the camera as you scroll, then dives
 // until it fades. Glass shards and dust drift past on the way.
 // It reads its progress from lib/space.js and sleeps when off screen.
@@ -10,7 +10,6 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import WarmUp from "./WarmUp";
 import { space, smoothstep } from "@/lib/space";
-import { N as KIWI, paintKiwi } from "@/lib/kiwi";
 
 const BLUSH = new THREE.Color("#dcb1c2");
 const VIOLET = new THREE.Color("#7c679e");
@@ -117,91 +116,57 @@ function Reflections() {
 }
 
 // A four-point star as a faceted solid: long thin points, a ridge down each one.
-// A soft four-point star with a violet glow.
-function useStarTexture() {
-  return useMemo(() => {
-    const c = document.createElement("canvas");
-    c.width = c.height = 512;
-    const g = c.getContext("2d");
-    // slim arms that swell into a small body, with softly rounded tips
-    const R = 190;
-    const at = (a, r) => [256 + Math.cos(a) * r, 256 + Math.sin(a) * r];
-    const path = new Path2D();
-    for (let i = 0; i < 4; i++) {
-      const a = (i * Math.PI) / 2 - Math.PI / 2;
-      const b = a + Math.PI / 2;
-      if (!i) path.moveTo(...at(a, R));
-      path.bezierCurveTo(...at(a, R * 0.25), ...at(b, R * 0.25), ...at(b, R));
-    }
-    path.closePath();
-    g.lineJoin = "round";
-    g.shadowColor = "rgba(186, 84, 235, 1)";
-    for (const [blur, color, w] of [[90, "rgba(186, 100, 240, .5)", 7], [44, "rgba(214, 150, 250, .7)", 5], [18, "rgba(246, 230, 255, .95)", 4], [0, "#fff", 3]]) {
-      g.shadowBlur = blur;
-      g.fillStyle = g.strokeStyle = color;
-      g.lineWidth = w;
-      g.fill(path);
-      g.stroke(path);
-    }
-    const t = new THREE.CanvasTexture(c);
-    t.colorSpace = THREE.SRGBColorSpace;
-    return t;
-  }, []);
-}
-// Kiwi's own pixels, kept hard-edged.
-function useKiwiTexture() {
-  return useMemo(() => {
-    const c = document.createElement("canvas");
-    const art = document.createElement("canvas");
-    art.width = art.height = KIWI * 10;
-    const p = art.getContext("2d");
-    p.scale(10, 10);
-    paintKiwi(p);
-    // a soft violet edge, so she stands clear of the light behind her
-    c.width = c.height = KIWI * 14;
-    const g = c.getContext("2d");
-    for (const [blur, color] of [[34, "rgba(150, 110, 240, .9)"], [9, "rgba(52, 30, 92, .95)"]]) {
-      g.shadowBlur = blur;
-      g.shadowColor = color;
-      g.drawImage(art, KIWI * 2, KIWI * 2);
-    }
-    g.shadowBlur = 0;
-    g.drawImage(art, KIWI * 2, KIWI * 2);
-    const t = new THREE.CanvasTexture(c);
-    t.colorSpace = THREE.SRGBColorSpace;
-    t.anisotropy = 4;
-    return t;
-  }, []);
+function starGeometry() {
+  const tips = [];
+  const N = 8;
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2 + Math.PI / 2;
+    const r = i % 2 ? 0.17 : i % 4 === 0 ? 1.25 : 0.95;
+    tips.push(new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r, 0));
+  }
+  const front = new THREE.Vector3(0, 0, 0.24);
+  const back = new THREE.Vector3(0, 0, -0.24);
+  const v = [];
+  for (let i = 0; i < N; i++) {
+    const a = tips[i];
+    const b = tips[(i + 1) % N];
+    v.push(...front.toArray(), ...a.toArray(), ...b.toArray(), ...back.toArray(), ...b.toArray(), ...a.toArray());
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(v, 3));
+  g.computeVertexNormals();
+  return g;
 }
 
 function Star() {
   const group = useRef(null);
-  const shape = useRef(null);
-  const kiwi = useRef(null);
+  const solid = useRef(null);
   const halo = useRef(null);
   const flareA = useRef(null);
   const flareB = useRef(null);
-  const starMap = useStarTexture();
-  const kiwiMap = useKiwiTexture();
+  const geo = useMemo(starGeometry, []);
   const glow = useGlowTexture();
   const flare = useFlareTexture();
-  useEffect(() => () => [starMap, kiwiMap, glow, flare].forEach((t) => t.dispose()), [starMap, kiwiMap, glow, flare]);
+  useEffect(() => () => { geo.dispose(); glow.dispose(); flare.dispose(); }, [geo, glow, flare]);
 
+  const onScreen = useMemo(() => new THREE.Vector3(), []);
   useFrame((state) => {
     const t = starT();
     const a = fade();
     starPath(t, group.current.position);
+    // Tell Kiwi where the star is, so she can tag along.
+    onScreen.copy(group.current.position).project(state.camera);
+    space.sx = ((onScreen.x + 1) / 2) * state.size.width;
+    space.sy = ((1 - onScreen.y) / 2) * state.size.height;
+    space.sa = a;
     const idle = 1 - smoothstep(0, 0.1, space.p);
     const time = state.clock.elapsedTime;
     group.current.position.y += Math.sin(time * 1.1) * 0.07 * idle;
     group.current.visible = a > 0.01;
-    const s = (0.26 + 0.44 * view.x) * a * (1 - 0.34 * Math.sin(Math.PI * Math.min(Math.max(t, 0), 1)) ** 2);
-    shape.current.rotation.z = Math.sin(time * 0.4) * 0.07 + t * 0.4;
-    shape.current.scale.setScalar(s * 4.4 * (1 + Math.sin(time * 2.2) * 0.03));
-    shape.current.material.opacity = a;
-    kiwi.current.rotation.z = Math.sin(time * 1.3) * 0.07 * idle + Math.sin(Math.PI * Math.min(Math.max(t, 0), 1)) * 0.3;
-    kiwi.current.scale.setScalar(s * 1.85);
-    kiwi.current.material.opacity = a;
+    solid.current.rotation.y = Math.sin(time * 0.6) * 0.5 + t * 5;
+    solid.current.rotation.z = Math.sin(time * 0.4) * 0.08 + t * 1.2;
+    const s = (0.44 + 0.16 * view.x) * a;
+    solid.current.scale.setScalar(s);
     const pulse = 1 + Math.sin(time * 2.2) * 0.05;
     halo.current.scale.setScalar(2.9 * pulse * a);
     halo.current.material.opacity = 0.5 * a;
@@ -212,13 +177,8 @@ function Star() {
 
   return (
     <group ref={group}>
-      <mesh ref={shape} renderOrder={4}>
-        <planeGeometry />
-        <meshBasicMaterial map={starMap} transparent depthWrite={false} depthTest={false} toneMapped={false} />
-      </mesh>
-      <mesh ref={kiwi} renderOrder={5}>
-        <planeGeometry />
-        <meshBasicMaterial map={kiwiMap} transparent depthWrite={false} depthTest={false} toneMapped={false} />
+      <mesh ref={solid} geometry={geo}>
+        <meshPhysicalMaterial color="#f3ecf8" metalness={1} roughness={0.2} emissive="#6f5f9e" emissiveIntensity={0.12} iridescence={0.8} iridescenceIOR={1.7} iridescenceThicknessMinimum={180} iridescenceThicknessMaximum={520} envMapIntensity={0.62} flatShading />
       </mesh>
       <sprite ref={halo} renderOrder={2}>
         <spriteMaterial map={glow} blending={THREE.AdditiveBlending} depthWrite={false} depthTest={false} transparent />

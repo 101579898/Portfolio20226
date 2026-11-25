@@ -28,8 +28,27 @@ export default function SmoothScroll() {
     }
 
     document.addEventListener("click", onClick, true);
+
+    // On phones, Kiwi and the static switch step aside while you scroll down (so they
+    // never cover a button) and come back when you scroll up or reach either end.
+    const phone = window.matchMedia("(max-width: 700px)");
+    let lastY = scrollY;
+    const root = document.documentElement;
+    const onScroll = () => {
+      const y = scrollY;
+      const d = y - lastY;
+      if (Math.abs(d) < 10) return;
+      const opening = document.getElementById("intro");
+      const end = y < 80 || y + innerHeight > document.documentElement.scrollHeight - 80 || (opening && y < opening.offsetHeight - innerHeight * 0.5);
+      root.classList.toggle("floaters-away", phone.matches && d > 0 && !end);
+      lastY = y;
+    };
+    addEventListener("scroll", onScroll, { passive: true });
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return () => document.removeEventListener("click", onClick, true);
+      return () => {
+        document.removeEventListener("click", onClick, true);
+        removeEventListener("scroll", onScroll);
+      };
     }
 
     const lenis = new Lenis({ lerp: 0.11, wheelMultiplier: 0.95 });
@@ -40,6 +59,8 @@ export default function SmoothScroll() {
     gsap.ticker.lagSmoothing(0);
     return () => {
       document.removeEventListener("click", onClick, true);
+      removeEventListener("scroll", onScroll);
+      root.classList.remove("floaters-away");
       gsap.ticker.remove(tick);
       lenis.destroy();
       setLenis(null);
