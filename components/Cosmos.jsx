@@ -47,19 +47,6 @@ const ELSEWHERE = [
 const POINTER = [0, 3, 6, 12, 22, 38];
 const SCROLL = [0, 0.1, 0.2, 0.42, 0.7, 1.1];
 
-// Pixel dissolves: nine masks, from solid to nothing, made of ordered dots.
-function dissolveMasks() {
-  const M = [0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36, 14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41, 51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21];
-  return Array.from({ length: 9 }, (_, k) => {
-    if (k === 0) return "none";
-    const c = document.createElement("canvas");
-    c.width = c.height = 32;
-    const g = c.getContext("2d");
-    M.forEach((v, i) => v >= k * 7.5 && g.fillRect((i % 8) * 4, Math.floor(i / 8) * 4, 4, 4));
-    return `url(${c.toDataURL()})`;
-  });
-}
-
 // Small floating data: pixels, plus signs and brackets.
 function dataTile(size, seed) {
   const c = document.createElement("canvas");
@@ -146,11 +133,6 @@ export default function Cosmos() {
       shown: null,
     }));
     const lights = [...el.querySelectorAll(".cosmos-light")];
-    const bloom = el.querySelector(".cosmos-bloom");
-    const petals = bloom.querySelector(".petals");
-    const haze = bloom.querySelector(".haze");
-    const masks = dissolveMasks();
-    let mask = -1;
     const ids = [...new Set(items.map((i) => i.at).filter(Boolean))];
 
     let h = innerHeight;
@@ -198,31 +180,13 @@ export default function Cosmos() {
           it.node.style.visibility = vis ? "visible" : "hidden";
         }
         if (!vis) continue;
-        // Objects in the opening slide past as you travel, then make way for the bloom.
+        // Objects in the opening slide past as you travel, then fade.
         const trip = it.at === "intro" && !reduce ? space.p : 0;
         const inner = it.at ? -trip * h * SCROLL[it.depth] * 0.55 : -now.s * 0.04 * it.depth;
         const x = -now.x * POINTER[it.depth];
         const y = -now.y * POINTER[it.depth] + t * h * SCROLL[it.depth] + inner;
         it.node.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
         it.node.style.opacity = (it.o * (1 - smoothstep(0.3, 1.15, Math.abs(t))) * (1 - smoothstep(0.5, 0.88, trip))).toFixed(3);
-      }
-      // The bloom: a small flower of light opens as the star dives in, then drifts up
-      // and breaks into pixels before About begins.
-      const gone = away("intro");
-      const past = gone === null ? 9 : Math.max(0, -gone); // screens travelled beyond the opening
-      const seen = home && !reduce ? smoothstep(0.42, 0.74, space.p) * (1 - smoothstep(0.1, 0.72, past)) : 0;
-      bloom.style.visibility = seen > 0.004 ? "visible" : "hidden";
-      if (seen > 0.004) {
-        const g = smoothstep(0.4, 1, space.p);
-        const size = 0.22 + g * 0.78 + past * 0.1;
-        bloom.style.opacity = seen.toFixed(3);
-        petals.style.transform = `translate(-50%,-50%) translate3d(${(-now.x * 22).toFixed(1)}px,${(-now.y * 16 - past * h * 0.5).toFixed(1)}px,0) rotate(${(-34 + g * 34 + past * 16).toFixed(2)}deg) scale(${size.toFixed(4)})`;
-        haze.style.transform = `translate(-50%,-50%) translate3d(${(-now.x * 9).toFixed(1)}px,${(-now.y * 7 - past * h * 0.36).toFixed(1)}px,0) scale(${(size * 0.94 + 0.12).toFixed(4)})`;
-        const k = Math.round(smoothstep(0.04, 0.62, past) * 8);
-        if (k !== mask) {
-          mask = k;
-          petals.style.maskImage = petals.style.webkitMaskImage = masks[k];
-        }
       }
       for (const l of lights) {
         const a = l.dataset.at ? away(l.dataset.at) : home ? 9 : 0;
@@ -287,10 +251,6 @@ export default function Cosmos() {
       <span className="cosmos-stars" />
       <span className="cosmos-stars" />
       <span className="cosmos-stars" />
-      <div className="cosmos-bloom">
-        <img className="haze" src={asset("/cosmos/bloom-haze.webp")} alt="" draggable="false" decoding="async" />
-        <img className="petals" src={asset("/cosmos/bloom.webp")} alt="" draggable="false" decoding="async" />
-      </div>
       {[...OBJECTS, ...ELSEWHERE].map((o, i) => (
         <div
           key={i}

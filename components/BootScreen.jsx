@@ -1,7 +1,7 @@
 "use client";
 
 // The original TV boot sequence: NO SIGNAL -> Start -> boot log -> BOOTING...
-// then the screen "powers on" into the portfolio.
+// then the screen goes dark and the portfolio fades in.
 // It plays once per browser session and can be skipped.
 import { useEffect, useRef, useState } from "react";
 import { pauseScroll, resumeScroll } from "@/lib/scroll";
@@ -15,7 +15,7 @@ const bootLines = [
   "booting, please wait...",
 ];
 
-const LINE_MS = 130; // lower = faster boot
+const LINE_MS = 210; // lower = faster boot
 
 export default function BootScreen() {
   const [phase, setPhase] = useState("start"); // start | boot | done
@@ -48,30 +48,43 @@ export default function BootScreen() {
     };
   }, []);
 
-  // Step 1: the TV screen grows out to the edges of the window.
+  // Step 1: the TV screen grows out to the edges of the window and goes dark.
   function finish() {
     if (leaving) return;
     timers.current.forEach(clearTimeout);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setLeaving(true);
-    timers.current.push(setTimeout(turnOn, reduce ? 0 : 520));
+    if (reduce) {
+      prepare();
+      reveal(true);
+      return;
+    }
+    timers.current = [setTimeout(prepare, 1000), setTimeout(() => reveal(false), 2100)];
   }
 
-  // Step 2: the picture comes on and the portfolio is revealed.
-  function turnOn() {
-    setSiteInert(false);
-    resumeScroll();
-    window.scrollTo(0, 0);
+  // Step 2: while the screen is black, get the whole page ready underneath.
+  function prepare() {
     const root = document.documentElement;
+    root.classList.add("boot-hold");
     root.dataset.booted = "1";
+    setSiteInert(false);
+    window.scrollTo(0, 0);
     try {
       sessionStorage.setItem("booted", "1");
     } catch {}
-    // TV turning on: the picture flashes bright and settles.
-    root.classList.add("power-on");
-    setTimeout(() => root.classList.remove("power-on"), 700);
-    setPhase("done");
-    window.dispatchEvent(new Event("portfolio:booted"));
+    window.dispatchEvent(new Event("portfolio:rehearse"));
+  }
+
+  // Step 3: the black fades away and the opening begins.
+  function reveal(atOnce) {
+    document.documentElement.classList.replace("boot-hold", "boot-fade");
+    requestAnimationFrame(() => requestAnimationFrame(() => window.dispatchEvent(new Event("portfolio:booted"))));
+    timers.current = [
+      setTimeout(() => {
+        resumeScroll();
+        setPhase("done");
+      }, atOnce ? 60 : 1700),
+    ];
   }
 
   function start() {
@@ -82,7 +95,7 @@ export default function BootScreen() {
     });
     const end = LINE_MS * (bootLines.length + 1);
     timers.current.push(setTimeout(() => setShowTitle(true), end));
-    timers.current.push(setTimeout(finish, end + 260));
+    timers.current.push(setTimeout(finish, end + 1100));
   }
 
   if (phase === "done") return null;

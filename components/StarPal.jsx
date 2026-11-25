@@ -30,7 +30,7 @@ export default function StarPal() {
   function speak(text) {
     setSay(text);
     clearTimeout(sayTimer.current);
-    sayTimer.current = setTimeout(() => setSay(""), 2800);
+    sayTimer.current = setTimeout(() => setSay(""), 4200);
   }
 
   useEffect(() => {

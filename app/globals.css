@@ -177,7 +177,7 @@ button { font: inherit; color: inherit; }
 .reveal {
   opacity: 0;
   transform: translateY(26px);
-  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+  transition: opacity 1.3s var(--ease), transform 1.3s var(--ease);
 }
 .reveal.is-in { opacity: 1; transform: none; }
 
@@ -279,13 +279,6 @@ button { font: inherit; color: inherit; }
   font-size: clamp(1.5rem, 4.5vw, 3.2rem);
   font-weight: 500;
   letter-spacing: -0.03em;
-  opacity: 0;
-  pointer-events: none;
-}
-.journey-flash {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, #fff 0%, rgba(220, 177, 194, 0.85) 30%, transparent 75%);
   opacity: 0;
   pointer-events: none;
 }
@@ -469,9 +462,8 @@ button { font: inherit; color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .boot-blink, .boot-title { animation: none; }
-  html.power-on body::after { display: none; }
   .journey { height: 100vh; height: 100svh; }
-  .journey-text, .journey-flash { display: none; }
+  .journey-text { display: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
 .pal-bob,
 .pal-eye,
@@ -527,10 +519,17 @@ scan bands and the 3D flip card.
   font-size: 22px;
   line-height: 1.3;
 }
-html[data-booted] .boot { display: none; }
+html[data-booted]:not(.boot-hold):not(.boot-fade) .boot { display: none; }
 html:not([data-booted]):has(.boot) { overflow: hidden; }
+html { scrollbar-gutter: stable; } /* the page never jumps sideways when scrolling unlocks */
 /* Nothing else shows until the TV is on */
 html:not([data-booted]):has(.boot) :is(.nav, .pal, .static-switch, .cursor-light, .star-rail) { visibility: hidden; }
+/* A hair below solid, so the browser really draws what is underneath */
+html.boot-hold .boot { opacity: 0.998; transition: none; }
+html.boot-hold :is(.nav, .pal, .static-switch, .cursor-light, .star-rail) { opacity: 0.01; }
+html.boot-fade :is(.nav, .pal, .static-switch, .star-rail) { animation: surface 1.6s ease 1.2s backwards; }
+@media (prefers-reduced-motion: reduce) { html.boot-fade :is(.nav, .pal, .static-switch, .star-rail) { animation: none; } }
+@keyframes surface { from { opacity: 0.01; } }
 .boot-tv {
   position: absolute;
   inset: 3vmin;
@@ -579,7 +578,7 @@ html:not([data-booted]):has(.boot) :is(.nav, .pal, .static-switch, .cursor-light
   letter-spacing: 6px;
   color: #ecd3de;
   text-shadow: 0 0 10px var(--retro-pink), 0 0 40px var(--retro-pink);
-  animation: bootFlicker 0.15s infinite;
+  animation: bootFlicker 1.8s ease-in-out infinite;
 }
 .boot-skip {
   position: absolute;
@@ -598,19 +597,6 @@ html:not([data-booted]):has(.boot) :is(.nav, .pal, .static-switch, .cursor-light
 .boot-skip:hover { border-color: var(--retro-pink); }
 @keyframes bootBlink { 50% { opacity: 0; } }
 @keyframes bootFlicker { 50% { opacity: 0.8; } }
-
-/* TV turning on: a soft flash over the page. (It must not transform or filter
-   the body: that would stretch every fixed layer to the full page height.) */
-html.power-on body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 190;
-  pointer-events: none;
-  background: radial-gradient(circle at 50% 50%, #fff, rgba(220, 203, 232, 0.9) 35%, rgba(124, 103, 158, 0.5) 100%);
-  animation: powerOn 0.5s ease-out forwards;
-}
-@keyframes powerOn { from { opacity: 1; } to { opacity: 0; } }
 
 /* ── Scanlines + the STATIC switch ────────────────────── */
 .scanlines {
@@ -671,15 +657,19 @@ html.power-on body::after {
 /* ── Boot: the TV screen grows to fill the window, then turns on ── */
 .boot-tv {
   transition:
-    inset 0.5s cubic-bezier(0.7, 0, 0.2, 1),
-    border-radius 0.5s cubic-bezier(0.7, 0, 0.2, 1),
-    box-shadow 0.5s;
+    inset 0.95s cubic-bezier(0.6, 0, 0.2, 1),
+    border-radius 0.95s cubic-bezier(0.6, 0, 0.2, 1),
+    box-shadow 0.95s;
 }
-.boot.is-leaving .boot-tv { inset: 0; border-radius: 0; box-shadow: 0 0 120px rgba(220, 177, 194, 0.6) inset; }
+.boot.is-leaving .boot-tv { inset: 0; border-radius: 0; box-shadow: none; }
+.boot-run, .boot-start { transition: opacity 0.6s; }
+.boot.is-leaving :is(.boot-run, .boot-start) { opacity: 0; transition-delay: 0.3s; }
+.boot { transition: opacity 1.5s ease; will-change: opacity; }
+html.boot-fade .boot { opacity: 0; pointer-events: none; }
 .boot-skip { transition: opacity 0.2s; }
 .boot.is-leaving .boot-skip { opacity: 0; pointer-events: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .boot-tv { transition: none; }
+  .boot, .boot-tv, .boot-run, .boot-start { transition: none; }
 }
 

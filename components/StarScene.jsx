@@ -3,7 +3,7 @@
 // The shooting star, in real 3D (React Three Fiber). One faceted chrome star
 // with a glowing core pulls a prism-coloured trail along a path: it flies in
 // when the page opens, swings close to the camera as you scroll, then dives
-// into the bloom. Glass shards and dust drift past on the way.
+// until it fades. Glass shards and dust drift past on the way.
 // It reads its progress from lib/space.js and sleeps when off screen.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -33,7 +33,7 @@ vec3 starPath(float t){ float u=max(t,-1.); float a=2.55-u*4.1; float r=4.1*pow(
 
 // Where the star is right now: fly-in first, then scroll.
 const starT = () => (space.p > 0.001 ? space.p : -0.62 * (1 - space.intro));
-const fade = () => smoothstep(0, 0.15, space.intro) * (1 - smoothstep(0.93, 1, space.p));
+const fade = () => smoothstep(0, 0.15, space.intro) * (1 - smoothstep(0.7, 0.97, space.p));
 
 function useGlowTexture() {
   return useMemo(() => {
@@ -162,11 +162,10 @@ function Star() {
     const s = (0.44 + 0.16 * view.x) * a;
     solid.current.scale.setScalar(s);
     const pulse = 1 + Math.sin(time * 2.2) * 0.05;
-    const burst = 1 + smoothstep(0.78, 0.97, space.p) * 5;
-    halo.current.scale.setScalar(2.9 * pulse * a * burst);
+    halo.current.scale.setScalar(2.9 * pulse * a);
     halo.current.material.opacity = 0.5 * a;
-    flareA.current.scale.set(5.4 * pulse * a * burst, 0.34 * a, 1);
-    flareB.current.scale.set(0.3 * a, 4 * pulse * a * burst, 1);
+    flareA.current.scale.set(5.4 * pulse * a, 0.34 * a, 1);
+    flareB.current.scale.set(0.3 * a, 4 * pulse * a, 1);
     flareA.current.material.opacity = flareB.current.material.opacity = 0.85 * a;
   });
 
