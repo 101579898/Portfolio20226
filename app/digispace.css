@@ -251,9 +251,9 @@ body::before { display: none; }
 @media (max-width: 1024px) { .star-rail { display: none; } }
 
 /* ── Kiwi ─────────────────────────────────────────────── */
-.pal { width: 90px; height: 90px; }
+.pal { width: 84px; height: 84px; }
 .pal-art { display: block; }
-.pal svg { overflow: visible; filter: drop-shadow(0 0 7px rgba(111, 114, 255, 0.75)) drop-shadow(0 0 20px rgba(124, 103, 158, 0.6)); }
+.pal svg { overflow: visible; filter: drop-shadow(0 0 12px rgba(238, 230, 196, 0.5)); }
 .pal-asleep { display: none; }
 .pal.is-happy .pal-asleep, .is-happy-art .pal-asleep { display: block; }
 .pal.is-happy .pal-awake, .is-happy-art .pal-awake, .is-happy-art .pal-mouth { display: none; }
@@ -269,7 +269,6 @@ body::before { display: none; }
   .hero h1 { font-size: clamp(4.6rem, 25vw, 8rem); }
   .hero-welcome { font-size: 0.33em; }
   .hero-flourish { width: 74vw; }
-  .cosmos-obj.d4 img { opacity: 0.7; }
 }
 @media (max-width: 1180px) { .transmission-dock { right: auto; left: 50%; bottom: 9vh; translate: -50% 0; } .hero { padding-bottom: 16vh; } }
 @media (max-height: 640px) { .transmission-dock { bottom: 12px; left: 84px; right: auto; translate: none; } .hero { padding-bottom: 8vh; } }
@@ -294,7 +293,7 @@ body::before { display: none; }
 .xp-main small { display: block; }
 .hero > .label { color: var(--soft); text-shadow: 0 0 8px #07060b, 0 0 16px #07060b, 0 0 24px #07060b; }
 @media (max-width: 700px) {
-  .pal { width: 60px; height: 60px; }
+  .pal { width: 66px; height: 66px; }
   .transmission-dock { bottom: 13vh; }
   .hero > .label { font-size: 0.98rem; line-height: 1.5; }
   .hero { padding-bottom: 20vh; }
@@ -380,8 +379,7 @@ html[data-static="off"] :is(.cosmos-grain, .cosmos-dither) { display: none; }
 .star-rail-read b { font-weight: 400; }
 
 /* ── Kiwi, lit from inside the screen ─────────────────── */
-.pal::before { content: ""; position: absolute; inset: -62%; z-index: -1; background: radial-gradient(circle, rgba(90, 92, 242, 0.34), rgba(124, 103, 158, 0.14) 42%, transparent 66%); -webkit-mask: url("./fx/dots.png"); mask: url("./fx/dots.png"); pointer-events: none; }
-.pal-bob { animation: kiwiBob 2.8s steps(8) infinite; }
+.pal::before { content: ""; position: absolute; inset: -62%; z-index: -1; background: radial-gradient(circle, rgba(90, 92, 242, 0.22), rgba(124, 103, 158, 0.1) 42%, transparent 66%); -webkit-mask: url("./fx/dots.png"); mask: url("./fx/dots.png"); pointer-events: none; }
 .kiwi-aura { animation: kiwiAura 2.4s steps(4) infinite; }
 .pal-bits { position: absolute; inset: 0; pointer-events: none; }
 .pal-bits i { --a: calc(var(--i) * 45deg + 12deg); position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; background: #8f9bff; box-shadow: 0 0 6px rgba(111, 114, 255, 0.9); transform: rotate(var(--a)) translateX(58px) rotate(calc(var(--a) * -1)); animation: kiwiBit 3.6s steps(9) infinite; animation-delay: calc(var(--i) * -0.83s); }
@@ -390,7 +388,6 @@ html[data-static="off"] :is(.cosmos-grain, .cosmos-dither) { display: none; }
 .pal.is-happy .pal-bits i { animation-duration: 1.8s; }
 .pal-spark { border-radius: 0; background: #8f9bff; box-shadow: 0 0 8px rgba(111, 114, 255, 0.9); }
 .pal-say { border-color: #b7a4ea; box-shadow: 0 0 0 2px #0b0912, 0 0 18px rgba(90, 92, 242, 0.5); }
-@keyframes kiwiBob { 50% { transform: translateY(-9px); } }
 @keyframes kiwiAura { 50% { opacity: 0.45; } }
 @keyframes kiwiBit { from { opacity: 0; translate: 0 10px; } 30%, 60% { opacity: 0.95; } to { opacity: 0; translate: 0 -22px; } }
 

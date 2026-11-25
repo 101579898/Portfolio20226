@@ -4,7 +4,7 @@
 // placed at its own depth. Far things barely move; near things move more, both
 // when you scroll and when the pointer moves. All light comes from the upper left.
 //
-//   depth 1 deep space   2 nebula light   3 moons, planets   4 lilies   5 foreground
+//   depth 1 deep space   2 nebula light   3 moons, planets   4 near objects   5 foreground
 //
 // To move or add an object, edit the list below.
 import { useEffect, useRef } from "react";
@@ -21,23 +21,22 @@ const OBJECTS = [
   { img: "blackhole", at: "intro", x: 13, y: 78, w: 30, min: 300, depth: 1, o: 0.5 },
   { img: "nebula", at: "intro", x: 72, y: 46, w: 92, min: 760, depth: 2, o: 0.62, move: "drift" },
   { img: "moon", at: "intro", x: 88, y: 20, w: 27, min: 230, depth: 3, o: 0.95, move: "drift" },
-  { img: "flower", at: "intro", x: 9, y: 31, w: 24, min: 170, depth: 4, o: 0.95, move: "sway" },
-  { img: "blossom", at: "intro", x: 99, y: 103, w: 40, min: 330, depth: 5, o: 0.5, move: "sway" },
+  { img: "blossom", at: "intro", x: 99, y: 103, w: 40, min: 330, depth: 5, o: 0.5, blur: 7, move: "sway" },
   // About
   { img: "nebula", at: "about", x: 22, y: 30, w: 88, min: 700, depth: 2, o: 0.42, flip: true, move: "drift" },
   { img: "planet", at: "about", x: 97, y: 44, w: 58, min: 500, depth: 3, o: 0.62, move: "drift" },
-  { img: "blossom", at: "about", x: 103, y: 100, w: 30, min: 260, depth: 5, o: 0.42, move: "sway" },
+  { img: "blossom", at: "about", x: 103, y: 100, w: 30, min: 260, depth: 5, o: 0.42, blur: 6, move: "sway" },
   // Work
   { img: "galaxy", at: "work", x: 12, y: 40, w: 46, min: 420, depth: 1, o: 0.4 },
   { img: "nebula", at: "work", x: 62, y: 60, w: 96, min: 760, depth: 2, o: 0.45, move: "drift" },
   { img: "moon", at: "work", x: 88, y: 46, w: 17, min: 130, depth: 3, o: 0.85, move: "drift" },
-  { img: "blossom", at: "work", x: 103, y: 98, w: 36, min: 280, depth: 5, o: 0.45, move: "sway" },
+  { img: "blossom", at: "work", x: -3, y: 98, w: 36, min: 280, depth: 5, o: 0.45, blur: 7, move: "sway" },
   // Music
   { img: "blackhole", at: "music", x: 50, y: 42, w: 70, min: 560, depth: 2, o: 0.5 },
   // Contact
   { img: "nebula", at: "contact", x: 40, y: 74, w: 96, min: 760, depth: 2, o: 0.5, move: "drift" },
   { img: "planet", at: "contact", x: 88, y: 88, w: 46, min: 420, depth: 3, o: 0.62, move: "drift" },
-  { img: "blossom", at: "contact", x: 103, y: 104, w: 34, min: 280, depth: 5, o: 0.4, move: "sway" },
+  { img: "blossom", at: "contact", x: 0, y: 104, w: 34, min: 280, depth: 5, o: 0.4, blur: 7, move: "sway" },
 ];
 // On other pages (case files) there are no chapters, so these are used instead.
 const ELSEWHERE = [
@@ -305,6 +304,7 @@ export default function Cosmos() {
             className={`${o.move ? `move-${o.move}` : ""} ${o.flip ? "is-flip" : ""}`}
             src={asset(`/cosmos/${o.img}.webp`)}
             alt=""
+            style={o.blur ? { filter: `blur(${o.blur}px)` } : undefined}
             draggable="false"
             decoding="async"
             fetchPriority={o.at === "intro" ? "auto" : "low"}

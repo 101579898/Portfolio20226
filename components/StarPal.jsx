@@ -42,8 +42,8 @@ export default function StarPal() {
       const dy = e.clientY - (r.top + r.height / 2);
       const dist = Math.hypot(dx, dy) || 1;
       // Eyes look toward the pointer.
-      const look = dist > 70 ? 1 : 0;
-      eyes.current.setAttribute("transform", `translate(${Math.round((dx / dist) * look)} ${Math.round((dy / dist) * look * 0.6)})`);
+      const look = Math.min(1, dist / 160);
+      eyes.current.setAttribute("transform", `translate(${(dx / dist) * look} ${(dy / dist) * look})`);
       setHappy(dist < 150);
 
       // Playing tag: with a mouse she hops away twice, then lets you catch her.

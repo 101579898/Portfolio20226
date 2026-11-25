@@ -1,7 +1,7 @@
 // Kiwi on screen. Her pixels come from lib/kiwi.js.
 //   eyesRef – lets StarPal move her eyes toward the pointer
 //   aura    – the scattered pixels of light around her
-import { N, K, EYES, EYE_Y, NOSE, MOUTH, kiwiPixel, auraPixel } from "@/lib/kiwi";
+import { N, EYES, ASLEEP, NOSE, MOUTH, SMILE, kiwiPixel, auraPixel } from "@/lib/kiwi";
 
 // Merge neighbouring pixels of one colour into rows of rectangles.
 const rows = [];
@@ -15,11 +15,12 @@ for (let y = 0; y < N; y++) {
   }
 }
 const glow = [];
-for (let y = -7; y < N + 7; y++)
-  for (let x = -7; x < N + 7; x++) {
+for (let y = -6; y < N + 6; y++)
+  for (let x = -6; x < N + 6; x++) {
     const a = auraPixel(x, y);
     if (a) glow.push({ x, y, fill: a[0], o: Math.round(a[1] * 100) / 100 });
   }
+const draw = (list) => list.map(([x, y, w, h, fill], i) => <rect key={i} x={x} y={y} width={w} height={h} fill={fill} />);
 
 export default function KiwiArt({ eyesRef, aura = false, ...props }) {
   return (
@@ -33,28 +34,14 @@ export default function KiwiArt({ eyesRef, aura = false, ...props }) {
         <rect key={`${r.x}-${r.y}`} x={r.x} y={r.y} width={r.w + 0.02} height={1.02} fill={r.fill} />
       ))}
       <g className="pal-awake" ref={eyesRef}>
-        {EYES.map((x) => (
-          <g key={x} className="pal-eye">
-            <rect x={x} y={EYE_Y} width={2} height={3} fill={K.ink} />
-            <rect x={x} y={EYE_Y} width={1} height={1} fill="#fff" />
-          </g>
-        ))}
+        {EYES.map((eye, i) => <g key={i} className="pal-eye">{draw(eye)}</g>)}
       </g>
-      <g className="pal-asleep" fill={K.ink}>
-        {EYES.map((x) => (
-          <g key={x}>
-            {[[-1, 2], [0, 1], [1, 1], [2, 2]].map(([dx, dy]) => <rect key={dx} x={x + dx} y={EYE_Y + dy} width={1} height={1} />)}
-          </g>
-        ))}
+      <g className="pal-asleep">
+        {ASLEEP.map((eye, i) => <g key={i}>{draw(eye)}</g>)}
       </g>
-      {NOSE.map(([x, y]) => <rect key={x} x={x} y={y} width={1} height={1} fill={K.nose} />)}
-      <g className="pal-mouth" fill={K.ink}>
-        {MOUTH.map(([x, y]) => <rect key={x} x={x} y={y} width={1} height={1} />)}
-      </g>
-      <g className="pal-smile">
-        <rect x={13} y={19} width={4} height={1} fill={K.ink} />
-        <rect x={14} y={20} width={2} height={1} fill={K.nose} />
-      </g>
+      {draw(NOSE)}
+      <g className="pal-mouth">{draw(MOUTH)}</g>
+      <g className="pal-smile">{draw(SMILE)}</g>
     </svg>
   );
 }
