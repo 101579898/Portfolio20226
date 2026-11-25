@@ -10,6 +10,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Transmission from "./Transmission";
 import { space, smoothstep } from "@/lib/space";
+import { glide, isGliding } from "@/lib/scroll";
 import { profile } from "@/data/site";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -62,6 +63,56 @@ export default function Journey() {
     return () => {
       window.removeEventListener("pointermove", onMove);
       io.disconnect();
+    };
+  }, []);
+
+  // Following the star takes one scroll (wheel, swipe or key): down flies to About,
+  // up flies back. Reduced motion has no smooth scroll, so nothing is taken over there.
+  useEffect(() => {
+    const about = document.getElementById("about");
+    if (!about) return;
+    const inside = () => document.documentElement.dataset.booted && scrollY < root.current.offsetHeight - 70;
+    const fly = (down) => {
+      if (isGliding()) return true;
+      if (!inside() || (!down && scrollY < 4)) return false;
+      return down ? glide(about, -40) : glide(0);
+    };
+    const stop = (e) => {
+      if (e.cancelable) e.preventDefault();
+      e.stopImmediatePropagation();
+    };
+    const onWheel = (e) => {
+      if (e.ctrlKey || e.shiftKey || Math.abs(e.deltaY) < Math.abs(e.deltaX) || !e.deltaY) return;
+      if (fly(e.deltaY > 0)) stop(e);
+    };
+    let start = null;
+    const onStart = (e) => (start = e.touches.length === 1 ? [e.touches[0].clientX, e.touches[0].clientY] : null);
+    const onTouch = (e) => {
+      if (!start || e.touches.length > 1) return;
+      const dx = e.touches[0].clientX - start[0];
+      const dy = e.touches[0].clientY - start[1];
+      if (Math.abs(dy) < 6 || Math.abs(dy) < Math.abs(dx)) return;
+      if (fly(dy < 0)) stop(e);
+    };
+    const DOWN = ["ArrowDown", "PageDown", " "];
+    const UP = ["ArrowUp", "PageUp"];
+    const onKey = (e) => {
+      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.target.closest?.("input, textarea, select, [role=dialog], [contenteditable]")) return;
+      if (e.key === " " && e.target.closest?.("button, a, summary")) return;
+      const down = DOWN.includes(e.key) && !(e.key === " " && e.shiftKey);
+      if (!down && !UP.includes(e.key) && e.key !== " ") return;
+      if (fly(down)) stop(e);
+    };
+    const opt = { passive: false, capture: true };
+    addEventListener("wheel", onWheel, opt);
+    addEventListener("touchstart", onStart, { passive: true, capture: true });
+    addEventListener("touchmove", onTouch, opt);
+    addEventListener("keydown", onKey, true);
+    return () => {
+      removeEventListener("wheel", onWheel, opt);
+      removeEventListener("touchstart", onStart, { capture: true });
+      removeEventListener("touchmove", onTouch, opt);
+      removeEventListener("keydown", onKey, true);
     };
   }, []);
 
