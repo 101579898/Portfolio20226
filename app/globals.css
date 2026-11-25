@@ -194,9 +194,7 @@ button { font: inherit; color: inherit; }
   gap: 16px;
   padding: 6px var(--gutter);
   border-bottom: 1px solid rgba(196, 178, 220, 0.08);
-  background: rgba(7, 6, 11, 0.6);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: linear-gradient(rgba(7, 6, 11, 0.96), rgba(7, 6, 11, 0.9));
   font-family: var(--font-mono), monospace;
   font-size: 1.06rem;
   letter-spacing: 0.08em;

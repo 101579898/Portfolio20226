@@ -120,6 +120,14 @@ body::before { display: none; }
 .transmission.is-playing .transmission-disc { animation-play-state: running; }
 .transmission-play svg { position: absolute; inset: 13px; width: 22px; fill: #fff; filter: drop-shadow(0 0 3px #07060b) drop-shadow(0 0 2px #07060b); }
 .transmission-play:hover:not(:disabled) .transmission-disc { box-shadow: 0 0 0 3px #efe6f2, 0 0 16px rgba(220, 177, 194, 0.6); }
+.transmission-volume { position: relative; z-index: 2; display: flex; align-items: center; gap: 8px; margin-top: 4px; pointer-events: auto; }
+.transmission-volume svg { flex: none; width: 18px; fill: var(--soft); }
+.transmission-volume input { -webkit-appearance: none; appearance: none; width: 128px; height: 28px; margin: 0; background: none; cursor: pointer; touch-action: pan-y; }
+.transmission-volume input::-webkit-slider-runnable-track { height: 4px; background: linear-gradient(90deg, var(--ice) var(--v), rgba(217, 207, 226, 0.28) var(--v)); }
+.transmission-volume input::-moz-range-track { height: 4px; background: rgba(217, 207, 226, 0.28); }
+.transmission-volume input::-moz-range-progress { height: 4px; background: var(--ice); }
+.transmission-volume input::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 18px; margin-top: -7px; border: 0; border-radius: 0; background: #f6f0f8; }
+.transmission-volume input::-moz-range-thumb { width: 12px; height: 18px; border: 0; border-radius: 0; background: #f6f0f8; }
 .transmission-song small { font-size: 0.72rem; color: var(--soft); }
 .transmission-caret { position: absolute; right: 12px; bottom: 10px; border: 6px solid transparent; border-top-color: #efe6f2; border-bottom: 0; animation: bootBlink 1.2s steps(1) infinite; }
 .transmission.is-flicker .transmission-body { animation: pixelFlicker 0.52s steps(1); }
@@ -184,8 +192,8 @@ body::before { display: none; }
 .win-bar i { width: 9px; height: 9px; border: 1px solid var(--muted); border-radius: 2px; }
 .win-bar i:last-child { background: var(--ice); border-color: var(--ice); }
 .win-body { padding: 14px; }
-.id-portrait { height: min(38vh, 330px); overflow: hidden; border-radius: 8px; background: radial-gradient(circle at 40% 30%, rgba(124, 103, 158, 0.42), #0b0912 70%); }
-.id-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; }
+.id-portrait { position: relative; height: min(38vh, 330px); overflow: hidden; border-radius: 8px; background: radial-gradient(circle at 40% 30%, rgba(124, 103, 158, 0.42), #0b0912 70%); }
+.id-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 42% 46%; image-rendering: pixelated; }
 .id-portrait .portrait-art { height: 100%; border: 0; background: none; }
 .callouts { margin-top: 12px; gap: 6px; }
 .callouts div { padding-bottom: 6px; border-color: rgba(196, 178, 220, 0.14); }
@@ -255,6 +263,10 @@ body::before { display: none; }
 .star-rail-label i { font-style: normal; color: var(--ice); }
 .star-rail a:hover .star-rail-label, .star-rail a:focus-visible .star-rail-label { opacity: 1; translate: 0 0; }
 @media (max-width: 1024px) { .star-rail { display: none; } }
+
+/* She is out flying: the corner is empty until she lands */
+.pal { transition: opacity 0.7s, visibility 0s; }
+html.kiwi-flying .pal { opacity: 0; visibility: hidden; transition: opacity 0.4s, visibility 0s 0.4s; }
 
 /* ── Kiwi ─────────────────────────────────────────────── */
 .pal { width: 84px; height: 84px; }
@@ -343,6 +355,9 @@ body::before { display: none; }
 .turntable-time { font-family: var(--font-pixel), monospace; font-size: 1.05rem; color: var(--gold); font-variant-numeric: tabular-nums; }
 .playlist-win { display: grid; grid-template-rows: auto 1fr; }
 .playlist-body { position: relative; min-height: 380px; padding: 14px; }
+.playlist-cover { position: absolute; inset: 14px; z-index: 2; display: grid; align-items: end; justify-items: center; padding: 0 0 16px; border: 0; border-radius: 12px; background: linear-gradient(transparent 55%, rgba(7, 6, 11, 0.72)); color: #fff; cursor: pointer; }
+.playlist-cover .label { padding: 8px 16px; border: 1px solid rgba(239, 230, 242, 0.55); border-radius: 999px; background: rgba(7, 6, 11, 0.82); color: #f6f0f8; }
+.playlist-cover:hover .label { border-color: #fff; }
 .playlist-host iframe { display: block; width: 100%; border: 0; border-radius: 12px; }
 .playlist-loading, .playlist-fallback { position: absolute; inset: 14px; display: grid; place-content: center; justify-items: center; gap: 14px; text-align: center; }
 .playlist-loading { pointer-events: none; }
