@@ -51,7 +51,7 @@ export default function CaseStudy({ project: p, titleId }) {
         <div className="case-side right">
           {p.objective ? (
             <section className="case-panel lit" data-in aria-labelledby={id(p, "goal")}>
-              <h2 id={id(p, "goal")}>The problem</h2>
+              <h2 id={id(p, "goal")}>{p.objectiveTitle || "The problem"}</h2>
               <p>{p.objective}</p>
             </section>
           ) : null}
@@ -68,9 +68,9 @@ export default function CaseStudy({ project: p, titleId }) {
       {p.process?.length ? (
         <section className="case-block" aria-labelledby={id(p, "process")}>
           <h2 className="case-h" id={id(p, "process")}>{p.processTitle || "The process"}</h2>
-          <ol className={`case-steps ${p.portrait ? "is-portrait" : ""}`}>
+          <ol className="case-steps">
             {p.process.map((s, i) => (
-              <li key={s.title}>
+              <li key={s.title} className={!s.image ? "no-image" : s.tall ? "is-tall" : undefined}>
                 <div>
                   <span className="case-step-n" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
                   <h3>{s.title}</h3>
@@ -80,6 +80,40 @@ export default function CaseStudy({ project: p, titleId }) {
               </li>
             ))}
           </ol>
+        </section>
+      ) : null}
+
+      {p.palette ? (
+        <section className="case-block case-palette" aria-labelledby={id(p, "pal")}>
+          <div>
+            <h2 className="case-h" id={id(p, "pal")}>{p.palette.title}</h2>
+            <p>{p.palette.text}</p>
+            {p.palette.credit ? <small>{p.palette.credit}</small> : null}
+          </div>
+          <ul>
+            {p.palette.colors.map((c) => (
+              <li key={c.hex}>
+                <span style={{ background: c.hex }} aria-hidden="true" />
+                <strong>{c.name}</strong>
+                <code>{c.hex}</code>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {p.screens?.items?.length ? (
+        <section className="case-block" aria-labelledby={id(p, "scr")}>
+          <h2 className="case-h" id={id(p, "scr")}>{p.screens.title}</h2>
+          <ul className="case-screens">
+            {p.screens.items.map((x) => (
+              <li key={x.title}>
+                <img src={asset(x.image)} alt={x.alt} loading="lazy" />
+                <h3>{x.title}</h3>
+                <p>{x.text}</p>
+              </li>
+            ))}
+          </ul>
         </section>
       ) : null}
 

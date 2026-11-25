@@ -2,7 +2,7 @@ import BootScreen from "@/components/BootScreen";
 import Journey from "@/components/Journey";
 import Profile from "@/components/Profile";
 import WorkSection from "@/components/work/WorkSection";
-import Waves from "@/components/Waves";
+import Music from "@/components/Music";
 import Contact from "@/components/Contact";
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
       <Journey />
       <Profile />
       <WorkSection />
-      <Waves />
+      <Music />
       <Contact />
     </>
   );

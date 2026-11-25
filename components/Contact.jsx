@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Reveal from "./Reveal";
 import PixelArt from "./PixelArt";
+import Signature from "./Signature";
 import { profile } from "@/data/site";
 
 export default function Contact() {
@@ -56,6 +57,9 @@ export default function Contact() {
           <dd><a href={profile.github.url} target="_blank" rel="noreferrer">{profile.github.label}</a></dd>
         </div>
       </Reveal>
+
+      <Signature name={profile.name} />
+      <p className="contact-creed">Clear, accessible, and friendly to real people.</p>
 
       <footer className="footer">
         <span>© 2026 {profile.name}</span>

@@ -8,6 +8,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import WarmUp from "./WarmUp";
 import { space, smoothstep } from "@/lib/space";
 
 const BLUSH = new THREE.Color("#dcb1c2");
@@ -365,6 +366,7 @@ function Camera() {
 
 export default function StarScene({ onReady, onFail }) {
   const [awake, setAwake] = useState(true);
+  const [warm, setWarm] = useState(false);
   const small = typeof window !== "undefined" && window.innerWidth < 700;
 
   useEffect(() => {
@@ -380,14 +382,13 @@ export default function StarScene({ onReady, onFail }) {
   return (
     <Canvas
       className="star-canvas"
-      frameloop={awake ? "always" : "never"}
+      frameloop={awake && warm ? "always" : "never"}
       dpr={small ? 1 : [1, 1.5]}
       camera={{ position: [0, 0, 6], fov: 46 }}
       gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
         gl.domElement.addEventListener("webglcontextlost", () => onFail?.(), { once: true });
-        onReady?.();
       }}
     >
       <Reflections />
@@ -396,6 +397,12 @@ export default function StarScene({ onReady, onFail }) {
       <Trail />
       <Star />
       <Shards count={small ? 9 : 18} />
+      <WarmUp
+        onReady={() => {
+          setWarm(true);
+          onReady?.();
+        }}
+      />
     </Canvas>
   );
 }

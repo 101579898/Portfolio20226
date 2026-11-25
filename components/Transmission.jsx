@@ -1,8 +1,8 @@
 "use client";
 
 // A small pixel message box floating in the opening scene. Click it and it
-// flickers into a song card; click again to go back. The words come from
-// `transmission` in data/site.js. It never plays any sound.
+// flickers into a song card, whose title opens the song in Spotify; click again to
+// go back. The words come from `transmission` in data/site.js. It never plays sound.
 import { useEffect, useRef, useState } from "react";
 import { transmission } from "@/data/site";
 
@@ -25,27 +25,30 @@ export default function Transmission() {
   }
 
   return (
-    <button
-      type="button"
-      className={`transmission hero-fade ${open ? "is-open" : ""} ${flicker ? "is-flicker" : ""}`}
-      onClick={toggle}
-      aria-expanded={open}
-      aria-label={open ? "Close the song message" : "Open the message"}
-    >
-      <span className="transmission-body" aria-live="polite">
+    <div className={`transmission hero-fade ${open ? "is-open" : ""} ${flicker ? "is-flicker" : ""}`}>
+      <button
+        type="button"
+        className="transmission-flip"
+        onClick={toggle}
+        aria-expanded={open}
+        aria-label={open ? "Back to the message" : "See which song this is from"}
+      />
+      <div className="transmission-body" aria-live="polite">
         {open ? (
           <>
             <span className="transmission-disc" aria-hidden="true" />
             <span className="transmission-song">
-              <strong>{transmission.song}</strong>
+              <a href={transmission.url} target="_blank" rel="noreferrer" aria-label={`${transmission.song} by ${transmission.artist}, open in Spotify`}>
+                {transmission.song} <span aria-hidden="true">↗</span>
+              </a>
               <span>{transmission.artist}</span>
             </span>
           </>
         ) : (
           <span className="transmission-text">{transmission.text || "1 new message"}</span>
         )}
-      </span>
+      </div>
       <span className="transmission-caret" aria-hidden="true" />
-    </button>
+    </div>
   );
 }

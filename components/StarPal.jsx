@@ -6,13 +6,14 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import KiwiArt from "./KiwiArt";
-import { profile } from "@/data/site";
+import { profile, music } from "@/data/site";
 
 const tapLines = ["Wheee!", "Again, again!", "So dizzy…", "Stardust everywhere!", "Mrrp! I'm " + profile.starName + "!"];
 const sectionLines = {
   about: "That's Kiara! She made me.",
   skills: "Look at those stats go!",
   work: "Ooh, a pack! Tear it open!",
+  music: "A playlist called " + music.title + "?" + (music.title === profile.starName ? " That's me!" : ""),
   contact: "Say hi to her, she's nice.",
 };
 

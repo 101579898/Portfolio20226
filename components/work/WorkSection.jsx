@@ -75,7 +75,8 @@ export default function WorkSection() {
   const drag = useRef(null);
   const collection = useRef(null);
   const [mode, setMode] = useState("pending"); // pending | 3d | flat
-  const [near, setNear] = useState(false); // close enough to be worth loading
+  const [near, setNear] = useState(false); // time to prepare the 3D pack
+  const [warm, setWarm] = useState(false); // the 3D pack is ready to draw
   const [onScreen, setOnScreen] = useState(false);
   const [scale, setScale] = useState(1);
 
@@ -102,10 +103,17 @@ export default function WorkSection() {
     const nearIO = new IntersectionObserver(([e]) => e.isIntersecting && setNear(true), { rootMargin: "900px 0px" });
     const onIO = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting));
     nearIO.observe(el);
+    // Prepare it quietly once the opening has settled, so arriving here is smooth.
+    let idle = 0;
+    const later = setTimeout(() => {
+      idle = window.requestIdleCallback ? requestIdleCallback(() => setNear(true), { timeout: 4000 }) : setTimeout(() => setNear(true), 500);
+    }, 4500);
     onIO.observe(el);
     const ro = new ResizeObserver(([e]) => setScale(Math.min(1, e.contentRect.width / 350, e.contentRect.height / 560)));
     ro.observe(el);
     return () => {
+      clearTimeout(later);
+      if (idle) (window.cancelIdleCallback || clearTimeout)(idle);
       nearIO.disconnect();
       onIO.disconnect();
       ro.disconnect();
@@ -207,6 +215,7 @@ export default function WorkSection() {
 
   function reseal() {
     if (!go("sealed")) return;
+    setWarm(false);
     timeline.current?.kill();
     Object.assign(fx.current, FX);
     setSeen(new Set());
@@ -269,9 +278,9 @@ export default function WorkSection() {
         onPointerMove={(e) => showPack && e.pointerType === "mouse" && point(e)}
       >
         {showPack && near && mode === "3d" ? (
-          <PackScene fx={fx} total={total} scale={scale} awake={onScreen} onFail={() => setMode("flat")} />
+          <PackScene fx={fx} total={total} scale={scale} awake={onScreen && warm} onReady={() => setWarm(true)} onFail={() => setMode("flat")} />
         ) : null}
-        {showPack && mode === "flat" ? <FlatPack fx={fx} scale={scale} /> : null}
+        {showPack && (mode === "flat" || (mode === "3d" && !warm)) ? <FlatPack fx={fx} scale={scale} /> : null}
         {phase === "sealed" || phase === "interacting" ? (
           <div
             className="pack-hit"

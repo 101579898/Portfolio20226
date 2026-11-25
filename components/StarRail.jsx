@@ -9,7 +9,7 @@ const STOPS = [
   { id: "intro", n: "01", label: "Opening" },
   { id: "about", n: "02", label: "About" },
   { id: "work", n: "03", label: "Work" },
-  { id: "signal", n: "04", label: "Signal" },
+  { id: "music", n: "04", label: "Music" },
   { id: "contact", n: "05", label: "Contact" },
 ];
 

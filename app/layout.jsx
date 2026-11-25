@@ -33,6 +33,13 @@ const bootCheck = 'try{if(sessionStorage.getItem("booted"))document.documentElem
 export const metadata = {
   title: `${profile.name} — ${profile.role}`,
   description: profile.bio,
+  metadataBase: new URL("https://101579898.github.io"),
+  openGraph: {
+    title: `${profile.name} — ${profile.role}`,
+    description: "Digi-Space: a digital universe where every project is something to discover.",
+    images: [{ url: "https://101579898.github.io/Portfolio20226/og.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport = { themeColor: "#07060b" };

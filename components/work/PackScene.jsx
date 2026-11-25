@@ -4,9 +4,10 @@
 // strip tears off along a jagged line, the mouth gapes open, light spills out and
 // the cards rise. Every moving value lives in `fx`, a plain object that the parent
 // animates with GSAP, so this file only has to draw it.
-import { useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import WarmUp from "../WarmUp";
 import { asset } from "@/lib/asset";
 import { fanPose, PACK } from "./machine";
 
@@ -336,18 +337,10 @@ export default function PackScene({ fx, total, scale, awake, onReady, onFail }) 
     >
       <Lights />
       <Camera />
-      <Pack fx={fx} total={total} scale={scale} />
-      <Ready onReady={onReady} />
+      <Suspense fallback={null}>
+        <Pack fx={fx} total={total} scale={scale} />
+        <WarmUp onReady={onReady} />
+      </Suspense>
     </Canvas>
   );
-}
-
-// Tells the parent once the first frame with textures has been drawn.
-function Ready({ onReady }) {
-  const n = useRef(0);
-  useFrame(() => {
-    n.current += 1;
-    if (n.current === 3) onReady?.();
-  });
-  return null;
 }

@@ -34,11 +34,12 @@ const OBJECTS = [
   { img: "moon", at: "work", x: 88, y: 46, w: 17, min: 130, depth: 3, o: 0.85, move: "drift" },
   { img: "flower", at: "work", x: 96, y: 86, w: 26, min: 210, depth: 4, o: 0.62, move: "turn" },
   { img: "blossom", at: "work", x: -3, y: 98, w: 36, min: 280, depth: 5, o: 0.45, blur: 7, move: "sway" },
-  // Signal (waves)
-  { img: "blackhole", at: "signal", x: 50, y: 46, w: 62, min: 560, depth: 2, o: 0.5 },
+  // Music
+  { img: "blackhole", at: "music", x: 50, y: 42, w: 70, min: 560, depth: 2, o: 0.5 },
+  { img: "flower", at: "music", x: 2, y: 18, w: 18, min: 150, depth: 4, o: 0.45, move: "turn" },
   // Contact
   { img: "nebula", at: "contact", x: 40, y: 74, w: 96, min: 760, depth: 2, o: 0.5, move: "drift" },
-  { img: "planet", at: "contact", x: 80, y: 58, w: 56, min: 480, depth: 3, o: 0.78, move: "drift" },
+  { img: "planet", at: "contact", x: 88, y: 88, w: 46, min: 420, depth: 3, o: 0.62, move: "drift" },
   { img: "flower", at: "contact", x: 97, y: 18, w: 18, min: 150, depth: 4, o: 0.55, move: "turn" },
   { img: "blossom", at: "contact", x: 0, y: 104, w: 34, min: 280, depth: 5, o: 0.4, blur: 7, move: "sway" },
 ];
@@ -197,6 +198,8 @@ export default function Cosmos() {
 
     measure();
     paint();
+    // Unpack the pictures early so they do not cause a hitch when first scrolled to.
+    const early = setTimeout(() => el.querySelectorAll("img").forEach((i) => i.decode?.().catch(() => {})), 1200);
     const ro = new ResizeObserver(measure);
     ro.observe(document.body);
     addEventListener("resize", measure);
@@ -204,6 +207,7 @@ export default function Cosmos() {
     if (fine && !reduce) addEventListener("pointermove", onMove, { passive: true });
     return () => {
       cancelAnimationFrame(raf);
+      clearTimeout(early);
       ro.disconnect();
       removeEventListener("resize", measure);
       removeEventListener("scroll", onScroll);
@@ -213,7 +217,7 @@ export default function Cosmos() {
 
   return (
     <div className="cosmos" ref={root} aria-hidden="true">
-      {["intro", "about", "work", "signal", "contact", ""].map((id) => (
+      {["intro", "about", "work", "music", "contact", ""].map((id) => (
         <span key={id || "else"} className={`cosmos-light light-${id || "else"}`} data-at={id} />
       ))}
       <span className="cosmos-stars" />
@@ -235,6 +239,7 @@ export default function Cosmos() {
             alt=""
             draggable="false"
             decoding="async"
+            fetchPriority={o.at === "intro" ? "auto" : "low"}
           />
         </div>
       ))}

@@ -23,11 +23,13 @@ export const profile = {
 };
 
 // The little pixel message in the opening scene.
-// text: paste your lyric here, exactly as you want it shown ("" shows "1 new message").
+// text: your lyric, exactly as you want it shown ("" shows "1 new message").
+// url: where the song's name links to.
 export const transmission = {
   text: "Me, I wasn't taught to share, but care",
   song: "PRIDE.",
   artist: "Kendrick Lamar",
+  url: "https://open.spotify.com/track/6IZvVAP7VPPnsGX6bvgkqg",
 };
 
 export const education = [
@@ -50,139 +52,106 @@ export const experience = [
 ];
 
 // SKILL BARS
-// level: 1-10 (fills the bar). These numbers are PLACEHOLDERS — set your own.
-// short: the two letters shown in the tile.
+// level: 1-10 (fills the bar). Change the numbers any time.
+// short: the letters shown in the tile.
 export const skills = [
+  { name: "Adobe", short: "Ad", level: 8, note: "Photoshop, Illustrator and After Effects" },
   { name: "Figma", short: "Fg", level: 7, note: "Wireframes, prototypes, design systems" },
-  { name: "Photoshop", short: "Ps", level: 6, note: "Image editing and compositing" },
-  { name: "Illustrator", short: "Ai", level: 6, note: "Logos, icons and vector illustration" },
-  { name: "HTML / CSS", short: "</>", level: 5, note: "Responsive, accessible layouts" },
-  { name: "JavaScript", short: "Js", level: 4, note: "Interactions and animation" },
-  { name: "GitHub", short: "Gh", level: 5, note: "Version control and publishing" },
-  { name: "VS Code", short: "Vs", level: 6, note: "My everyday editor" },
-  { name: "Maya", short: "My", level: 3, note: "3D modelling basics" },
+  { name: "JavaScript", short: "Js", level: 7, note: "Interactions and animation" },
+  { name: "Code / HTML / CSS", short: "</>", level: 6, note: "Responsive, accessible layouts, with VS Code and GitHub" },
+  { name: "Maya", short: "My", level: 4, note: "3D modelling" },
 ];
+
+// MUSIC
+// Paste any public Spotify playlist link. It never plays until someone presses play.
+export const music = {
+  title: "Kiwi",
+  url: "https://open.spotify.com/playlist/6NH9ex9OHieBgUEpKYUKab",
+};
 
 // PROJECTS
 // Each object becomes one card in the work pack AND one case study. Nothing else
 // needs to change. Leave a field out (or empty) and that part is simply not shown.
 //
 //   summary  one or two sentences, on the card        intro     the opening paragraph
-//   role, responsibilities, tools                     objective the problem you set out to solve
-//   process  steps: { title, text, image, alt }       decisions { title, text }
+//   role, responsibilities, tools                     objective what you set out to do
+//   process  steps: { title, text, image, alt, tall } (tall: true for phone screens)
+//   palette  { title, text, colors: [{ name, hex }] } decisions { title, text }
+//   screens  { title, items: [{ title, text, image, alt }] }  a row of phone screens
 //   outcome  how it ended                             gallery   { src, alt }
 //   image    the main picture (public/work/...)       links     { label, href }
 //   hue      0-360, the tint of the card
 export const projects = [
   {
-    slug: "myro-rebrand",
-    title: "Myro → Aurea",
-    type: "Branding",
-    year: "2026",
-    role: "Brand strategy, identity & web design",
-    tools: ["Canva"],
-    summary: "Rebranding a natural fragrance and essential oil company as Aurea: quiet luxury that people can trust.",
-    intro:
-      "Myro is a fragrance and essential oil brand built on 100% natural ingredients. I rebranded it as Aurea, a natural fragrance brand dedicated to clean, sustainable scents, designed for everyday rituals that offer moments of calm, clarity and authenticity.",
-    objective:
-      "Today's fragrance market is split between synthetic luxury brands and natural wellness brands that often lack true credibility or sophistication. People looking for clean, high-quality scents struggle to find options that feel both trustworthy and luxurious. Aurea fills that gap.",
-    responsibilities: [
-      "Competitor and audience research",
-      "Persona and customer journey map",
-      "Logo, colour and type system",
-      "User flows, lo-fi and hi-fi website screens",
-      "Social content plan and brand partnerships",
-    ],
-    process: [
-      {
-        title: "Read the market",
-        text: "I compared Myro with PHLUR, NEST New York and doTERRA, then built a persona and a customer journey map from what those brands' customers say in reviews.",
-        image: "/work/myro/persona.webp",
-        alt: "User persona slide with a radar chart and profile",
-      },
-      {
-        title: "Map the journey",
-        text: "From awareness to loyalty: what people think, do and feel at each step, and where the brand can do better.",
-        image: "/work/myro/journey-map.webp",
-        alt: "Customer journey map from awareness to loyalty",
-      },
-      {
-        title: "Set the mood",
-        text: "High-quality, natural, gold, rich, golden, luxury. The keywords became a palette and a set of images.",
-        image: "/work/myro/moodboard.webp",
-        alt: "Moodboard of amber bottles and gold textures with five colour swatches",
-      },
-      {
-        title: "Plan the site",
-        text: "User flows for shopping, value sets, support and the brand story, then paper wireframes.",
-        image: "/work/myro/wireframes.webp",
-        alt: "Two pages of hand-drawn website wireframes",
-      },
-      {
-        title: "Design the screens",
-        text: "Hi-fi website screens that put the product first: shop, product page, value sets and the Aurea story.",
-        image: "/work/myro/hi-fi.webp",
-        alt: "Aurea website shown on a laptop beside a column of page designs",
-      },
-    ],
-    decisions: [
-      { title: "A golden palette", text: "#462407, #9f691e, #daa754 and #f1dfaa: rich browns and golds for natural luxury." },
-      { title: "Two typefaces", text: "Cormorant Garamond for headings and Inter for body text." },
-      { title: "A clear audience", text: "Made for all genders aged 25–39, mostly women who value beauty, wellness and authenticity." },
-      { title: "Instagram and TikTok", text: "Instagram for a consistent, visual brand identity; TikTok for short stories about mood, rituals and wellness." },
-    ],
-    gallery: [
-      { src: "/work/myro/before-after.webp", alt: "The original Myro site, before becoming Aurea" },
-      { src: "/work/myro/identity.webp", alt: "Aurea brand identity: logo, tagline, colours and fonts" },
-      { src: "/work/myro/user-flows.webp", alt: "User flow diagram" },
-      { src: "/work/myro/instagram.webp", alt: "Aurea Instagram profile on two phones" },
-      { src: "/work/myro/posts.webp", alt: "Aurea Instagram stories and posts" },
-      { src: "/work/myro/schedule.webp", alt: "Weekly social posting schedule" },
-    ],
-    outcome:
-      "A full rebrand: a new name, identity and voice, a website design, and a social launch plan with a weekly posting schedule, engagement strategy, brand partnerships and the numbers to track once it is live.",
-    image: "/work/myro/website.webp",
-    alt: "The Aurea website on a laptop, with a perfume bottle and rose",
-    links: [{ label: "View the full deck (PDF, 15 MB)", href: "/work/myro-rebrand.pdf" }],
-    hue: 335,
-  },
-  {
     slug: "cafe-finder",
     title: "Cafe Finder",
-    type: "Web / UI",
+    type: "UX / UI + Code",
     year: "2025",
-    role: "Design & front-end build",
-    tools: ["HTML", "CSS", "Bootstrap 5"],
-    summary: "A mobile-first site for finding cafes in Toronto, with a map, nearby picks and a page for each cafe.",
+    role: "Everything: ideation, interface design and front-end code",
+    tools: ["Adobe Illustrator", "HTML", "CSS", "Bootstrap 5"],
+    summary: "A minimal guide to local cafes nearby. I planned it, designed it in Illustrator, then built it in code.",
     intro:
-      "Cafe Finder is a mobile-first site for finding somewhere to sit down in Toronto. It opens on a map with nearby cafes underneath, and each cafe has its own page with a rating, address, story, hours and photos.",
-    objective: "",
-    responsibilities: ["Screen design", "HTML and CSS build", "Publishing on GitHub Pages"],
+      "Cafe Finder is a simple guide to the cafes around you in Toronto. I took it from the first idea to a working site: the ideation, the interface design in Adobe Illustrator, and then the code.",
+    objectiveTitle: "The goal",
+    objective:
+      "Keep the interface super minimal and simple, without overcomplicating the idea. The app should be a guide that keeps information about different local cafes in the nearby area.",
+    responsibilities: [
+      "Ideation and design goals",
+      "Site map",
+      "Interface design in Illustrator",
+      "HTML and CSS build",
+      "Publishing on GitHub Pages",
+    ],
     process: [
       {
-        title: "Home",
-        text: "Your location, a search bar and a map, with nearby cafes in a sheet you can reach with a thumb.",
-        image: "/work/cafe/homepage.webp",
-        alt: "Cafe Finder home screen with a map and two nearby cafes",
+        title: "Set the goals",
+        text: "I started by writing down what the app had to do: a homepage split between a map and a scrollable list of nearby cafes, simple toggle filters, a detail page for each cafe, and a bottom menu for home, favourites and profile.",
       },
       {
-        title: "Find a cafe",
-        text: "A larger map with pins, and the nearby list directly under it.",
-        image: "/work/cafe/findcafe.webp",
-        alt: "Find Cafe screen with four map pins",
+        title: "Map the app",
+        text: "Everything branches from Home: Profile, Search & Filters, the Cafe Detail Page and Favourites. Filters cover what people look for, like open now, Wi-Fi, outlets and a quiet space.",
+        image: "/work/cafe/sitemap.webp",
+        alt: "Site map: Home leads to Profile, Search and Filters, Cafe Detail Page and Favourites, each with its own list",
       },
       {
-        title: "Cafe page",
-        text: "A big photo first, then rating, address, the cafe's story, opening hours and photos.",
+        title: "Design it in Illustrator",
+        text: "The base design came first: a big rounded photo, then the name, rating, address, tags, the cafe's story, hours and more photos, on a calm cream background.",
+        image: "/work/cafe/illustrator.webp",
+        alt: "Illustrator design of the ICHA TEA cafe page",
+        tall: true,
+      },
+      {
+        title: "Turn it into code",
+        text: "Then I rebuilt the design as a phone-sized site with HTML, CSS and Bootstrap, and published it on GitHub Pages.",
         image: "/work/cafe/cafe.webp",
-        alt: "Cafe page for ICHA TEA with a photo, rating, address and hours",
+        alt: "The coded ICHA TEA cafe page",
+        tall: true,
       },
     ],
-    processTitle: "Screen by screen",
-    portrait: true, // the pictures above are tall phone screens
+    palette: {
+      title: "A warm, simple palette",
+      text: "Deep berry red and warm brown for accents and headers, for coffee and cafe vibes. Beige and cream for a soft, neutral background that feels calm. Bolder reds highlight important things, like \"open now\".",
+      colors: [
+        { name: "Berry Brown", hex: "#66281f" },
+        { name: "Rosewood Red", hex: "#994d47" },
+        { name: "Warm Brown", hex: "#9d8361" },
+        { name: "Almond Cream", hex: "#bfb9a3" },
+        { name: "Sweet Beige", hex: "#e6e5d5" },
+      ],
+      credit: "Palette inspired by @o8lux_design",
+    },
+    screens: {
+      title: "The coded screens",
+      items: [
+        { title: "Home", text: "Your location, search and a map, with nearby cafes below.", image: "/work/cafe/homepage.webp", alt: "Cafe Finder home screen with a map and two nearby cafes" },
+        { title: "Find a cafe", text: "A larger map with pins and the nearby list under it.", image: "/work/cafe/findcafe.webp", alt: "Find Cafe screen with four map pins" },
+        { title: "Cafe page", text: "Photo, rating, address, story, hours and photos.", image: "/work/cafe/cafe.webp", alt: "Cafe page for ICHA TEA" },
+      ],
+    },
     decisions: [
-      { title: "Phone first", text: "The layout is capped at phone width, with a fixed bottom bar for the main pages." },
-      { title: "Warm colours", text: "Coffee browns and creams, so the interface feels like the places it lists." },
+      { title: "Minimal first", text: "Only what helps someone choose a cafe quickly." },
+      { title: "Map and list together", text: "The map gives a quick visual; the list gives the details." },
+      { title: "Simple cards", text: "Each cafe is a card for quick looking, with the full story one tap away." },
     ],
     gallery: [],
     outcome: "",
@@ -192,6 +161,6 @@ export const projects = [
       { label: "Open the site", href: "https://101579898.github.io/Cafefind/homepage.html" },
       { label: "See the code", href: "https://github.com/101579898/Cafefind" },
     ],
-    hue: 20,
+    hue: 8,
   },
 ];

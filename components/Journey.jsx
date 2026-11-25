@@ -32,9 +32,18 @@ export default function Journey() {
   const entering = useRef(null);
   const galaxy = useRef(null);
   const flash = useRef(null);
+  const actions = useRef(null);
   const message = useRef(null);
   // "pending" until we know; "3d" shows the scene; "flat" shows a drawn star instead.
   const [mode, setMode] = useState("pending");
+  const gate = useRef({ booted: false, warm: false, flown: false });
+
+  function flyIn() {
+    const g = gate.current;
+    if (!g.booted || !g.warm || g.flown) return;
+    g.flown = true;
+    gsap.to(space, { intro: 1, duration: 2.1, ease: "power3.out" });
+  }
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -72,7 +81,9 @@ export default function Journey() {
         const out = smoothstep(0.04, 0.3, q);
         title.current.style.opacity = 1 - out;
         title.current.style.transform = `translateZ(0) scale(${1 + out * 0.28})`;
-        title.current.style.visibility = out >= 1 ? "hidden" : "visible";
+        // The heading stays readable to screen readers; only its links are switched off.
+        title.current.style.pointerEvents = out >= 1 ? "none" : "";
+        actions.current.style.visibility = out >= 1 ? "hidden" : "visible";
         message.current.style.opacity = 1 - out;
         message.current.style.visibility = out >= 1 ? "hidden" : "visible";
         message.current.style.transform = `translateY(${-out * 90}px)`;
@@ -97,11 +108,14 @@ export default function Journey() {
       space.intro = 0;
       const intro = gsap
         .timeline({ paused: true })
-        .to(space, { intro: 1, duration: 2.1, ease: "power3.out" }, 0)
         .from(".hero-line > span", { yPercent: 60, opacity: 0, duration: 1.1, ease: "power3.out", stagger: 0.14 }, 0.45)
         .from(".hero-flourish path", { strokeDashoffset: 1, duration: 1.3, ease: "power2.inOut" }, 0.85)
         .from(".hero-fade", { opacity: 0, y: 12, duration: 0.8, stagger: 0.12 }, 1);
-      const playIntro = () => intro.play();
+      const playIntro = () => {
+        gate.current.booted = true;
+        flyIn();
+        intro.play();
+      };
       if (document.documentElement.dataset.booted) playIntro();
       else window.addEventListener("portfolio:booted", playIntro, { once: true });
 
@@ -114,7 +128,13 @@ export default function Journey() {
     <section className="journey" id="intro" ref={root} aria-label="Welcome">
       <div className="journey-stage">
         <img className="journey-galaxy" ref={galaxy} src={asset("/cosmos/galaxy.webp")} alt="" aria-hidden="true" />
-        {mode === "3d" ? <StarScene onFail={() => setMode("flat")} /> : null}
+        {mode === "3d" ? <StarScene
+            onReady={() => {
+              gate.current.warm = true;
+              flyIn();
+            }}
+            onFail={() => setMode("flat")}
+          /> : null}
         {mode === "flat" ? (
           <svg className="journey-flatstar" viewBox="0 0 100 100" aria-hidden="true">
             <path d="M50 2 Q53 47 98 50 Q53 53 50 98 Q47 53 2 50 Q47 47 50 2 Z" fill="#efe6f6" />
@@ -130,7 +150,7 @@ export default function Journey() {
           <svg className="hero-flourish" viewBox="0 0 600 70" aria-hidden="true">
             <path pathLength="1" d="M20 22 C 60 64, 180 60, 300 42 S 520 14, 566 30 C 592 40, 560 58, 528 46" />
           </svg>
-          <div className="hero-actions hero-fade">
+          <div className="hero-actions hero-fade" ref={actions}>
             <p className="scroll-hint">
               <span className="scroll-dot" aria-hidden="true" />
               Scroll to follow the star
