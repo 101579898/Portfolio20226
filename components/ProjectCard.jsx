@@ -63,12 +63,12 @@ export default function ProjectCard({
 
   // Print the back of the card.
   useEffect(() => {
-    const art = cardBack(card);
+    const art = cardBack();
     const c = back.current;
     c.width = art.width;
     c.height = art.height;
     c.getContext("2d").drawImage(art, 0, 0);
-  }, [card]);
+  }, []);
 
   function paint() {
     const el = ref.current;
@@ -209,7 +209,7 @@ export default function ProjectCard({
           <span className="card-sheen" aria-hidden="true" />
         </article>
 
-        {/* BACK: Kiwi on her moon (see lib/cardback.js) */}
+        {/* BACK: a small Kiwi on a smooth sky (see lib/cardback.js) */}
         <div className="card card-back" aria-hidden="true">
           <canvas className="back-art" ref={back} />
           <span className="back-holo" />

@@ -20,7 +20,7 @@ const OBJECTS = [
   // Opening
   { img: "blackhole", at: "intro", x: 13, y: 78, w: 30, min: 300, depth: 1, o: 0.5 },
   { img: "nebula", at: "intro", x: 72, y: 46, w: 92, min: 760, depth: 2, o: 0.62, move: "drift" },
-  { img: "moon", at: "intro", x: 88, y: 20, w: 27, min: 230, depth: 3, o: 0.95, move: "drift" },
+  { img: "moon", at: "intro", x: 88, y: 20, w: 36, min: 305, depth: 3, o: 0.95, move: "drift" },
   { img: "blossom", at: "intro", x: 99, y: 103, w: 40, min: 330, depth: 5, o: 0.5, blur: 7, move: "sway" },
   // About
   { img: "nebula", at: "about", x: 22, y: 30, w: 88, min: 700, depth: 2, o: 0.42, flip: true, move: "drift" },
@@ -29,7 +29,7 @@ const OBJECTS = [
   // Work
   { img: "galaxy", at: "work", x: 12, y: 40, w: 46, min: 420, depth: 1, o: 0.4 },
   { img: "nebula", at: "work", x: 62, y: 60, w: 96, min: 760, depth: 2, o: 0.45, move: "drift" },
-  { img: "moon", at: "work", x: 88, y: 46, w: 17, min: 130, depth: 3, o: 0.85, move: "drift" },
+  { img: "moon", at: "work", x: 88, y: 46, w: 22, min: 172, depth: 3, o: 0.85, move: "drift" },
   { img: "blossom", at: "work", x: -3, y: 98, w: 36, min: 280, depth: 5, o: 0.45, blur: 7, move: "sway" },
   // Music
   { img: "blackhole", at: "music", x: 50, y: 42, w: 70, min: 560, depth: 2, o: 0.5 },
@@ -41,7 +41,7 @@ const OBJECTS = [
 // On other pages (case files) there are no chapters, so these are used instead.
 const ELSEWHERE = [
   { img: "nebula", x: 30, y: 30, w: 96, min: 760, depth: 2, o: 0.5, move: "drift" },
-  { img: "moon", x: 94, y: 16, w: 18, min: 150, depth: 3, o: 0.7, move: "drift" },
+  { img: "moon", x: 94, y: 16, w: 24, min: 200, depth: 3, o: 0.7, move: "drift" },
 ];
 // How far each depth moves: with the pointer (px) and with a screen of scroll (share of the screen).
 const POINTER = [0, 3, 6, 12, 22, 38];

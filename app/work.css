@@ -86,7 +86,7 @@
 /* Back: the printed design, with the write-up over the lower part when it is on */
 .card.card-back { position: absolute; inset: 0; padding: 0; transform: rotateY(180deg) translateZ(3px); background: #0b0912; border: 0; }
 .back-art { position: absolute; inset: 0; width: 100%; height: 100%; }
-.back-holo { position: absolute; inset: 0; background: repeating-linear-gradient(118deg, transparent 0 7%, rgba(143, 155, 255, 0.5) 11%, rgba(220, 177, 194, 0.5) 15%, rgba(200, 199, 147, 0.32) 18%, transparent 24%); background-size: 260% 260%; background-position: var(--mx, 30%) var(--my, 20%); mix-blend-mode: screen; opacity: 0.16; -webkit-mask: url("./fx/dots.png"); mask: url("./fx/dots.png"); transition: opacity 0.4s; }
+.back-holo { position: absolute; inset: 0; background: linear-gradient(118deg, transparent 18%, rgba(143, 155, 255, 0.42) 36%, rgba(220, 177, 194, 0.46) 48%, rgba(200, 199, 147, 0.28) 56%, transparent 74%); background-size: 260% 260%; background-position: var(--mx, 30%) var(--my, 20%); mix-blend-mode: screen; opacity: 0.22; transition: opacity 0.4s; }
 .card3d:hover .back-holo, .is-spin .back-holo { opacity: 0.55; }
 /* When a card turns over, its picture resolves out of pixels */
 .card-pixels { position: absolute; inset: 0; background: #171330; opacity: 0; pointer-events: none; -webkit-mask: url("./fx/dots.png") 0 0 / 24px; mask: url("./fx/dots.png") 0 0 / 24px; }

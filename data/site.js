@@ -81,8 +81,6 @@ export const music = {
 //   outcome  how it ended                             gallery   { src, alt }
 //   image    the main picture (public/work/...)       links     { label, href }
 //   hue      0-360, the tint of the card
-//   symbol   mark on the card's back: cup, pen, bars, paw, star, code, heart
-//   backTone moon on the card's back: 0 blush, 1 blue, 2 violet, 3 pale
 export const projects = [
   {
     slug: "cafe-finder",
@@ -164,7 +162,5 @@ export const projects = [
       { label: "See the code", href: "https://github.com/101579898/Cafefind" },
     ],
     hue: 8,
-    symbol: "cup",
-    backTone: 0,
   },
 ];
