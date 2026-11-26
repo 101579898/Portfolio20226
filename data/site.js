@@ -50,18 +50,25 @@ export const education = [
 
 export const experience = [
   { title: "Sephora", detail: "Operations Consultant", date: "2024 — Present" },
-  { title: "O'Grady's on Church", detail: "Part-time Busser", date: "Apr — Jul 2024" },
+  { title: "Blockchain Futurist Conference", detail: "Volunteer, Toronto", date: "Jul 19 — 20, 2026" },
   { title: "TechTO", detail: "Volunteer contract", date: "Jul 2024" },
 ];
 
+// AWARDS
+// detail is optional.
+export const awards = [
+  { title: "Sunday Afolabi Scholarship Grant", date: "Jun 2026" },
+  { title: "Dotty Nicholas Sickle Cell Scholarship", date: "Jun 2026" },
+];
+
 // SKILL BARS
-// level: 1-10 (fills the bar). Change the numbers any time.
+// level: 1-10, halves allowed (fills the bar). Change the numbers any time.
 // short: the letters shown in the tile.
 export const skills = [
   { name: "Adobe", short: "Ad", level: 8, note: "Photoshop, Illustrator and After Effects" },
   { name: "Figma", short: "Fg", level: 7, note: "Wireframes, prototypes, design systems" },
   { name: "JavaScript", short: "Js", level: 7, note: "Interactions and animation" },
-  { name: "Code / HTML / CSS", short: "</>", level: 6, note: "Responsive, accessible layouts, with VS Code and GitHub" },
+  { name: "Code / HTML / CSS", short: "</>", level: 7.5, note: "Responsive, accessible layouts, with VS Code and GitHub" },
   { name: "Maya", short: "My", level: 4, note: "3D modelling" },
 ];
 
