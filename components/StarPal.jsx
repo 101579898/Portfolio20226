@@ -14,7 +14,6 @@ const tapLines = ["Wheee!", "Again, again!", "So dizzy…", "Stardust everywhere
 const sectionLines = {
   about: "That's Kiara! She made me.",
   skills: "Look at those stats go!",
-  work: "Ooh, a pack! Tear it open!",
   music: "A playlist called " + music.title + "?" + (music.title === profile.starName ? " That's me!" : ""),
   contact: "Say hi to her, she's nice.",
 };
@@ -128,6 +127,9 @@ export default function StarPal() {
       }
     }
     window.addEventListener("pointermove", onMove, { passive: true });
+    // The work pack tells her when it is properly on screen.
+    const onPack = () => speak("Ooh, a pack! Tear it open!");
+    window.addEventListener("pack:here", onPack);
 
     // She comments on each section the first time you reach it.
     const said = new Set();
@@ -149,6 +151,7 @@ export default function StarPal() {
 
     return () => {
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pack:here", onPack);
       io.disconnect();
       clearTimeout(sayTimer.current);
     };

@@ -459,7 +459,8 @@ button { font: inherit; color: inherit; }
 /* ── Reduced motion: everything is readable without animation ── */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .boot-blink, .boot-title { animation: none; }
+  .boot-blink, .boot-title, .boot-parts li span, .boot-bar::after, .boot-bar.is-tuning span { animation: none !important; }
+  .boot-bar span { transition: none; }
   .journey { height: 100vh; height: 100svh; }
   .journey-text { display: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
@@ -593,6 +594,18 @@ html.boot-fade :is(.nav, .pal, .static-switch, .star-rail) { animation: surface 
   cursor: pointer;
 }
 .boot-skip:hover { border-color: var(--retro-pink); }
+/* Waiting for the site to be ready */
+.boot-wait { display: grid; justify-items: center; gap: 22px; width: min(560px, 80%); }
+.boot-title.is-small { font-size: clamp(28px, 5.4vw, 64px); letter-spacing: 4px; }
+.boot-bar { position: relative; width: 100%; height: 22px; padding: 3px; border: 2px solid var(--retro-pink); }
+.boot-bar span { position: absolute; inset: 3px; background: repeating-linear-gradient(90deg, var(--retro-pink) 0 14px, transparent 14px 18px); transform-origin: left; transform: scaleX(calc(0.06 + var(--share, 0) * 0.94)); transition: transform 0.6s ease; box-shadow: 0 0 14px rgba(220, 177, 194, 0.6); }
+.boot-bar::after { content: ""; position: absolute; inset: 3px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent); background-size: 30% 100%; background-repeat: no-repeat; animation: bootScan 1.6s linear infinite; }
+.boot-bar.is-tuning { width: min(320px, 60vw); }
+.boot-bar.is-tuning span { transform: none; width: 30%; right: auto; animation: bootTune 1.4s ease-in-out infinite alternate; }
+@keyframes bootTune { from { left: 3px; } to { left: calc(70% - 3px); } }
+.boot-parts { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; text-transform: uppercase; font-size: 18px; opacity: 0.85; }
+.boot-parts li:not(.is-done) span { animation: bootBlink 1.2s steps(1) infinite; }
+@keyframes bootScan { from { background-position: -40% 0; } to { background-position: 140% 0; } }
 @keyframes bootBlink { 50% { opacity: 0; } }
 @keyframes bootFlicker { 50% { opacity: 0.8; } }
 
