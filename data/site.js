@@ -89,6 +89,7 @@ export const music = {
 //   palette  { title, text, colors: [{ name, hex }] } decisions { title, text }
 //   screens  { title, items: [{ title, text, image, alt }] }  a row of phone screens
 //   outcome  how it ended                             gallery   { src, alt }
+//   results  a list of what you did (shown as "What I did")
 //   image    the main picture (public/work/...)       links     { label, href }
 //   hue      0-360, the tint of the card
 export const projects = [
@@ -172,5 +173,69 @@ export const projects = [
       { label: "See the code", href: "https://github.com/101579898/Cafefind" },
     ],
     hue: 8,
+  },
+  // Placeholders from Kiara's project slides (school projects); fuller case studies to come.
+  {
+    slug: "ar-cultural-salon",
+    title: "Educational AR Cultural Salon",
+    type: "AR / XR concept",
+    year: "GBC",
+    tools: ["AR", "ModiFace API"],
+    summary: "An AR mirror that lets you try on makeup, hair and accessories from different cultures and eras, and learn the story behind each look.",
+    intro:
+      "An AR mirror concept that lets users try on makeup, hairstyles, and accessories from different cultures and time periods, with historical and cultural context for each look. It's designed to broaden how people see beauty and to teach through the experience.",
+    objectiveTitle: "The goal",
+    objective:
+      "To challenge narrow, Eurocentric beauty standards by turning beauty into a cultural learning experience that supports healthy self identity, especially for teens and young adults.",
+    results: [
+      "Researched how social media and filter culture shape beauty standards and affect wellbeing, and defined the problem and three user groups (teens, young adults, students and educators).",
+      "Planned a 15-week Agile process (research, prototype, test, refine) with an accessibility and ethics review built in.",
+      "Designed lo-fi mirror screens covering cultural browsing, live face tracking with step-by-step explanations, and a \"Learn More\" panel with historical context, cultural significance, and modern influence.",
+      "Defined five deliverables, including an AR prototype powered by the ModiFace API and a curated cultural content database.",
+    ],
+    image: "/work/ar-salon.webp",
+    alt: "A phone showing the Han Dynasty Rouge look, with its historical context, cultural significance and modern influence",
+    hue: 345,
+  },
+  {
+    slug: "bennys-aac-redesign",
+    title: "Benny's AAC Redesign",
+    type: "Accessibility redesign",
+    year: "GBC",
+    role: "Team project",
+    summary: "A redesign of an AAC communication board for head-switch users, focused on usability, clarity and error prevention.",
+    intro:
+      "A redesign of the Foundation board in Benny's Access Hub, an AAC (Augmentative and Alternative Communication) system. It's built for Benny, who uses AAC daily, and the caregivers who support them, and it works with a head switch: move left to scan, right to select.",
+    objectiveTitle: "The goal",
+    objective:
+      "Make the system more intuitive and less physically and mentally demanding, so users can communicate more independently. The redesign focused on usability, clarity, and error prevention.",
+    results: [
+      "Researched the problem: existing AAC interfaces can be inefficient, hard to use, and not suited to individual users' needs.",
+      "Redesigned the phrase board with clearer categories (Core Phrases, Needs & Wants, Feelings, People, Actions, Places) and consistent navigation.",
+    ],
+    image: "/work/bennys-aac.webp",
+    alt: "Cover of the Benny's Redesign project, with the old and new AAC phrase boards on tablets",
+    hue: 200,
+  },
+  {
+    slug: "rehab-hci-home",
+    title: "Rehabilitation HCI Systems for Home Use",
+    type: "HCI research",
+    year: "GBC",
+    summary: "A research-based proposal for how rehab centres could use motion-sensing technology so patients can keep up rehabilitation at home.",
+    intro:
+      "A research based proposal on how UHN rehab centres could use motion-sensing technology so patients can continue rehabilitation at home. It uses BDRehab, a Kinect-based balance rehab system from researchers in Spain, as a case study, and looks at what UHN should consider before adopting a similar system.",
+    objectiveTitle: "The goal",
+    objective:
+      "Help rehab centres reduce waitlists and travel barriers by supporting at-home therapy that is safe, motivating, and easy for patients to use, and make sure it is tested in real conditions before rollout.",
+    results: [
+      "Researched how HCI and movement-based systems are used in rehab, including evidence that video-game-style exercises improve motivation and outcomes.",
+      "Analyzed the BDRehab case: a home PC and Kinect camera with nothing to wear, where the therapist sets how strict the posture checks are and receives attempts, errors, and time data to adjust the exercise remotely.",
+      "Identified the risk that clinic-tested results may not hold in real homes, which have clutter, different lighting, pets, and family.",
+      "Recommended testing with five real patients and a therapist present, followed by a small pilot, before any full rollout.",
+    ],
+    image: "/work/rehab-hci.webp",
+    alt: "Illustration on a phone of a patient and a therapist shaking hands",
+    hue: 210,
   },
 ];

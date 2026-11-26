@@ -117,6 +117,15 @@ export default function CaseStudy({ project: p, titleId }) {
         </section>
       ) : null}
 
+      {p.results?.length ? (
+        <section className="case-block" aria-labelledby={id(p, "res")}>
+          <h2 className="case-h" id={id(p, "res")}>{p.resultsTitle || "What I did"}</h2>
+          <ul className="case-results">
+            {p.results.map((r) => <li key={r}>{r}</li>)}
+          </ul>
+        </section>
+      ) : null}
+
       {p.decisions?.length ? (
         <section className="case-block" aria-labelledby={id(p, "dec")}>
           <h2 className="case-h" id={id(p, "dec")}>Design decisions</h2>
