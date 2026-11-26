@@ -10,7 +10,7 @@ import { useGSAP } from "@gsap/react";
 import Reveal from "./Reveal";
 import Decode from "./Decode";
 import PixelArt from "./PixelArt";
-import { profile, education, experience, skills } from "@/data/site";
+import { profile, education, experience, awards, skills } from "@/data/site";
 import { asset } from "@/lib/asset";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -36,7 +36,7 @@ function Timeline({ items }) {
         <li key={item.title}>
           <div>
             <strong>{item.title}</strong>
-            <span>{item.detail}</span>
+            {item.detail ? <span>{item.detail}</span> : null}
           </div>
           <span className="pill">{item.date}</span>
         </li>
@@ -110,6 +110,12 @@ export default function Profile() {
             <h3 className="deco">Work experience</h3>
             <Timeline items={experience} />
           </Reveal>
+          {awards.length ? (
+            <Reveal className="panel lit">
+              <h3 className="deco">Awards</h3>
+              <Timeline items={awards} />
+            </Reveal>
+          ) : null}
           <Reveal>
             <Window title="quest.log" className="quest">
               <p>{profile.seeking}</p>
