@@ -266,8 +266,6 @@ body::before { display: none; }
 
 /* Phones: Kiwi's speech wraps instead of running off the screen */
 @media (max-width: 700px) { .pal-say { white-space: normal; width: max-content; max-width: min(250px, calc(100vw - 110px)); } }
-/* In the opening Kiwi sits by the star, so her speech goes underneath her */
-.pal.is-near .pal-say { right: auto; bottom: auto; left: 50%; top: 100%; translate: -50% 6px; border-radius: 2px 14px 14px 14px; white-space: normal; width: max-content; max-width: 250px; text-align: center; }
 
 /* ── Kiwi ─────────────────────────────────────────────── */
 .pal { width: 84px; height: 84px; }

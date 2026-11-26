@@ -1,7 +1,7 @@
 "use client";
 
-// Kiwi, the kitten-star. In the opening she sits by the shooting star, says hi and
-// tags along as you follow it, then floats in the corner: she watches your pointer,
+// Kiwi, the kitten-star. She floats in the corner (in the opening she says hi, and
+// drifts after the shooting star as she fades away): she watches your pointer,
 // smiles when you come close, dodges once or twice if you chase her with a mouse,
 // and spins when you tap her.
 import { useEffect, useRef, useState } from "react";
@@ -25,7 +25,6 @@ export default function StarPal() {
   const eyes = useRef(null);
   const [say, setSay] = useState("");
   const [happy, setHappy] = useState(false);
-  const [near, setNear] = useState(false);
   const sayTimer = useRef(0);
   const dodges = useRef(0);
   const taps = useRef(0);
@@ -36,7 +35,8 @@ export default function StarPal() {
     sayTimer.current = setTimeout(() => setSay(""), ms);
   }
 
-  // Tagging along with the star in the opening.
+  // In the opening she stays in her corner and says hi. When you follow the star she
+  // drifts a little after it and fades away, then is back in her corner when you land.
   useEffect(() => {
     const el = btn.current;
     const home = document.getElementById("intro");
@@ -44,42 +44,37 @@ export default function StarPal() {
     let raf = 0;
     let x = 0;
     let y = 0;
-    let wasNear = false;
-    let cheered = false;
+    let o = 1;
     let hello = 0;
 
     function frame() {
       raf = 0;
-      const p = space.p;
-      const wide = innerWidth > 900;
-      const here = space.active && document.documentElement.dataset.booted ? smoothstep(0.5, 1, space.intro) * space.sa : 0;
-      // Wide screens: right by the star from the start. Phones: once the title has gone.
-      const f = here * (wide ? 1 : smoothstep(0.22, 0.34, p)) * (1 - smoothstep(0.72, 0.95, p));
+      const p = space.active ? space.p : 1;
+      const booted = !!document.documentElement.dataset.booted;
+      // How far she has gone after the star (0-1), and how faded she is.
+      const go = smoothstep(0.03, 0.4, p) * (1 - smoothstep(0.9, 1, p));
+      const fade = smoothstep(0.08, 0.42, p) * (1 - smoothstep(0.93, 1, p));
       const w = el.offsetWidth;
       const baseX = el.offsetLeft + w / 2;
       const baseY = el.offsetTop + el.offsetHeight / 2;
-      const tx = Math.min(innerWidth - w, Math.max(w, space.sx + (wide ? -96 : -40)));
-      const ty = Math.min(innerHeight - w, Math.max(w + 40, space.sy + (wide ? 92 : 70)));
-      const gx = (tx - baseX) * f;
-      const gy = (ty - baseY) * f;
-      x += (gx - x) * 0.07;
-      y += (gy - y) * 0.07;
-      const still = Math.abs(gx - x) + Math.abs(gy - y) < 0.4;
-      if (Math.abs(x) + Math.abs(y) < 0.5 && f === 0) {
+      const gx = space.sa > 0.05 ? (space.sx - baseX) * 0.3 * go : 0;
+      const gy = space.sa > 0.05 ? (space.sy - baseY) * 0.3 * go : 0;
+      x += (gx - x) * 0.08;
+      y += (gy - y) * 0.08;
+      o += (1 - fade - o) * 0.12;
+      const still = Math.abs(gx - x) + Math.abs(gy - y) < 0.4 && Math.abs(1 - fade - o) < 0.01;
+      if (Math.abs(x) + Math.abs(y) < 0.5 && o > 0.99) {
         el.style.translate = "";
-        el.style.transition = "";
+        el.style.opacity = "";
+        el.style.pointerEvents = "";
       } else {
-        el.style.transition = "opacity 0.35s ease";
         el.style.translate = `${x.toFixed(1)}px ${y.toFixed(1)}px`;
+        el.style.opacity = o.toFixed(3);
+        el.style.pointerEvents = o < 0.5 ? "none" : "";
       }
-      const isNear = wide && f > 0.6 && p < 0.12;
-      if (isNear !== wasNear) setNear((wasNear = isNear));
-      if (!hello && here > 0.9 && p < 0.05 && scrollY < 40) hello = setTimeout(() => scrollY < 40 && speak("Hi, I'm " + profile.starName + "! Scroll and we'll follow the star together.", 7000), 1600);
-      if (!cheered && p > 0.3) {
-        cheered = true;
-        speak("Wheee! Wait for me!", 2600);
-      }
-      if (space.active || !still || f > 0) raf = requestAnimationFrame(frame);
+      if (fade > 0.2) setSay("");
+      if (!hello && booted && space.intro > 0.9 && p < 0.02 && scrollY < 40) hello = setTimeout(() => scrollY < 40 && speak("Hi, I'm " + profile.starName + "! Scroll to follow the star.", 6000), 2200);
+      if (space.active || !still) raf = requestAnimationFrame(frame);
     }
     const wake = () => {
       if (!raf) raf = requestAnimationFrame(frame);
@@ -95,7 +90,8 @@ export default function StarPal() {
       removeEventListener("portfolio:booted", wake);
       removeEventListener("scroll", wake);
       el.style.translate = "";
-      el.style.transition = "";
+      el.style.opacity = "";
+      el.style.pointerEvents = "";
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -187,7 +183,7 @@ export default function StarPal() {
   return (
     <button
       ref={btn}
-      className={`pal ${happy ? "is-happy" : ""} ${near ? "is-near" : ""}`}
+      className={`pal ${happy ? "is-happy" : ""}`}
       onClick={spin}
       aria-label={`${profile.starName}, the kitten star. Press to make her spin.`}
     >
