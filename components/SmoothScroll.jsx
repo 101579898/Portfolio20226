@@ -38,8 +38,7 @@ export default function SmoothScroll() {
       const y = scrollY;
       const d = y - lastY;
       if (Math.abs(d) < 10) return;
-      const opening = document.getElementById("intro");
-      const end = y < 80 || y + innerHeight > document.documentElement.scrollHeight - 80 || (opening && y < opening.offsetHeight - innerHeight * 0.5);
+      const end = y < 80 || y + innerHeight > document.documentElement.scrollHeight - 80;
       root.classList.toggle("floaters-away", phone.matches && d > 0 && !end);
       lastY = y;
     };
