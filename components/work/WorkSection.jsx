@@ -18,6 +18,9 @@ import CardZoom from "./CardZoom";
 import CaseOverlay from "./CaseOverlay";
 import { canGo, PACK } from "./machine";
 import { projects } from "@/data/site";
+
+// How much of the pack must be on screen before it calls for attention.
+const CALL_AT = 0.55;
 import { buildDeck, rollPull } from "@/lib/deck";
 
 const PackScene = dynamic(() => import("./PackScene"), { ssr: false });
@@ -297,6 +300,29 @@ export default function WorkSection() {
 
   const showPack = phase === "sealed" || phase === "interacting" || phase === "opening" || phase === "revealing";
   const showCards = phase === "revealing" || phase === "collection" || phase === "detail";
+  // The first time the sealed pack is properly in view, it lights up and gives a little
+  // wiggle, and Kiwi points it out, so nobody scrolls straight past it.
+  const [calling, setCalling] = useState(false);
+  const [lit, setLit] = useState(false);
+  useEffect(() => {
+    const el = stage.current;
+    if (!el) return;
+    let done = false;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        setLit(e.intersectionRatio >= CALL_AT);
+        if (done || e.intersectionRatio < CALL_AT) return;
+        done = true;
+        setCalling(true);
+        window.dispatchEvent(new Event("pack:here"));
+        setTimeout(() => setCalling(false), 2400);
+      },
+      { threshold: [0, CALL_AT] }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   const hint =
     phase === "sealed" || phase === "interacting"
       ? "Drag across the pack to tear it open, or click it."
@@ -317,7 +343,7 @@ export default function WorkSection() {
       </Reveal>
 
       <div
-        className={`pack-stage is-${phase} view-${view}`}
+        className={`pack-stage is-${phase} view-${view} ${lit ? "is-lit" : ""} ${calling ? "is-calling" : ""}`}
         ref={stage}
         onPointerMove={(e) => showPack && e.pointerType === "mouse" && point(e)}
       >

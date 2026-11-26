@@ -4,7 +4,7 @@
 
 /* ── Stage ────────────────────────────────────────────── */
 .work { padding-bottom: clamp(64px, 9vw, 120px); }
-.pack-stage { position: relative; display: grid; place-items: center; min-height: 600px; margin: 8px calc(var(--gutter) * -1) 0; }
+.pack-stage { position: relative; isolation: isolate; display: grid; place-items: center; min-height: 600px; margin: 8px calc(var(--gutter) * -1) 0; }
 .pack-canvas { position: absolute !important; inset: -70px 0 -90px; width: auto !important; height: auto !important; pointer-events: none; }
 .pack-stage:is(.is-sealed, .is-interacting, .is-opening)::before {
   /* the glow the pack floats in, and its shadow */
@@ -14,6 +14,16 @@
   background: radial-gradient(300px 330px at 50% 48%, rgba(124, 103, 158, 0.34), transparent 70%), radial-gradient(170px 24px at 50% 95%, rgba(7, 6, 11, 0.85), transparent 72%);
   pointer-events: none;
 }
+/* While the sealed pack is in view it glows brighter, and the first time it calls for
+   attention: the light blooms out behind it and the pack wiggles once. */
+.pack-stage::after { content: ""; position: absolute; left: 50%; top: 48%; z-index: -1; width: min(1000px, 160vw); aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(circle, rgba(246, 232, 255, 0.95) 0%, rgba(214, 180, 255, 0.8) 20%, rgba(170, 128, 245, 0.55) 30%, rgba(124, 90, 210, 0.28) 42%, rgba(90, 70, 170, 0.1) 54%, transparent 66%), conic-gradient(from 0deg, transparent 0 4%, rgba(236, 220, 255, 0.34) 6%, transparent 9% 21%, rgba(236, 220, 255, 0.28) 23%, transparent 26% 46%, rgba(236, 220, 255, 0.34) 48%, transparent 51% 71%, rgba(236, 220, 255, 0.28) 73%, transparent 76%); -webkit-mask: radial-gradient(circle, #000 34%, transparent 68%); mask: radial-gradient(circle, #000 34%, transparent 68%); opacity: 0; scale: 0.6; pointer-events: none; transition: opacity 1.2s ease, scale 1.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.pack-stage.is-lit:is(.is-sealed, .is-interacting)::after { opacity: 0.8; scale: 1; animation: packBreathe 3.6s ease-in-out 1.6s infinite; }
+.pack-stage.is-calling::after { opacity: 1; animation: packRays 2.4s ease-out, packBreathe 3.6s ease-in-out 2.4s infinite; }
+.pack-stage.is-calling:is(.is-sealed, .is-interacting) :is(.pack-canvas, .flat-pack) { animation: packWiggle 0.9s ease-in-out 0.35s; }
+@keyframes packBreathe { 50% { opacity: 0.6; scale: 0.93; } }
+@keyframes packRays { from { rotate: -14deg; scale: 0.5; opacity: 0; } 30% { opacity: 1; } to { rotate: 0deg; scale: 1; } }
+@keyframes packWiggle { 0%, 100% { rotate: 0deg; } 20% { rotate: -3deg; } 40% { rotate: 2.6deg; } 60% { rotate: -1.6deg; } 80% { rotate: 0.8deg; } }
+@media (prefers-reduced-motion: reduce) { .pack-stage::after { transition: opacity 0.4s; scale: 1; } .pack-stage.is-lit:is(.is-sealed, .is-interacting)::after, .pack-stage.is-calling::after { animation: none; } .pack-stage.is-calling :is(.pack-canvas, .flat-pack) { animation: none; } }
 .pack-hit { position: relative; z-index: 2; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 .pack-hit:active { cursor: grabbing; }
 .pack-hint { margin-top: 18px; min-height: 1.6em; text-align: center; color: var(--soft); text-shadow: 0 0 12px #07060b; }

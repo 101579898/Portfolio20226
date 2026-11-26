@@ -10,6 +10,7 @@ import { useGSAP } from "@gsap/react";
 import Transmission from "./Transmission";
 import { space, smoothstep } from "@/lib/space";
 import { glide, gliding, endGlide } from "@/lib/scroll";
+import { markReady } from "@/lib/ready";
 import { profile } from "@/data/site";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -44,7 +45,9 @@ export default function Journey() {
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setMode(!reduce && hasWebGL() ? "3d" : "flat");
+    const can = !reduce && hasWebGL();
+    setMode(can ? "3d" : "flat");
+    if (!can) markReady("star");
 
     const onMove = (e) => {
       space.mx = (e.clientX / innerWidth) * 2 - 1;
@@ -233,9 +236,13 @@ export default function Journey() {
         {mode === "3d" ? <StarScene
             onReady={() => {
               gate.current.warm = true;
+              markReady("star");
               flyIn();
             }}
-            onFail={() => setMode("flat")}
+            onFail={() => {
+              markReady("star");
+              setMode("flat");
+            }}
           /> : null}
         {mode === "flat" ? (
           <svg className="journey-flatstar" viewBox="0 0 100 100" aria-hidden="true">
