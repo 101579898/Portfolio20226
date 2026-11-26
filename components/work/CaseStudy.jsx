@@ -142,7 +142,7 @@ export default function CaseStudy({ project: p, titleId }) {
 
       {p.gallery?.length ? (
         <section className="case-block" aria-labelledby={id(p, "gal")}>
-          <h2 className="case-h" id={id(p, "gal")}>Gallery</h2>
+          <h2 className="case-h" id={id(p, "gal")}>{p.galleryTitle || "Gallery"}</h2>
           <ul className="case-gallery">
             {p.gallery.map((g) => (
               <li key={g.src}><img src={asset(g.src)} alt={g.alt} loading="lazy" /></li>

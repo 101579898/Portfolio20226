@@ -201,8 +201,8 @@ export const projects = [
     slug: "bennys-aac-redesign",
     title: "Benny's AAC Redesign",
     type: "Accessibility redesign",
-    year: "GBC",
-    role: "Team project",
+    year: "2026",
+    role: "Team project with Doyun and Julia, for Physical Interfaces",
     summary: "A redesign of an AAC communication board for head-switch users, focused on usability, clarity and error prevention.",
     intro:
       "A redesign of the Foundation board in Benny's Access Hub, an AAC (Augmentative and Alternative Communication) system. It's built for Benny, who uses AAC daily, and the caregivers who support them, and it works with a head switch: move left to scan, right to select.",
@@ -212,6 +212,34 @@ export const projects = [
     results: [
       "Researched the problem: existing AAC interfaces can be inefficient, hard to use, and not suited to individual users' needs.",
       "Redesigned the phrase board with clearer categories (Core Phrases, Needs & Wants, Feelings, People, Actions, Places) and consistent navigation.",
+    ],
+    process: [
+      {
+        title: "The problem",
+        text: "Existing alternative communication systems can be unaccommodating, difficult to use, and require high mental or physical demand. Many interfaces are inefficient and aren't suited to users' needs.",
+        image: "/work/benny/problem.webp",
+        alt: "The redesigned phrase board, with an illustrated caregiver and an AAC user in a wheelchair",
+      },
+      {
+        title: "To empower",
+        text: "We targeted individuals and caregivers who rely on AAC tools daily. The goal is to make systems intuitive and effective, supporting user independence for a higher quality of life.",
+      },
+      {
+        title: "Design focus",
+        text: "Using Benny's Access Hub as the foundation, we redesigned the phrase board, improving usability, clarity and error prevention.",
+        image: "/work/benny/design-focus.webp",
+        alt: "The phrase board with Questions and Time open, showing who, what, when, where and why around it",
+      },
+      {
+        title: "Try it yourself",
+        text: "Using the head switch, move your head left to scan (or press space) and right to select (or press return), then use the device to build phrases and communicate.",
+      },
+    ],
+    galleryTitle: "The posters",
+    gallery: [
+      { src: "/work/benny/poster-cover.webp", alt: "Poster: Benny's Redesign cover, with the original AAC boards on tablets" },
+      { src: "/work/benny/poster-info.webp", alt: "Poster: what AAC systems are, our changes, and how it works" },
+      { src: "/work/benny/poster-process.webp", alt: "Poster: redesigning for better communication, from the problem to trying it yourself" },
     ],
     image: "/work/bennys-aac.webp",
     alt: "Cover of the Benny's Redesign project, with the old and new AAC phrase boards on tablets",
